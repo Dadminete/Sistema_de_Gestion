@@ -1,0 +1,62 @@
+.dashboard-card {
+  background-color: var(--vscode-editor-background);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--vscode-editor-foreground);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.card-header .material-icons {
+  font-size: 24px;
+  margin-right: 10px;
+  color: var(--vscode-primary-foreground);
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: var(--vscode-editor-foreground);
+}
+
+.card-content {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.card-value {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0;
+  margin-right: 10px;
+  color: var(--vscode-editor-foreground);
+}
+
+.card-percentage {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.card-percentage.up {
+  color: #4CAF50; /* Green for positive trend */
+}
+
+.card-percentage.down {
+  color: #F44336; /* Red for negative trend */
+}
+
+.card-description {
+  font-size: 0.9em;
+  color: var(--vscode-editor-foreground);
+  opacity: 0.7;
+  margin: 0;
+}

@@ -1,0 +1,295 @@
+.permisos-gestion {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.permisos-gestion h1 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.alert {
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.alert-error {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+}
+
+.alert-success {
+  background-color: #efe;
+  border: 1px solid #cfc;
+  color: #3c3;
+}
+
+.permisos-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+}
+
+/* Sección de Roles */
+.roles-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.roles-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.roles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.role-btn {
+  padding: 0.75rem 1rem;
+  background: #f5f5f5;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.role-btn:hover {
+  background: #eee;
+  border-color: #ddd;
+}
+
+.role-btn.active {
+  background: #2196f3;
+  color: white;
+  border-color: #1976d2;
+  font-weight: 600;
+}
+
+.role-name {
+  font-weight: 500;
+}
+
+.role-count {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+
+/* Sección de Permisos */
+.permisos-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.permisos-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #2196f3;
+}
+
+/* Categorías de Permisos */
+.categoria-group {
+  margin-bottom: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.categoria-header {
+  width: 100%;
+  padding: 1rem;
+  background: #f9f9f9;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.categoria-header:hover {
+  background: #f0f0f0;
+}
+
+.categoria-toggle {
+  font-size: 0.8rem;
+  transition: transform 0.2s;
+  display: inline-block;
+  min-width: 1rem;
+}
+
+.categoria-name {
+  flex: 1;
+  text-align: left;
+}
+
+.categoria-count {
+  font-size: 0.85rem;
+  background: #2196f3;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* Lista de Permisos */
+.permisos-list {
+  padding: 1rem;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
+}
+
+.permiso-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  margin-bottom: 0.5rem;
+}
+
+.permiso-item:hover {
+  background: #f5f5f5;
+}
+
+.permiso-item input[type="checkbox"] {
+  margin-top: 0.25rem;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #2196f3;
+}
+
+.permiso-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.permiso-nombre {
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.permiso-descripcion {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Acciones */
+.permisos-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e0e0e0;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: #2196f3;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #1976d2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .permisos-container {
+    grid-template-columns: 1fr;
+  }
+
+  .roles-section {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .roles-list {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .role-btn {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .permisos-gestion {
+    padding: 1rem;
+  }
+
+  .permisos-section {
+    padding: 1rem;
+  }
+
+  .permiso-item {
+    flex-direction: column;
+  }
+
+  .categoria-header {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}

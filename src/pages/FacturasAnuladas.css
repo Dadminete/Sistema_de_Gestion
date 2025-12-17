@@ -1,0 +1,155 @@
+/* ================================================
+   FACTURAS ANULADAS - Glass Morphism Dark Mode
+   =============================================== */
+
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(100, 100, 100, 0.12);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --danger-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+body.dark {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.facturas-anuladas-page {
+    padding: 24px;
+    animation: slideInUp 0.5s ease-out;
+}
+
+.facturas-anuladas-header {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    padding: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.header-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ef4444;
+}
+
+.header-content h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--danger-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-content p {
+    margin: 4px 0 0 0;
+    color: var(--text-color-secondary, #64748b);
+    font-size: 0.875rem;
+}
+
+.facturas-table-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    overflow: hidden;
+}
+
+/* Table Action Buttons */
+.table-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+/* Action buttons - using DataTable.css styles */
+
+/* Loading States */
+.loading-container {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-color-secondary, #94a3b8);
+}
+
+.loading-container svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+/* Strikethrough styling for cancelled items */
+.cancelled-item {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.cancelled-amount {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+/* Status Badge for cancelled state */
+.status-badge-cancelled {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .facturas-anuladas-page {
+        padding: 16px;
+    }
+
+    .facturas-anuladas-header {
+        padding: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .header-content h1 {
+        font-size: 1.25rem;
+    }
+
+    .table-actions {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

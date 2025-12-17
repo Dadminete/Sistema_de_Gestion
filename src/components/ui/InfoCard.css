@@ -1,0 +1,100 @@
+.info-card {
+  background-color: var(--colors-background-paper);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.info-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.info-card-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.info-card-header .material-icons {
+  color: var(--colors-text-secondary);
+  cursor: pointer;
+}
+
+.info-card-content {
+  flex-grow: 1;
+}
+
+/* Welcome Card Specific Styles */
+.welcome-card {
+  background: linear-gradient(45deg, #2196f3, #64b5f6);
+  color: white;
+}
+
+.welcome-card h2 {
+  margin-top: 0;
+}
+
+.welcome-card p {
+  line-height: 1.6;
+}
+
+.welcome-card button {
+  background-color: white;
+  color: #2196f3;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+/* Downloads Card Specific Styles */
+.download-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.download-item .material-icons {
+  color: #2196f3;
+}
+
+/* Support Card Specific Styles */
+.support-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.support-actions button {
+  background-color: #f0f0f0;
+  border: 1px solid var(--colors-divider);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.support-footer {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.support-footer button {
+    width: 100%;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}

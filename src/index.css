@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import './styles/theme.css';
+
+:root {
+  color-scheme: light dark;
+  color: var(--colors-text-primary);
+  background-color: var(--colors-background-default);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  outline: none;
+  font-family: 'Poppins', sans-serif !important; /* Apply directly to body with !important */
+  font-weight: 300 !important; /* Ensure the 300 weight is applied with !important */
+  line-height: 1.5;
+}
+
+h1, h2, h3, p, small, button, input, select, textarea {
+  font-family: 'Poppins', sans-serif !important; /* Apply to common text elements with !important */
+  font-weight: 300 !important; /* Ensure the 300 weight is applied with !important */
+}
+
+h1 {
+  font-size: var(--typography-hierarchy-h1-font-size);
+  font-weight: var(--typography-hierarchy-h1-font-weight);
+  line-height: 1.1;
+  color: var(--colors-text-primary);
+}
+
+h2 {
+  font-size: var(--typography-hierarchy-h2-font-size);
+  font-weight: var(--typography-hierarchy-h2-font-weight);
+  color: var(--colors-text-primary);
+}
+
+h3 {
+  font-size: var(--typography-hierarchy-h3-font-size);
+  font-weight: var(--typography-hierarchy-h3-font-weight);
+  color: var(--colors-text-primary);
+}
+
+p {
+  font-size: var(--typography-hierarchy-body1-font-size);
+  font-weight: var(--typography-hierarchy-body1-font-weight);
+  color: var(--colors-text-primary);
+}
+
+small {
+  font-size: var(--typography-hierarchy-body2-font-size);
+  font-weight: var(--typography-hierarchy-body2-font-weight);
+  color: var(--colors-text-secondary);
+}
+
+button {
+  border-radius: var(--components-button-border-radius);
+  border: 1px solid transparent;
+  padding: var(--components-button-padding);
+  font-size: var(--typography-hierarchy-button-font-size);
+  font-weight: var(--typography-hierarchy-button-font-weight);
+  font-family: inherit; /* Keep inherit for buttons to respect specific button styles if any */
+  background-color: var(--components-button-variants-primary-background-color);
+  color: var(--components-button-variants-primary-color);
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: var(--colors-primary-main);
+}
+button:focus,
+button:focus-visible {
+  outline: none;
+}
+
+/* acciones icono*/
+/* Override for table action buttons to ensure they have no background */
+button.action-btn {
+  background-color: transparent;
+}
+
+/* Remove all outlines and borders that could cause black borders */
+* {
+  outline: none !important;
+}
+
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure no default browser styling creates borders */
+#root {
+  outline: none !important;
+  border: none !important;
+}
+
+div {
+  outline: none !important;
+}
+
+.form-control {
+  border: 1px solid var(--colors-divider);
+  padding: 1.5rem;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 1.5rem;
+  background-color: var(--colors-background-paper);
+}
+
+.input-fixed-width {
+  width: 224px !important; /* Equivalent to w-56 */
+}
+
+/* Custom styles for tab buttons in light mode */
+body.light .tab-button-default-light {
+  background-color: rgb(23, 162, 184) !important; /* Teal background */
+  color: var(--colors-text-primary) !important; /* Gray text */
+  margin: 0 8px !important; /* Add horizontal margin */
+}
+
+body.light .tab-button-active-light {
+  background-color: var(--colors-primary-main) !important; /* Active tab background */
+  color: var(--colors-primary-contrast) !important; /* White text */
+  margin: 0 8px !important; /* Add horizontal margin */
+}
+
+body.light .tab-button-completed-light {
+  background-color: var(--colors-success-main) !important; /* Completed tab background */
+  color: var(--colors-primary-contrast) !important; /* White text */
+  margin: 0 8px !important; /* Add horizontal margin */
+}
+
+/* Custom styles for tab buttons in dark mode - using same colors as light mode for consistency */
+body.dark .tab-button-default-light {
+  background-color: rgb(23, 162, 184) !important; /* Teal background */
+  color: #6c757d !important; /* Gray text from light mode */
+  margin: 0 8px !important; /* Add horizontal margin */
+}
+
+body.dark .tab-button-active-light {
+  background-color: #4a69bb !important; /* Light mode primary color */
+  color: #ffffff !important; /* White text */
+  margin: 0 8px !important; /* Add horizontal margin */
+}
+
+body.dark .tab-button-completed-light {
+  background-color: #28a745 !important; /* Light mode success color */
+  color: #ffffff !important; /* White text */
+  margin: 0 8px !important; /* Add horizontal margin */
+}

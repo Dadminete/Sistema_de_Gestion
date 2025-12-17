@@ -1,0 +1,122 @@
+body.light {
+  --colors-primary-main: #4a69bb;
+  --colors-primary-light: #eef2f9;
+  --colors-primary-dark: #3a5998;
+  --colors-primary-contrast: #ffffff;
+  --colors-secondary-main: #6c757d;
+  --colors-secondary-contrast: #ffffff;
+  --components-button-variants-secondary-background-color: #6c757d; /* Explicitly define for secondary button */
+  --components-button-variants-secondary-color: #ffffff;
+  --colors-background-default: #f4f7f6;
+  --colors-background-paper: #ffffff;
+  --colors-surface-variant: #f8f9fa;
+  --colors-text-primary: #6c757d; /* Gray text for the page */
+  --colors-text-secondary: #888;
+  --colors-text-disabled: #adb5bd;
+  --colors-divider: #e9ecef;
+  --colors-action-hover: #f8f9fa;
+  --colors-action-disabled: #f1f3f4;
+  --colors-success-main: #28a745;
+  --colors-error-main: #dc3545;
+  --colors-warning-main: #ffc107;
+  --colors-info-main: #17a2b8; /* Teal */
+  --colors-icon-default: #17a2b8; /* Teal */
+  --components-button-primary-box-shadow: 0 4px 6px -1px rgba(23, 162, 184, 0.5), 0 2px 4px -1px rgba(23, 162, 184, 0.3);
+
+  /* Card variables for light theme */
+  --components-card-background-color: #ffffff;
+  --components-card-border: 1px solid #e0e0e0;
+  --components-card-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --components-card-padding: 1rem;
+  --colors-text-card: #6c757d; /* Gray text for cards in light mode */
+  --form-card-background: #ffffff; /* White background for form card in light mode */
+  --form-text-color: #6c757d; /* Gray text for form in light mode */
+
+  /* Legacy variables for backward compatibility */
+  --background-light: #ffffff;
+  --text-primary: #6c757d;
+  --text-secondary: #888;
+  --border-color: #e9ecef;
+  --background-color: #ffffff;
+  --primary-color: #4a69bb;
+  --primary-hover-color: #3a5998;
+  --hover-color: #f8f9fa;
+  --border-hover-color: #4a69bb;
+}
+
+body.dark {
+  --colors-primary-main: #5d8aa8;
+  --colors-primary-light: #3e4e5e;
+  --colors-primary-dark: #4a6b7a;
+  --colors-primary-contrast: #ffffff;
+  --colors-secondary-main: #1abc9c;
+  --colors-secondary-contrast: #ffffff;
+  --colors-background-default: #282c34; /* Changed from almost black to a slightly lighter dark grey */
+  --colors-background-paper: #2d3748;
+  --colors-surface-variant: #3a4a5a;
+  --colors-text-primary: #a0aec0; /* Gray text for the page in dark mode */
+  --colors-text-secondary: #a0aec0;
+  --colors-text-disabled: #718096;
+  --colors-divider: #4a5568;
+  --colors-action-hover: #4a5568;
+  --colors-action-disabled: #2d3748;
+  --colors-success-main: #48bb78;
+  --colors-error-main: #f56565;
+  --colors-warning-main: #ed8936;
+  --colors-info-main: #63b3ed; /* Light blue for dark mode */
+  --colors-icon-default: #ffffff; /* White */
+  --components-button-primary-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+
+  /* Card variables for dark theme */
+  --components-card-background-color: #363636; /* Card background in dark mode */
+  --components-card-border: 1px solid #555555; /* Soft gray border in dark mode */
+  --components-card-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --components-card-padding: 1rem;
+  --colors-text-card: #ffffff; /* White text for cards in dark mode */
+  --form-card-background: rgb(40, 44, 52); /* Specific dark background for form card */
+  --form-text-color: #a0aec0; /* Gray text for form in dark mode */
+
+  /* Legacy variables for backward compatibility */
+  --background-light: #2d3748;
+  --text-primary: #a0aec0;
+  --text-secondary: #a0aec0;
+  --border-color: #4a5568;
+  --background-color: #2d3748;
+  --primary-color: #5d8aa8;
+  --primary-hover-color: #4a6b7a;
+  --hover-color: #4a5568;
+  --border-hover-color: #5d8aa8;
+}
+
+:root {
+  /* Global layout variables */
+  --layout-structure-sidebar-width: 300px;
+  --layout-structure-sidebar-width-collapsed: 80px;
+  --layout-structure-header-height: 64px;
+  --layout-structure-main-container-padding: 1rem;
+  
+  /* Typography variables */
+  --typography-hierarchy-h1-font-size: 2.5rem;
+  --typography-hierarchy-h1-font-weight: 600;
+  --typography-hierarchy-h2-font-size: 2rem;
+  --typography-hierarchy-h2-font-weight: 600;
+  --typography-hierarchy-h3-font-size: 1.5rem;
+  --typography-hierarchy-h3-font-weight: 500;
+  --typography-hierarchy-body1-font-size: 1rem;
+  --typography-hierarchy-body1-font-weight: 400;
+  --typography-hierarchy-body2-font-size: 0.875rem;
+  --typography-hierarchy-body2-font-weight: 400;
+  --typography-hierarchy-button-font-size: 0.875rem;
+  --typography-hierarchy-button-font-weight: 500;
+  
+  /* Component variables */
+  --components-button-border-radius: 0.375rem;
+  --components-button-padding: 0.5rem 1rem;
+  --components-button-variants-primary-background-color: var(--colors-primary-main);
+  --components-button-variants-primary-color: #ffffff;
+
+  /* General variables */
+  --border-radius-md: 0.5rem; /* Medium border radius */
+  --border-radius-sm: 0.25rem; /* Small border radius */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05); /* Small shadow */
+}

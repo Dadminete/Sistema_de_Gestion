@@ -1,0 +1,55 @@
+.sales-chart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  background-color: var(--components-card-background-color);
+  color: var(--colors-text-card);
+  border: var(--components-card-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--components-card-box-shadow);
+  padding: var(--components-card-padding);
+}
+
+.doughnut-chart-wrapper {
+  position: relative;
+  width: var(--sales-chart-doughnut-size, 200px); /* Adjust as needed */
+  height: 200px; /* Adjust as needed */
+  margin: 1rem 0;
+}
+
+.chart-center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.chart-center-text p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--colors-text-secondary);
+}
+
+.chart-center-text h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.sales-chart-footer {
+  text-align: center;
+  margin-top: auto;
+}
+
+.sales-chart-footer p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--colors-text-secondary);
+}
+
+.sales-chart-footer a {
+  color: var(--colors-primary-main);
+  text-decoration: none;
+  font-weight: 600;
+}

@@ -1,0 +1,12 @@
+.chart-container {
+  position: relative;
+  height: 100%;
+  min-height: 500px;
+  width: 100%;
+  background-color: var(--components-card-background-color);
+  color: var(--colors-text-card);
+  border: var(--components-card-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--components-card-box-shadow);
+  padding: var(--components-card-padding);
+}

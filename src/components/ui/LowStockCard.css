@@ -1,0 +1,47 @@
+.low-stock-card {
+    background-color: var(--components-card-background-color);
+    color: var(--colors-text-card);
+    border: var(--components-card-border);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--components-card-box-shadow);
+    padding: var(--components-card-padding);
+    height: 100%;
+}
+
+.low-stock-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.low-stock-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.low-stock-item:last-child {
+    border-bottom: none;
+}
+
+.low-stock-item .product-name {
+    font-weight: 500;
+}
+
+.stock-level {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.current-stock {
+    font-weight: 600;
+    color: var(--danger-color, #f44336);
+}
+
+.min-stock {
+    font-size: 0.8rem;
+    color: var(--colors-text-secondary);
+}

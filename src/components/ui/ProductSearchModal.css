@@ -1,0 +1,83 @@
+.search-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001; /* Higher z-index to appear above the edit modal */
+}
+
+.search-modal-content {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.theme-dark .search-modal-content {
+  background-color: #2d2d2d;
+}
+
+.search-modal-content h3 {
+  margin-top: 0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.theme-dark .search-input {
+  background-color: #444;
+  border-color: #666;
+  color: #f0f0f0;
+}
+
+.product-list {
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.product-list-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.theme-dark .product-list-item {
+  border-bottom-color: #444;
+}
+
+.product-list-item:hover {
+  background-color: #f8f9fa;
+}
+
+.theme-dark .product-list-item:hover {
+  background-color: #404040;
+}
+
+.product-list-item .product-name {
+  font-weight: 500;
+}
+
+.product-list-item .product-price {
+  color: #6c757d;
+}
+
+.theme-dark .product-list-item .product-price {
+  color: #aaa;
+}

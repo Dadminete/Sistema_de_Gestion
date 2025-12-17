@@ -1,0 +1,255 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.dashboard-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left .breadcrumb {
+    color: var(--colors-primary-main);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.header-left h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.header-left p {
+    margin: 0.25rem 0 0 0;
+    color: var(--colors-text-secondary);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.date-range-picker {
+    background-color: var(--colors-background-paper);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--colors-divider);
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.header-actions button {
+    background: var(--colors-background-paper);
+    border: 1px solid var(--colors-divider);
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--colors-icon-default);
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-actions button .material-icons {
+    font-size: 1.25rem;
+}
+
+.dashboard-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    /* Added space below KPI cards */
+}
+
+.dashboard-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    /* Increased gap for more spacing */
+    padding-bottom: 4rem;
+    /* Added space at the bottom */
+}
+
+.dashboard-row {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+}
+
+.card-welcome {
+    grid-column: span 4;
+}
+
+.card-revenue {
+    grid-column: span 5;
+}
+
+.card-sales {
+    grid-column: span 3;
+}
+
+.card-wallet {
+    grid-column: span 4;
+}
+
+.card-downloads {
+    grid-column: span 4;
+}
+
+.card-reports {
+    grid-column: span 4;
+}
+
+@media (max-width: 1200px) {
+    .dashboard-row {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .dashboard-kpis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card-welcome,
+    .card-revenue,
+    .card-sales,
+    .card-wallet,
+    .card-downloads,
+    .card-reports {
+        grid-column: span 3;
+    }
+
+    .card-revenue {
+        grid-column: span 6;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .dashboard-kpis,
+    .dashboard-row {
+        grid-template-columns: 1fr;
+    }
+
+    .card-welcome,
+    .card-revenue,
+    .card-sales,
+    .card-wallet,
+    .card-downloads,
+    .card-reports {
+        grid-column: span 1;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .header-right {
+        justify-content: center;
+    }
+
+    .header-stats {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+
+/* My Wallet Card */
+.card-wallet .wallet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.card-wallet h3 {
+    margin: 0.5rem 0;
+}
+
+.card-wallet .wallet-details {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.card-wallet .wallet-details p {
+    font-size: 0.8rem;
+    color: var(--colors-text-secondary);
+    margin: 0;
+}
+
+.card-wallet .wallet-details h4 {
+    margin: 0.25rem 0 0;
+}
+
+.card-wallet .wallet-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.card-wallet .wallet-actions button {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.buy-btn {
+    background-color: #6c757d;
+    color: white;
+    border: 1px solid #6c757d;
+}
+
+.sell-btn {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #e9ecef;
+}
+
+/* Card styling for both light and dark modes */
+.card-wallet>div,
+.card-downloads>div,
+.card-reports>div,
+.chart-container,
+.sales-chart-container {
+    background-color: var(--components-card-background-color);
+    color: var(--colors-text-card);
+    border: var(--components-card-border);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--components-card-box-shadow);
+    padding: var(--components-card-padding);
+}
+
+/* Explicitly set text color for cards in dark mode */
+body.dark .card-wallet>div,
+body.dark .card-downloads>div,
+body.dark .card-reports>div,
+body.dark .chart-container,
+body.dark .sales-chart-container {
+    color: #ffffff;
+    /* White text in dark mode */
+}
+
+/* Explicitly set text color for cards in light mode */
+body.light .card-wallet>div,
+body.light .card-downloads>div,
+body.light .card-reports>div,
+body.light .chart-container,
+body.light .sales-chart-container {
+    color: #6c757d;
+    /* Gray text in light mode */
+}

@@ -1,0 +1,57 @@
+.papeleria-sales-chart-container {
+    padding: 1rem;
+    border-radius: 12px;
+    background-color: var(--components-card-background-color);
+    color: var(--colors-text-card);
+    border: var(--components-card-border);
+    box-shadow: var(--components-card-box-shadow);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.chart-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.chart-tabs {
+    display: flex;
+    gap: 1rem; /* Increase gap for better spacing */
+}
+
+.chart-tabs button {
+    background-color: transparent;
+    border: 1px solid var(--colors-border, #e2e8f0);
+    color: var(--colors-text-secondary);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.chart-tabs button:hover {
+    background-color: var(--colors-hover-bg, #f8fafc);
+    border-color: var(--primary-color, #3b82f6);
+}
+
+.chart-tabs button.active {
+    background-color: var(--primary-color, #3b82f6);
+    color: white;
+    border-color: var(--primary-color, #3b82f6);
+}
+
+.chart-content {
+    height: 350px;
+    position: relative;
+}

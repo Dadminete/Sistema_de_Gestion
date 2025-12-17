@@ -1,0 +1,19 @@
+{
+  "functions": {
+    "dynamic-action": "supabase/functions/dynamic-action/index.ts"
+  },
+  "lint": {
+    "files": {
+      "include": [
+        "supabase/functions/"
+      ]
+    }
+  },
+  "fmt": {
+    "files": {
+      "include": [
+        "supabase/functions/"
+      ]
+    }
+  }
+}

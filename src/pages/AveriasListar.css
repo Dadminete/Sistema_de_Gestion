@@ -1,0 +1,113 @@
+.page-container {
+  padding: 20px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 2em;
+  color: var(--text-color-primary);
+  margin-bottom: 5px;
+}
+
+.page-subtitle {
+  color: var(--text-color-secondary);
+  font-size: 0.9em;
+}
+
+.card {
+  background-color: var(--card-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-size: 1.5em;
+  color: var(--text-color-primary);
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table th {
+  background-color: var(--table-header-background);
+  color: var(--table-header-color);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85em;
+}
+
+.data-table tbody tr:hover {
+  background-color: var(--table-row-hover-background);
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: var(--table-row-even-background);
+}
+
+.button-small {
+  padding: 5px 10px;
+  font-size: 0.8em;
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.button-secondary {
+  background-color: var(--button-secondary-background);
+  color: var(--button-secondary-color);
+  border: 1px solid var(--button-secondary-border);
+}
+
+.button-secondary:hover {
+  background-color: var(--button-secondary-hover-background);
+  color: var(--button-secondary-hover-color);
+  border-color: var(--button-secondary-hover-border);
+}
+
+.error-message {
+  color: var(--error-color);
+  background-color: var(--error-background);
+  border: 1px solid var(--error-border);
+  padding: 10px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+}
+
+/* Ensure icon-only actions have no background */
+.dt-actions .action-button {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 6px !important;
+  width: 32px !important;
+  height: 32px !important;
+}
+.dt-actions .action-button:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+}

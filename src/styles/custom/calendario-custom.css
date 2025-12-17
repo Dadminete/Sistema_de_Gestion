@@ -1,0 +1,37 @@
+/* Estilos personalizados para el calendario */
+/* Botón de añadir tarea con sombra teal en modo claro */
+
+.button.primary.custom-add-task {
+  box-shadow: 0 2px 4px rgb(23, 162, 184);
+}
+
+.button.primary.custom-add-task:hover {
+  box-shadow: 0 4px 8px rgb(23, 162, 184);
+}
+
+/* Colores de texto del menú en modo claro */
+.custom-menu-text {
+  color: #6B7280; /* gris igual al del menú lateral */
+}
+
+/* Asegurar que el estilo se mantenga en modo oscuro si es necesario */
+.dark .custom-menu-text {
+  color: #D1D5DB; /* gris claro para modo oscuro */
+}
+
+/* Estilos para los elementos del menú dropdown */
+.dropdown-item.custom-menu-text {
+  color: #6B7280;
+}
+
+.dropdown-item.custom-menu-text .material-icons {
+  color: #6B7280;
+}
+
+.dark .dropdown-item.custom-menu-text {
+  color: #D1D5DB;
+}
+
+.dark .dropdown-item.custom-menu-text .material-icons {
+  color: #D1D5DB;
+}

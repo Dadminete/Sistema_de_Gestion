@@ -1,0 +1,640 @@
+import React, { useState, useEffect } from 'react';
+import Button from '../ui/Button';
+import './ClienteForm.css';
+
+interface ClientFormData {
+  // Step 1: Información Personal
+  nombre: string;
+  apellidos: string;
+  cedula: string;
+  fecha_nacimiento: string;
+  sexo: 'MASCULINO' | 'FEMENINO' | 'OTRO' | '';
+
+  // Step 2: Información de Contacto
+  telefono: string;
+  telefono_secundario: string;
+  email: string;
+  contacto: string;
+  contacto_emergencia: string;
+  telefono_emergencia: string;
+
+  // Step 3: Dirección
+  direccion: string;
+  sector_barrio: string;
+  ciudad: string;
+  provincia: string;
+  codigo_postal: string;
+  coordenadas_lat: string;
+  coordenadas_lng: string;
+  referencia_direccion: string;
+
+  // Step 4: Detalles del Cliente
+  tipo_cliente: string;
+  categoria_cliente: 'NUEVO' | 'REGULAR' | 'VIP' | 'INACTIVO';
+  estado: string;
+  limite_crediticio: number;
+  dias_credito: number;
+  descuento_porcentaje: number;
+  referido_por: string;
+  notas: string;
+
+  // Step 5: Confirmación
+  foto_url: string;
+}
+
+interface ClienteFormProps {
+  initialData?: Partial<ClientFormData>;
+  onSubmit: (data: any) => Promise<void>;
+  onCancel: () => void;
+  isEditing: boolean;
+}
+
+const ClienteForm: React.FC<ClienteFormProps> = ({ initialData, onSubmit, onCancel, isEditing }) => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState<ClientFormData>({
+    nombre: '',
+    apellidos: '',
+    cedula: '',
+    fecha_nacimiento: '',
+    sexo: '',
+    telefono: '',
+    telefono_secundario: '',
+    email: '',
+    contacto: '',
+    contacto_emergencia: '',
+    telefono_emergencia: '',
+    direccion: '',
+    sector_barrio: '',
+    ciudad: '',
+    provincia: '',
+    codigo_postal: '',
+    coordenadas_lat: '',
+    coordenadas_lng: '',
+    referencia_direccion: '',
+    tipo_cliente: 'residencial',
+    categoria_cliente: 'NUEVO',
+    estado: 'activo',
+    limite_crediticio: 0,
+    dias_credito: 0,
+    descuento_porcentaje: 0,
+    referido_por: '',
+    notas: '',
+    foto_url: '',
+    ...initialData,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const totalSteps = 5;
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(prev => ({ ...prev, ...initialData }));
+    }
+  }, [initialData]);
+
+  const updateFormData = (field: keyof ClientFormData, value: string | number) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const validateStep = (step: number): boolean => {
+    switch (step) {
+      case 1:
+        return formData.nombre.trim() !== '' && formData.apellidos.trim() !== '';
+      case 2:
+        return true;
+      case 3:
+        return true;
+      case 4:
+        return true;
+      case 5:
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+    }
+  };
+
+  const handlePrevious = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const clientData = {
+        // Basic personal info
+        nombre: formData.nombre,
+        apellidos: formData.apellidos,
+        cedula: formData.cedula || undefined,
+        fecha_nacimiento: formData.fecha_nacimiento || undefined,
+        sexo: formData.sexo === '' ? undefined : formData.sexo,
+        foto_url: formData.foto_url || undefined,
+
+        // Contact info
+        telefono: formData.telefono || undefined,
+        telefono_secundario: formData.telefono_secundario || undefined,
+        email: formData.email || undefined,
+        contacto: formData.contacto || undefined,
+        contacto_emergencia: formData.contacto_emergencia || undefined,
+        telefono_emergencia: formData.telefono_emergencia || undefined,
+
+        // Address info
+        direccion: formData.direccion || undefined,
+        sector_barrio: formData.sector_barrio || undefined,
+        ciudad: formData.ciudad || undefined,
+        provincia: formData.provincia || undefined,
+        codigo_postal: formData.codigo_postal || undefined,
+        coordenadas_lat: formData.coordenadas_lat ? parseFloat(formData.coordenadas_lat) : undefined,
+        coordenadas_lng: formData.coordenadas_lng ? parseFloat(formData.coordenadas_lng) : undefined,
+        referencia_direccion: formData.referencia_direccion || undefined,
+
+        // Client details
+        tipo_cliente: formData.tipo_cliente,
+        categoria_cliente: formData.categoria_cliente,
+        estado: formData.estado,
+        limite_crediticio: formData.limite_crediticio,
+        dias_credito: formData.dias_credito,
+        descuento_porcentaje: formData.descuento_porcentaje,
+        referido_por: formData.referido_por || undefined,
+        notas: formData.notas || undefined,
+      };
+
+      await onSubmit(clientData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al guardar el cliente');
+    } finally {
+      setLoading(false);
+    }
+  };
+          key={step}
+          className={`step ${step === currentStep ? 'active' : step < currentStep ? 'completed' : ''}`}
+        >
+          <span className="step-number">{step}</span>
+          <span className="step-label">
+            {step === 1 && 'Información Personal'}
+            {step === 2 && 'Contacto'}
+            {step === 3 && 'Dirección'}
+            {step === 4 && 'Detalles'}
+            {step === 5 && 'Confirmación'}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderStep1 = () => (
+    <div className="step-content">
+      <h3>Información Personal</h3>
+      <div className="form-grid">
+        <div className="form-group">
+          <label htmlFor="nombre">Nombre *</label>
+          <input
+            id="nombre"
+            type="text"
+            value={formData.nombre}
+            onChange={(e) => updateFormData('nombre', e.target.value)}
+            className="form-input"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="apellidos">Apellidos *</label>
+          <input
+            id="apellidos"
+            type="text"
+            value={formData.apellidos}
+            onChange={(e) => updateFormData('apellidos', e.target.value)}
+            className="form-input"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="cedula">Cédula</label>
+          <input
+            id="cedula"
+            type="text"
+            value={formData.cedula}
+            onChange={(e) => updateFormData('cedula', e.target.value)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="fecha_nacimiento">Fecha de Nacimiento</label>
+          <input
+            id="fecha_nacimiento"
+            type="date"
+            value={formData.fecha_nacimiento}
+            onChange={(e) => updateFormData('fecha_nacimiento', e.target.value)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="sexo">Sexo</label>
+          <select
+            id="sexo"
+            value={formData.sexo}
+            onChange={(e) => updateFormData('sexo', e.target.value)}
+            className="form-input"
+          >
+            <option value="">Seleccionar...</option>
+            <option value="MASCULINO">Masculino</option>
+            <option value="FEMENINO">Femenino</option>
+            <option value="OTRO">Otro</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderStep2 = () => (
+    <div className="step-content">
+      <h3>Información de Contacto</h3>
+      <div className="form-grid">
+        <div className="form-group">
+          <label htmlFor="telefono">Teléfono Principal</label>
+          <input
+            id="telefono"
+            type="tel"
+            value={formData.telefono}
+            onChange={(e) => updateFormData('telefono', e.target.value)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="telefono_secundario">Teléfono Secundario</label>
+          <input
+            id="telefono_secundario"
+            type="tel"
+            value={formData.telefono_secundario}
+            onChange={(e) => updateFormData('telefono_secundario', e.target.value)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={formData.email}
+            onChange={(e) => updateFormData('email', e.target.value)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="contacto">Contacto</label>
+          <input
+            id="contacto"
+            type="text"
+            value={formData.contacto}
+            onChange={(e) => updateFormData('contacto', e.target.value)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="contacto_emergencia">Contacto de Emergencia</label>
+          <input
+            id="contacto_emergencia"
+            type="text"
+            value={formData.contacto_emergencia}
+            onChange={(e) => updateFormData('contacto_emergencia', e.target.value)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="telefono_emergencia">Teléfono de Emergencia</label>
+          <input
+            id="telefono_emergencia"
+            type="tel"
+            value={formData.telefono_emergencia}
+            onChange={(e) => updateFormData('telefono_emergencia', e.target.value)}
+            className="form-input"
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderStep3 = () => (
+    <div className="step-content">
+      <h3>Dirección</h3>
+      <div className="form-grid">
+        <div className="form-group full-width">
+          <label htmlFor="direccion">Dirección</label>
+          <textarea
+            id="direccion"
+            value={formData.direccion}
+            onChange={(e) => updateFormData('direccion', e.target.value)}
+            className="form-input"
+            rows={3}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="sector_barrio">Sector/Barrio</label>
+          <input
+            id="sector_barrio"
+            type="text"
+            value={formData.sector_barrio}
+            onChange={(e) => updateFormData('sector_barrio', e.target.value)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="ciudad">Ciudad</label>
+          <input
+            id="ciudad"
+            type="text"
+            value={formData.ciudad}
+            onChange={(e) => updateFormData('ciudad', e.target.value)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="provincia">Provincia</label>
+          <input
+            id="provincia"
+            type="text"
+            value={formData.provincia}
+            onChange={(e) => updateFormData('provincia', e.target.value)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="codigo_postal">Código Postal</label>
+          <input
+            id="codigo_postal"
+            type="text"
+            value={formData.codigo_postal}
+            onChange={(e) => updateFormData('codigo_postal', e.target.value)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="coordenadas_lat">Latitud</label>
+          <input
+            id="coordenadas_lat"
+            type="number"
+            step="any"
+            value={formData.coordenadas_lat}
+            onChange={(e) => updateFormData('coordenadas_lat', e.target.value)}
+            className="form-input"
+            placeholder="Ej: 18.4567"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="coordenadas_lng">Longitud</label>
+          <input
+            id="coordenadas_lng"
+            type="number"
+            step="any"
+            value={formData.coordenadas_lng}
+            onChange={(e) => updateFormData('coordenadas_lng', e.target.value)}
+            className="form-input"
+            placeholder="Ej: -69.9876"
+          />
+        </div>
+        <div className="form-group full-width">
+          <label htmlFor="referencia_direccion">Referencia de Dirección</label>
+          <textarea
+            id="referencia_direccion"
+            value={formData.referencia_direccion}
+            onChange={(e) => updateFormData('referencia_direccion', e.target.value)}
+            className="form-input"
+            rows={2}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderStep4 = () => (
+    <div className="step-content">
+      <h3>Detalles del Cliente</h3>
+      <div className="form-grid">
+        <div className="form-group">
+          <label htmlFor="tipo_cliente">Tipo de Cliente</label>
+          <select
+            id="tipo_cliente"
+            value={formData.tipo_cliente}
+            onChange={(e) => updateFormData('tipo_cliente', e.target.value)}
+            className="form-input"
+          >
+            <option value="residencial">Residencial</option>
+            <option value="comercial">Comercial</option>
+            <option value="empresarial">Empresarial</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="categoria_cliente">Categoría</label>
+          <select
+            id="categoria_cliente"
+            value={formData.categoria_cliente}
+            onChange={(e) => updateFormData('categoria_cliente', e.target.value as 'NUEVO' | 'REGULAR' | 'VIP' | 'INACTIVO')}
+            className="form-input"
+          >
+            <option value="NUEVO">Nuevo</option>
+            <option value="REGULAR">Regular</option>
+            <option value="VIP">VIP</option>
+            <option value="INACTIVO">Inactivo</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="estado">Estado</label>
+          <select
+            id="estado"
+            value={formData.estado}
+            onChange={(e) => updateFormData('estado', e.target.value)}
+            className="form-input"
+          >
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+            <option value="suspendido">Suspendido</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="limite_crediticio">Límite de Crédito (DOP)</label>
+          <input
+            id="limite_crediticio"
+            type="number"
+            step="0.01"
+            min="0"
+            value={formData.limite_crediticio}
+            onChange={(e) => updateFormData('limite_crediticio', parseFloat(e.target.value) || 0)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="dias_credito">Días de Crédito</label>
+          <input
+            id="dias_credito"
+            type="number"
+            min="0"
+            value={formData.dias_credito}
+            onChange={(e) => updateFormData('dias_credito', parseInt(e.target.value) || 0)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="descuento_porcentaje">Descuento (%)</label>
+          <input
+            id="descuento_porcentaje"
+            type="number"
+            step="0.01"
+            min="0"
+            max="100"
+            value={formData.descuento_porcentaje}
+            onChange={(e) => updateFormData('descuento_porcentaje', parseFloat(e.target.value) || 0)}
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="referido_por">Referido Por (ID)</label>
+          <input
+            id="referido_por"
+            type="text"
+            value={formData.referido_por}
+            onChange={(e) => updateFormData('referido_por', e.target.value)}
+            className="form-input"
+            placeholder="UUID del cliente que refirió"
+          />
+        </div>
+        <div className="form-group full-width">
+          <label htmlFor="notas">Notas</label>
+          <textarea
+            id="notas"
+            value={formData.notas}
+            onChange={(e) => updateFormData('notas', e.target.value)}
+            className="form-input"
+            rows={3}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderStep5 = () => (
+    <div className="step-content">
+      <h3>Confirmación</h3>
+      <div className="confirmation-summary">
+        <div className="summary-section">
+          <h4>Información Personal</h4>
+          <p><strong>Nombre:</strong> {formData.nombre} {formData.apellidos}</p>
+          {formData.cedula && <p><strong>Cédula:</strong> {formData.cedula}</p>}
+          {formData.fecha_nacimiento && <p><strong>Fecha Nacimiento:</strong> {formData.fecha_nacimiento}</p>}
+          {formData.sexo && <p><strong>Sexo:</strong> {formData.sexo}</p>}
+        </div>
+
+        <div className="summary-section">
+          <h4>Contacto</h4>
+          {formData.telefono && <p><strong>Teléfono:</strong> {formData.telefono}</p>}
+          {formData.email && <p><strong>Email:</strong> {formData.email}</p>}
+          {formData.contacto && <p><strong>Contacto:</strong> {formData.contacto}</p>}
+        </div>
+
+        <div className="summary-section">
+          <h4>Dirección</h4>
+          {formData.direccion && <p><strong>Dirección:</strong> {formData.direccion}</p>}
+          {formData.ciudad && <p><strong>Ciudad:</strong> {formData.ciudad}</p>}
+          {formData.provincia && <p><strong>Provincia:</strong> {formData.provincia}</p>}
+        </div>
+
+        <div className="summary-section">
+          <h4>Detalles del Cliente</h4>
+          <p><strong>Tipo:</strong> {formData.tipo_cliente}</p>
+          <p><strong>Categoría:</strong> {formData.categoria_cliente}</p>
+          <p><strong>Estado:</strong> {formData.estado}</p>
+          {formData.limite_crediticio > 0 && <p><strong>Límite Crédito:</strong> DOP {formData.limite_crediticio.toLocaleString()}</p>}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="foto_url">URL de Foto (opcional)</label>
+          <input
+            id="foto_url"
+            type="url"
+            value={formData.foto_url}
+            onChange={(e) => updateFormData('foto_url', e.target.value)}
+            className="form-input"
+            placeholder="https://..."
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 1: return renderStep1();
+      case 2: return renderStep2();
+      case 3: return renderStep3();
+      case 4: return renderStep4();
+      case 5: return renderStep5();
+      default: return null;
+    }
+  };
+
+  return (
+    <div className="cliente-nuevo">
+      <div className="form-header">
+        <h1>{isEditing ? 'Editar Cliente' : 'Crear Nuevo Cliente'}</h1>
+        <p>Complete la información del cliente paso a paso</p>
+      </div>
+
+      {renderStepIndicator()}
+
+      <div className="form-container">
+        {renderCurrentStep()}
+
+        {error && (
+          <div className="error-message">
+            <span className="material-icons">error</span>
+            {error}
+          </div>
+        )}
+
+        <div className="form-navigation">
+          <Button
+            onClick={currentStep === 1 ? onCancel : handlePrevious}
+            disabled={loading}
+            className="secondary"
+          >
+            <span className="material-icons">arrow_back</span>
+            {currentStep === 1 ? 'Cancelar' : 'Anterior'}
+          </Button>
+
+          <div className="step-counter">
+            Paso {currentStep} de {totalSteps}
+          </div>
+
+          {currentStep < totalSteps ? (
+            <Button
+              onClick={handleNext}
+              disabled={!validateStep(currentStep)}
+              className="primary"
+            >
+              Siguiente
+              <span className="material-icons">arrow_forward</span>
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="success"
+            >
+              {loading ? 'Guardando...' : 'Guardar Cambios'}
+              <span className="material-icons">check</span>
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ClienteForm;

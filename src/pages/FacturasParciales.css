@@ -1,0 +1,438 @@
+/* FacturasParciales.css - Glass morphism styling for partial payment invoices page */
+
+/* CSS Variables for consistent theming */
+:root {
+  /* Glass morphism base */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: rgba(0, 0, 0, 0.1);
+  
+  /* Partial payment theme colors (amber/orange) */
+  --partial-primary: #f59e0b;
+  --partial-secondary: #d97706;
+  --partial-light: #fef3c7;
+  --partial-dark: #92400e;
+  
+  /* Text colors */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  
+  /* Background colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  
+  /* Partial gradients */
+  --partial-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --partial-gradient-light: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+  
+  /* Progress colors */
+  --progress-bg: rgba(245, 158, 11, 0.2);
+  --progress-fill: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* Dark mode variables */
+body.dark {
+  --glass-bg: rgba(17, 24, 39, 0.8);
+  --glass-border: rgba(75, 85, 99, 0.3);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
+  
+  --partial-primary: #f59e0b;
+  --partial-secondary: #d97706;
+  --partial-light: rgba(245, 158, 11, 0.1);
+  --partial-dark: #fbbf24;
+  
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  
+  --bg-primary: #1f2937;
+  --bg-secondary: #111827;
+  
+  --partial-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --partial-gradient-light: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.1) 100%);
+  
+  --progress-bg: rgba(245, 158, 11, 0.3);
+  --progress-fill: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* Main page container */
+.facturas-parciales-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, 
+    rgba(245, 158, 11, 0.05) 0%, 
+    rgba(217, 119, 6, 0.02) 50%, 
+    transparent 100%);
+  padding: 2rem;
+}
+
+body.dark .facturas-parciales-page {
+  background: linear-gradient(135deg, 
+    rgba(245, 158, 11, 0.1) 0%, 
+    rgba(217, 119, 6, 0.05) 50%, 
+    transparent 100%);
+}
+
+/* Glass header styling */
+.glass-header {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--partial-gradient);
+  opacity: 0.6;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.header-icon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--partial-primary);
+  background: var(--partial-light);
+  padding: 0.75rem;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+body.dark .header-icon {
+  background: var(--partial-light);
+  color: var(--partial-dark);
+}
+
+.header-text {
+  flex: 1;
+}
+
+.header-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  background: var(--partial-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.header-subtitle {
+  margin: 0.5rem 0 0 0;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+/* Table container */
+.table-container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px var(--glass-shadow);
+}
+
+/* Invoice number styling */
+.partial-invoice-number {
+  font-weight: 600;
+  color: var(--partial-primary);
+  padding: 0.25rem 0.5rem;
+  background: var(--partial-light);
+  border-radius: 6px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+body.dark .partial-invoice-number {
+  color: var(--partial-dark);
+  background: var(--partial-light);
+}
+
+/* Date styling */
+.due-date {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.overdue-date {
+  color: #dc2626;
+  font-weight: 600;
+  background: rgba(220, 38, 38, 0.1);
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+}
+
+body.dark .overdue-date {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Amount cell styling */
+.amount-cell {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.paid-amount {
+  font-weight: 600;
+  color: #10b981;
+  font-size: 0.875rem;
+}
+
+.pending-amount {
+  font-weight: 600;
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+body.dark .paid-amount {
+  color: #34d399;
+}
+
+body.dark .pending-amount {
+  color: #f87171;
+}
+
+/* Progress bar styling */
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--progress-bg);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--progress-fill);
+  transition: width 0.3s ease;
+  border-radius: 4px;
+}
+
+.progress-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--partial-primary);
+  min-width: 35px;
+  text-align: right;
+}
+
+body.dark .progress-text {
+  color: var(--partial-dark);
+}
+
+/* Payment date styling */
+.last-payment-date {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  background: rgba(245, 158, 11, 0.05);
+  border-radius: 6px;
+  border: 1px solid rgba(245, 158, 11, 0.1);
+  display: inline-block;
+}
+
+body.dark .last-payment-date {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* Payment methods styling */
+.payment-methods {
+  font-size: 0.75rem;
+  color: var(--partial-secondary);
+  font-weight: 500;
+  padding: 0.2rem 0.5rem;
+  background: var(--partial-light);
+  border-radius: 8px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  display: inline-block;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.dark .payment-methods {
+  color: var(--partial-dark);
+  background: var(--partial-light);
+}
+
+/* Status badge for partial invoices */
+.status-badge-partial {
+  background: var(--partial-light);
+  color: var(--partial-secondary);
+  padding: 0.35rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+body.dark .status-badge-partial {
+  background: var(--partial-light);
+  color: var(--partial-dark);
+}
+
+/* Action buttons */
+.action-btn.partial-pay-btn {
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.action-btn.partial-pay-btn:hover {
+  background: #f59e0b;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+body.dark .action-btn.partial-pay-btn {
+  background: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+}
+
+body.dark .action-btn.partial-pay-btn:hover {
+  background: #f59e0b;
+  color: var(--bg-primary);
+}
+
+.action-btn.complete-btn {
+  background: #dcfce7;
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.action-btn.complete-btn:hover {
+  background: #16a34a;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+body.dark .action-btn.complete-btn {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+}
+
+body.dark .action-btn.complete-btn:hover {
+  background: #16a34a;
+  color: var(--bg-primary);
+}
+
+.action-btn.pay-btn {
+  background: var(--partial-light);
+  color: var(--partial-primary);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.action-btn.pay-btn:hover {
+  background: var(--partial-primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+body.dark .action-btn.pay-btn {
+  background: var(--partial-light);
+  color: var(--partial-dark);
+}
+
+body.dark .action-btn.pay-btn:hover {
+  background: var(--partial-primary);
+  color: var(--bg-primary);
+}
+
+/* Loading state */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+  gap: 1rem;
+}
+
+.loading-container svg {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--partial-primary);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .facturas-parciales-page {
+    padding: 1rem;
+  }
+  
+  .glass-header {
+    padding: 1.5rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .header-title {
+    font-size: 1.5rem;
+  }
+  
+  .progress-container {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+  }
+  
+  .progress-text {
+    text-align: left;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 1024px) {
+  .payment-methods {
+    max-width: 80px;
+  }
+}

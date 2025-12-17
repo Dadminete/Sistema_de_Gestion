@@ -1,0 +1,474 @@
+/* ================================================
+   FACTURAS CREAR - Modern Design with Dark Mode
+   =============================================== */
+
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(100, 100, 100, 0.12);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+    --danger-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+body.dark {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.create-invoice-page {
+    min-height: 100vh;
+    padding: 24px;
+    animation: slideInUp 0.5s ease-out;
+}
+
+.create-invoice-hero {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.hero-header {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hero-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.hero-title h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.hero-actions .btn-cancel {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    color: var(--text-color-secondary, #64748b);
+}
+
+.hero-actions .btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(102, 126, 234, 0.5);
+    transform: translateY(-2px);
+}
+
+.invoice-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.form-section {
+    margin-bottom: 24px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    color: var(--text-color-primary, #1e293b);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.section-header svg {
+    width: 20px;
+    height: 20px;
+    color: #667eea;
+}
+
+.invoice-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    padding: 20px;
+}
+
+.info-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.info-field label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-color-primary, #1e293b);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.info-field input {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    font-size: 0.875rem;
+    color: var(--text-color-primary, #1e293b);
+    transition: all 0.3s ease;
+}
+
+.info-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.info-field input:read-only {
+    background: rgba(255, 255, 255, 0.02);
+    cursor: not-allowed;
+    color: var(--text-color-secondary, #64748b);
+    opacity: 0.7;
+}
+
+.details-section {
+    padding: 20px;
+}
+
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.details-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color-primary, #1e293b);
+}
+
+.btn-add-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-add-line:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.details-table-wrapper {
+    overflow-x: auto;
+}
+
+.details-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.details-table thead {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.details-table th {
+    padding: 12px;
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-color-primary, #1e293b);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.details-table td {
+    padding: 12px;
+    font-size: 0.875rem;
+    color: var(--text-color-secondary, #64748b);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.details-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.details-table tbody tr:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.details-table input {
+    width: 100%;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--text-color-primary, #1e293b);
+    transition: all 0.3s ease;
+}
+
+.details-table input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.details-table .amount-cell {
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    color: var(--text-color-primary, #1e293b);
+    text-align: right;
+}
+
+.btn-delete-line {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete-line:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.no-details {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-color-secondary, #94a3b8);
+    font-style: italic;
+}
+
+.invoice-summary {
+    padding: 20px;
+}
+
+.observations-section {
+    padding: 20px;
+}
+
+.observations-section label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: var(--text-color-primary, #1e293b);
+    font-size: 0.875rem;
+}
+
+.observations-section textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    font-size: 0.875rem;
+    color: var(--text-color-primary, #1e293b);
+    font-family: inherit;
+    resize: vertical;
+    transition: all 0.3s ease;
+}
+
+.observations-section textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.observations-section textarea::placeholder {
+    color: var(--text-color-secondary, #94a3b8);
+}
+
+.invoice-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px;
+    border-top: 1px solid var(--glass-border);
+}
+
+.btn-cancel,
+.btn-save {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color-secondary, #64748b);
+    border: 1px solid var(--glass-border);
+}
+
+.btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-save {
+    background: var(--secondary-gradient);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(16, 185, 129, 0.4);
+}
+
+.btn-save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Glass Button Styles from Payroll Page */
+.btn-glass {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    color: var(--text-color-primary, #1e293b);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-glass:hover {
+    transform: translateY(-2px);
+    border-color: rgba(102, 126, 234, 0.5);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+}
+
+.btn-glass.primary {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+}
+
+.btn-glass.primary:hover {
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Apply glass styling to all form sections */
+.form-section > .glass-card,
+.form-section .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .create-invoice-page {
+        padding: 16px;
+    }
+
+    .create-invoice-hero {
+        padding: 16px;
+    }
+
+    .hero-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .hero-title h1 {
+        font-size: 1.25rem;
+    }
+
+    .invoice-info-grid {
+        grid-template-columns: 1fr;
+        padding: 16px;
+    }
+
+    .details-section {
+        padding: 16px;
+    }
+
+    .details-table-wrapper {
+        overflow-x: scroll;
+    }
+
+    .details-table {
+        min-width: 800px;
+    }
+
+    .invoice-actions {
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .btn-cancel,
+    .btn-save {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .invoice-summary {
+        padding: 16px;
+    }
+
+    .observations-section {
+        padding: 16px;
+    }
+}

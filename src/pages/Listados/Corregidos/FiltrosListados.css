@@ -1,0 +1,78 @@
+/* Estilos para los filtros de búsqueda en listados de ingresos y gastos */
+
+.filters-section {
+  margin-bottom: 24px;
+  padding: 20px;
+  background-color: var(--colors-background-light);
+  border-radius: 8px;
+  border: 1px solid var(--colors-border-main);
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.filter-row:last-child {
+  margin-bottom: 0;
+}
+
+.search-input {
+  padding: 10px 16px;
+  border: 1px solid var(--colors-border-main);
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 200px;
+  background: var(--colors-surface-main);
+  color: var(--colors-text-primary);
+  flex: 1;
+  min-width: 150px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--colors-primary-main);
+  box-shadow: 0 0 0 2px var(--colors-primary-light);
+}
+
+/* Responsive design para móviles */
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .search-input {
+    min-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Estilos para el contenedor principal */
+.listado-ingresos-gastos-container {
+  padding: 20px;
+  background-color: var(--colors-background-main);
+  min-height: 100vh;
+}
+
+.listado-ingresos-gastos-container h2 {
+  color: var(--colors-text-primary);
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.data-table-card {
+  background: var(--colors-surface-main);
+  border-radius: 8px;
+  box-shadow: var(--shadows-medium);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.data-table-section {
+  overflow-x: auto;
+}

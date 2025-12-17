@@ -1,0 +1,178 @@
+# Actualización Automática de Saldo en Cuentas Contables
+
+## ✅ Implementación Completada
+
+Se ha implementado exitosamente la funcionalidad para actualizar automáticamente el campo `saldoActual` de las cuentas contables cuando se registran movimientos de ingresos o gastos.
+
+---
+
+## 🔧 Cambios Técnicos Realizados
+
+### Archivo Modificado: [server/services/movimientoContableService.js](file:///e:/Web/DB_Sistema_2.0_NEON/server/services/movimientoContableService.js)
+
+#### 1. **Nueva Función Helper: [updateCuentaContableSaldo](file:///e:/Web/DB_Sistema_2.0_NEON/server/services/movimientoContableService.js#6-70)**
+
+Esta función se encarga de:
+- Identificar la cuenta contable correcta basándose en el método de pago (caja, banco, genérico)
+- Calcular el nuevo saldo usando los movimientos existentes
+- Actualizar el campo `saldoActual` en la base de datos
+
+```javascript
+const updateCuentaContableSaldo = async (categoriaId, metodo, cajaId = null, cuentaBancariaId = null) => {
+  // Encuentra la cuenta contable según el método
+  // Calcula el nuevo saldo
+  // Actualiza saldoActual en la BD
+}
+```
+
+#### 2. **Integración en Operaciones CRUD**
+
+**✅ CREATE** ([createMovimiento](file:///e:/Web/DB_Sistema_2.0_NEON/server/services/movimientoContableService.js#51-117)):
+- Después de crear el movimiento y actualizar la caja
+- Se actualiza automáticamente el `saldoActual` de la cuenta contable asociada
+
+**✅ UPDATE** ([updateMovimiento](file:///e:/Web/DB_Sistema_2.0_NEON/server/services/movimientoContableService.js#192-245)):
+- Actualiza la cuenta contable antigua (si cambió categoría/método)
+- Actualiza la nueva cuenta contable
+- Maneja correctamente cambios de categoría, método, caja o cuenta bancaria
+
+**✅ DELETE** ([deleteMovimiento](file:///e:/Web/DB_Sistema_2.0_NEON/server/services/movimientoContableService.js#149-167)):
+- Después de eliminar el movimiento
+- Se recalcula y actualiza el `saldoActual` de la cuenta contable
+
+---
+
+## 📋 Cómo Funciona
+
+### Escenario 1: Registrar un Ingreso
+
+**Antes:**
+```
+Cuenta Contable: "Ingresos por Servicios"
+- saldoActual: $0.00 (no se actualizaba)
+```
+
+**Acción:** Crear movimiento contable
+- Tipo: Ingreso
+- Monto: $1,500.00
+- Categoría: "Ingresos por Servicios" (4.1)
+- Método: Caja
+
+**Después (automático):**
+```
+Cuenta Contable: "Ingresos por Servicios"
+- saldoActual: $1,500.00 ✨ (actualizado automáticamente)
+```
+
+### Escenario 2: Registrar un Gasto
+
+**Antes:**
+```
+Cuenta Contable: "Gastos Operativos - Salarios"
+- saldoActual: $0.00
+```
+
+**Acción:** Crear movimiento contable
+- Tipo: Gasto
+- Monto: $850.00
+- Categoría: "Salarios y Nómina" (5.1.1)
+- Método: Banco
+
+**Después (automático):**
+```
+Cuenta Contable: "Gastos Operativos - Salarios"
+- saldoActual: -$850.00 ✨ (actualizado automáticamente)
+```
+
+---
+
+## 🔍 Lógica de Identificación de Cuenta Contable
+
+La función determina qué cuenta contable actualizar según el método:
+
+1. **Método: Caja** (`metodo === 'caja'`)
+   - Busca la cuenta contable asociada a la caja
+   - Obtiene `cuentaContableId` desde la tabla `cajas`
+
+2. **Método: Banco** (`metodo === 'banco'`)
+   - Busca la cuenta contable asociada a la cuenta bancaria
+   - Obtiene `cuentaContableId` desde la tabla `cuentas_bancarias`
+
+3. **Método: Genérico/Otros**
+   - Busca la cuenta contable por categoría
+   - Encuentra la primera cuenta contable con ese `categoriaId`
+
+---
+
+## 🧪 Cómo Probar
+
+### Prueba 1: Crear Ingreso en Caja
+1. Ve a `/contabilidad/ingresos-gastos`
+2. Registra un ingreso:
+   - Tipo: Ingreso
+   - Categoría: "Ingresos por Servicios de Internet"
+   - Método: Caja
+   - Monto: $2,000.00
+3. Ve a `/contabilidad/cuentas-contables`
+4. ✅ Verifica que la cuenta contable muestre el nuevo `saldoActual`
+
+### Prueba 2: Crear Gasto en Banco
+1. Ve a `/contabilidad/ingresos-gastos`
+2. Registra un gasto:
+   - Tipo: Gasto
+   - Categoría: "Alquiler"
+   - Método: Banco
+   - Selecciona una cuenta bancaria
+   - Monto: $1,200.00
+3. Ve a `/contabilidad/cuentas-contables`
+4. ✅ Verifica que la cuenta contable asociada muestre el gasto reflejado
+
+### Prueba 3: Editar Movimiento
+1. Edita un movimiento existente y cambia el monto
+2. Ve a `/contabilidad/cuentas-contables`
+3. ✅ Verifica que el `saldoActual` se haya recalculado correctamente
+
+### Prueba 4: Eliminar Movimiento
+1. Elimina un movimiento contable
+2. Ve a `/contabilidad/cuentas-contables`
+3. ✅ Verifica que el `saldoActual` se haya actualizado sin ese movimiento
+
+---
+
+## 📊 Consola de Logs
+
+La implementación incluye logs para debugging:
+
+```
+[UpdateSaldo] Updated cuenta contable <uuid> - New balance: 1500.50
+[UpdateSaldo] No cuenta contable found for categoria: <uuid>, metodo: caja
+[UpdateSaldo] Error updating cuenta contable saldo: <error details>
+```
+
+Revisa la consola del servidor para ver estos logs cuando se registren movimientos.
+
+---
+
+## ⚠️ Consideraciones Importantes
+
+1. **Rendimiento**: La actualización es asíncrona pero se ejecuta inmediatamente después de cada operación
+2. **Consistencia**: El saldo siempre se recalcula desde cero sumando todos los movimientos
+3. **Relación con Cajas**: Las cajas tienen su propia lógica de actualización que se mantiene intacta
+4. **Cuentas Bancarias**: Se actualizan tanto los movimientos como los pagos de clientes
+
+---
+
+## ✨ Beneficios
+
+- ✅ **Datos en tiempo real**: El `saldoActual` siempre está actualizado en la BD
+- ✅ **Consultas más rápidas**: No necesitas calcular el saldo cada vez que consultas
+- ✅ **Consistencia**: Garantiza que la información financiera sea precisa
+- ✅ **Reportes confiables**: Los reportes contables usan datos actualizados
+
+---
+
+## 🎯 Próximos Pasos Recomendados
+
+1. Probar con diferentes categorías de ingresos y gastos
+2. Verificar que los reportes contables usen el `saldoActual` actualizado
+3. Considerar agregar un script de sincronización para recalcular todos los saldos existentes (opcional)

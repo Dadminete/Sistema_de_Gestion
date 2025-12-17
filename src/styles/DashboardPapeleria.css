@@ -1,0 +1,225 @@
+/* DashboardPapeleria.css - Glassmorphism Redesign */
+.papeleria-dashboard {
+    padding: 24px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Header */
+.dashboard-header {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.dashboard-header h1 {
+    margin: 0 0 12px 0;
+    color: #1e293b;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.dashboard-header h1 svg {
+    font-size: 40px;
+    color: #3b82f6;
+}
+
+.dashboard-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 18px;
+}
+
+/* Stats Cards Grid */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
+}
+
+.card-inner {
+    position: relative;
+    z-index: 1;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.card-header h3 {
+    margin: 0;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-icon {
+    font-size: 24px;
+    color: #64748b;
+}
+
+.card p {
+    margin: 0 0 12px 0;
+    color: #1e293b;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.card-subtext {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.card-subtext span {
+    display: block;
+}
+
+.card-subtext .positive {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.card-subtext .negative {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+/* Card Progress Bars */
+.card-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.6) 100%);
+    border-radius: 0 0 16px 16px;
+}
+
+.card-progress-income {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.card-progress-status {
+    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.card-progress-balance {
+    background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.card-progress-expense {
+    background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+/* Main Content */
+.dashboard-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.chart-section {
+    padding: 32px;
+}
+
+.cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+}
+
+.low-stock-wrapper {
+    width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .stats-cards {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .papeleria-dashboard {
+        padding: 16px;
+    }
+
+    .dashboard-header {
+        padding: 24px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 28px;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .stats-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .cards-row {
+        grid-template-columns: 1fr;
+    }
+
+    .card p {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .papeleria-dashboard {
+        padding: 12px;
+    }
+
+    .dashboard-header {
+        padding: 20px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 24px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+}

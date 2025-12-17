@@ -1,0 +1,90 @@
+/* Estilos para el Calendario - Compatible con Tema Claro/Oscuro */
+
+:root {
+  --fc-bg-color-light: #ffffff;
+  --fc-text-color-light: #374151; /* gray-700 */
+  --fc-border-color-light: #e5e7eb; /* gray-200 */
+  --fc-today-bg-color-light: rgba(253, 224, 71, 0.2); /* yellow-300 con opacidad */
+
+  --fc-bg-color-dark: #1f2937; /* gray-800 */
+  --fc-text-color-dark: #d1d5db; /* gray-300 */
+  --fc-border-color-dark: #4b5563; /* gray-600 */
+  --fc-today-bg-color-dark: rgba(253, 224, 71, 0.1);
+}
+
+/* Estilos base del calendario */
+.fc {
+  color: var(--fc-text-color-light);
+  background-color: var(--fc-bg-color-light);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.dark .fc {
+  color: var(--fc-text-color-dark);
+  background-color: var(--fc-bg-color-dark);
+}
+
+/* Barra de herramientas */
+.fc .fc-toolbar.fc-header-toolbar {
+  margin-bottom: 1.5em;
+  background-color: transparent;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: var(--fc-text-color-light);
+}
+
+.dark .fc .fc-toolbar-title {
+  color: var(--fc-text-color-dark);
+}
+
+.fc .fc-button {
+  background-color: #3b82f6; /* blue-500 */
+  border: none;
+  color: white;
+  transition: background-color 0.2s;
+}
+
+.fc .fc-button:hover {
+  background-color: #2563eb; /* blue-600 */
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active, 
+.fc .fc-button-primary:not(:disabled):active {
+  background-color: #1d4ed8; /* blue-800 */
+}
+
+/* Vista de la grilla */
+.fc-theme-standard .fc-scrollgrid, .fc-theme-standard th, .fc-theme-standard td {
+  border-color: var(--fc-border-color-light);
+}
+
+.dark .fc-theme-standard .fc-scrollgrid, .dark .fc-theme-standard th, .dark .fc-theme-standard td {
+  border-color: var(--fc-border-color-dark);
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: var(--fc-today-bg-color-light);
+}
+
+.dark .fc .fc-daygrid-day.fc-day-today {
+  background-color: var(--fc-today-bg-color-dark);
+}
+
+.fc .fc-col-header-cell-cushion {
+  color: var(--fc-text-color-light);
+  font-weight: 600;
+}
+
+.dark .fc .fc-col-header-cell-cushion {
+  color: var(--fc-text-color-dark);
+}
+
+/* Eventos */
+.fc .fc-event {
+  border: 1px solid rgba(0,0,0,0.1);
+  font-weight: 600;
+}

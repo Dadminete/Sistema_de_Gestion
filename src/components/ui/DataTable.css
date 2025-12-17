@@ -1,0 +1,584 @@
+/* DataTable Styles - Modern and clean design */
+
+.data-table-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.data-table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.search-input {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
+  font-size: 0.875rem;
+  width: 100%;
+  max-width: 320px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color-primary, #1e293b);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.search-input::placeholder {
+  color: var(--text-color-secondary, #94a3b8);
+}
+
+.data-table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Button variants */
+.action-button.create {
+  background: var(--colors-primary-main);
+  color: white;
+}
+
+.action-button.create:hover {
+  background: var(--colors-primary-dark);
+}
+
+.action-button.excel {
+  background: #10b981;
+  color: white;
+}
+
+.action-button.excel:hover {
+  background: #059669;
+}
+
+.action-button.pdf {
+  background: #f43f5e;
+  color: white;
+}
+
+.action-button.pdf:hover {
+  background: #e11d48;
+}
+
+.action-button.columns {
+  background-color: rgb(255, 255, 255);
+  color: var(--colors-text-secondary);
+}
+
+.action-button.columns:hover {
+  background-color: var(--colors-grey-300);
+}
+
+[data-theme='dark'] .action-button.columns {
+  background-color: var(--colors-grey-700);
+  color: white;
+}
+
+[data-theme='dark'] .action-button.columns:hover {
+  background-color: var(--colors-grey-600);
+}
+
+.action-button.icon-only {
+  padding: 0.5rem;
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  color: var(--colors-text-primary);
+}
+
+.action-button.icon-only:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: scale(1.05);
+}
+
+[data-theme='dark'] .action-button.icon-only {
+  color: #fff;
+}
+
+/* Force variant buttons used as icon-only to remain transparent (no filled backgrounds) */
+.action-button.icon-only.excel,
+.action-button.icon-only.pdf,
+.action-button.icon-only.columns,
+.action-button.icon-only.excel:hover,
+.action-button.icon-only.pdf:hover,
+.action-button.icon-only.columns:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.column-toggle-container {
+  position: relative;
+  display: inline-block;
+}
+
+.column-toggle-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background-color: var(--colors-background-paper);
+  border: 1px solid var(--colors-border-main);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  width: 250px;
+  padding: 0.5rem;
+}
+
+.column-toggle-header {
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--colors-border-light);
+  margin-bottom: 0.5rem;
+  color: var(--colors-text-primary);
+}
+
+.column-toggle-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.column-toggle-item:hover {
+  background-color: var(--colors-background-hover);
+}
+
+.column-toggle-item input {
+  margin-right: 0.75rem;
+  cursor: pointer;
+}
+
+.column-toggle-item span {
+  color: var(--colors-text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Light mode */
+.data-table {
+  /* Background is now handled by parent glass card */
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.data-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  background: rgba(102, 126, 234, 0.05);
+  color: var(--text-color-primary, #1e293b);
+  font-weight: 600;
+  padding: 12px;
+  text-align: left;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+}
+
+.data-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  color: var(--text-color-secondary, #64748b);
+  font-size: 0.875rem;
+}
+
+.data-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.data-table tbody tr.clickable-row {
+  cursor: pointer;
+}
+
+.data-table tbody tr.clickable-row:hover {
+  background: rgba(102, 126, 234, 0.1);
+  transform: none;
+  transition: all 0.2s ease;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Table actions */
+.table-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.table-actions .action-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+}
+
+/* Ensure SVG icons are visible */
+.table-actions .action-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+  pointer-events: none !important;
+}
+
+/* Ensure Material Icons are visible */
+.table-actions .action-btn .material-icons {
+  font-size: 16px !important;
+  display: block !important;
+  pointer-events: none !important;
+}
+
+.table-actions .action-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.table-actions .action-btn.edit-btn {
+  background-color: var(--colors-primary-main, #667eea) !important;
+  color: white !important;
+}
+
+.table-actions .action-btn.edit-btn svg {
+  color: white !important;
+  stroke: currentColor !important;
+}
+
+.table-actions .action-btn.edit-btn:hover {
+  background-color: var(--colors-primary-dark, #4f46e5) !important;
+}
+
+.table-actions .action-btn.view-btn {
+  background-color: var(--colors-secondary-main, #6b7280) !important;
+  color: white !important;
+}
+
+.table-actions .action-btn.view-btn svg {
+  color: white !important;
+  stroke: currentColor !important;
+}
+
+.table-actions .action-btn.view-btn:hover {
+  background-color: var(--colors-text-secondary, #4b5563) !important;
+}
+
+.table-actions .action-btn.delete-btn {
+  background-color: var(--colors-error-main, #ef4444) !important;
+  color: white !important;
+}
+
+.table-actions .action-btn.delete-btn svg {
+  color: white !important;
+  stroke: currentColor !important;
+}
+
+.table-actions .action-btn.delete-btn:hover {
+  background-color: var(--colors-error-dark, #dc2626) !important;
+}
+
+.table-actions .action-btn.reactivate-btn {
+  background-color: #10b981 !important;
+  color: white !important;
+}
+
+.table-actions .action-btn.reactivate-btn svg {
+  color: white !important;
+  stroke: currentColor !important;
+}
+
+.table-actions .action-btn.reactivate-btn:hover {
+  background-color: #059669 !important;
+}
+
+[data-theme='dark'] .table-actions .action-btn.view-btn {
+  background-color: var(--colors-secondary-main, #6b7280) !important;
+  color: white !important;
+}
+
+[data-theme='dark'] .table-actions .action-btn.view-btn:hover {
+  background-color: var(--colors-text-secondary, #4b5563) !important;
+}
+
+.table-actions .action-btn.suspend-btn {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+
+.table-actions .action-btn.suspend-btn svg {
+  color: white !important;
+  stroke: currentColor !important;
+}
+
+.table-actions .action-btn.suspend-btn:hover {
+  background-color: #e68900 !important;
+}
+
+[data-theme='dark'] .table-actions .action-btn.suspend-btn {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+
+[data-theme='dark'] .table-actions .action-btn.suspend-btn:hover {
+  background-color: #e68900 !important;
+}
+
+.action-btn.reactivate-btn {
+  color: #10b981;
+}
+
+.action-btn.reactivate-btn:hover {
+  color: #059669;
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+[data-theme='dark'] .table-actions .action-btn.reactivate-btn {
+  background-color: #10b981 !important;
+  color: white !important;
+}
+
+[data-theme='dark'] .table-actions .action-btn.reactivate-btn:hover {
+  background-color: #059669 !important;
+}
+
+.action-btn.delete-btn {
+  color: #ef4444;
+}
+
+.action-btn.delete-btn:hover {
+  color: #dc2626;
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.table-actions .action-btn.print-btn {
+  background-color: #10b981 !important;
+  color: white !important;
+}
+
+.table-actions .action-btn.print-btn svg {
+  color: white !important;
+  stroke: currentColor !important;
+}
+
+.table-actions .action-btn.print-btn:hover {
+  background-color: #059669 !important;
+}
+
+[data-theme='dark'] .table-actions .action-btn.print-btn {
+  background-color: #10b981 !important;
+  color: white !important;
+}
+
+[data-theme='dark'] .table-actions .action-btn.print-btn:hover {
+  background-color: #059669 !important;
+}
+
+[data-theme='dark'] .table-actions .action-btn.delete-btn {
+  background-color: var(--colors-error-main, #ef4444) !important;
+  color: white !important;
+}
+
+[data-theme='dark'] .table-actions .action-btn.delete-btn:hover {
+  background-color: var(--colors-error-dark, #dc2626) !important;
+}
+
+/* Status badges */
+.status-badge {
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.status-badge.success {
+  background: var(--colors-success-light);
+  color: var(--colors-success-dark);
+}
+
+.status-badge.danger {
+  background: var(--colors-error-light);
+  color: var(--colors-error-dark);
+}
+
+.status-badge.warning {
+  background: var(--colors-warning-light);
+  color: var(--colors-warning-dark);
+}
+
+.status-badge.secondary {
+  background: var(--colors-grey-200);
+  color: var(--colors-grey-700);
+}
+
+/* Pagination */
+.data-table-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: var(--colors-background-default);
+  border-top: 1px solid var(--colors-border-main);
+}
+
+.pagination-info {
+  color: var(--colors-text-secondary);
+  font-size: 0.9rem;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--colors-border-main);
+  border-radius: 8px;
+  background: var(--colors-background-paper);
+  color: var(--colors-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: var(--colors-primary-main);
+  color: white;
+  border-color: var(--colors-primary-main);
+}
+
+.pagination-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pagination-select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--colors-border-main);
+  border-radius: 8px;
+  background: var(--colors-background-paper);
+  color: var(--colors-text-primary);
+  cursor: pointer;
+}
+
+.pagination-select:focus {
+  outline: none;
+  border-color: var(--colors-primary-main);
+}
+
+/* Loading states */
+.data-table.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 3rem;
+  color: var(--colors-text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Client Photo Sizing Fix */
+.data-table td img[src*="/uploads/"],
+.data-table td img[alt*="foto"],
+.data-table td img[alt*="Foto"] {
+  width: 50px !important;
+  height: 50px !important;
+  max-width: 50px !important;
+  max-height: 50px !important;
+  min-width: 50px !important;
+  min-height: 50px !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+  display: block !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .data-table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input {
+    max-width: 100%;
+  }
+
+  .data-table-actions {
+    justify-content: center;
+  }
+
+  .data-table-pagination {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .pagination-controls {
+    justify-content: center;
+  }
+}

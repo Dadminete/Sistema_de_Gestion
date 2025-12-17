@@ -1,0 +1,499 @@
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(100, 100, 100, 0.12);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+    --danger-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+body.dark {
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.payroll-page {
+    padding: 24px;
+    animation: slideInUp 0.5s ease-out;
+}
+
+.payroll-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+}
+
+.payroll-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.payroll-subtitle {
+    color: var(--text-color-secondary, #64748b);
+    font-size: 0.875rem;
+    margin-top: 4px;
+}
+
+.payroll-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.period-selector {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.period-selector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.period-selector-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color-primary, #1e293b);
+}
+
+.period-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.period-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.period-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(102, 126, 234, 0.5);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+}
+
+.period-card.active {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.period-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.period-code {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-color-primary, #1e293b);
+}
+
+.period-badge {
+    display: inline-flex;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.period-badge.abierto {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.period-badge.cerrado {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.period-badge.procesado {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.period-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: var(--text-color-secondary, #64748b);
+}
+
+.period-info-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.period-info-item svg {
+    width: 14px;
+    height: 14px;
+    color: #667eea;
+}
+
+.payroll-table-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.payroll-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.payroll-table thead {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.payroll-table th {
+    padding: 12px;
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-color-primary, #1e293b);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.payroll-table td {
+    padding: 12px;
+    font-size: 0.875rem;
+    color: var(--text-color-secondary, #64748b);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.payroll-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.payroll-table tbody tr:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.employee-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.employee-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--primary-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.employee-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.employee-name {
+    font-weight: 600;
+    color: var(--text-color-primary, #1e293b);
+}
+
+.employee-cargo {
+    font-size: 0.75rem;
+    color: var(--text-color-secondary, #94a3b8);
+}
+
+.amount-cell {
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+.amount-positive {
+    color: #10b981;
+}
+
+.amount-negative {
+    color: #ef4444;
+}
+
+.status-badge {
+    display: inline-flex;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-badge.pendiente {
+    background: rgba(251, 191, 36, 0.1);
+    color: #f59e0b;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.status-badge.pagado {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-badge.cancelado {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.table-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.action-icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #64748b !important;
+    /* Force visible color */
+    position: relative;
+    z-index: 10;
+}
+
+.action-icon-btn svg {
+    width: 18px !important;
+    height: 18px !important;
+    stroke: currentColor;
+    stroke-width: 2;
+    display: block !important;
+    opacity: 1 !important;
+}
+
+.action-icon-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea !important;
+}
+
+.action-icon-btn.delete {
+    color: #94a3b8 !important;
+}
+
+.action-icon-btn.delete:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444 !important;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-color-secondary, #94a3b8);
+}
+
+.empty-state svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-color-primary, #1e293b);
+}
+
+.empty-state p {
+    font-size: 0.875rem;
+}
+
+/* Employee Selection Modal */
+.employee-selection-modal {
+    max-width: 700px;
+}
+
+.employee-search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.employee-search-bar svg {
+    position: absolute;
+    left: 16px;
+    color: var(--text-color-secondary, #94a3b8);
+    width: 20px;
+    height: 20px;
+}
+
+.employee-search-bar input {
+    padding-left: 48px;
+}
+
+.select-all-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.select-all-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-color-primary, #1e293b);
+    transition: color 0.2s ease;
+}
+
+.select-all-btn:hover {
+    color: #667eea;
+}
+
+.select-all-btn svg {
+    color: #667eea;
+}
+
+.selected-count {
+    font-size: 0.875rem;
+    color: var(--text-color-secondary, #64748b);
+    font-weight: 500;
+}
+
+.employee-selection-list {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.employee-selection-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.employee-selection-item:hover {
+    background: rgba(102, 126, 234, 0.05);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.employee-selection-item.selected {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: #667eea;
+}
+
+.employee-checkbox {
+    flex-shrink: 0;
+}
+
+.employee-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.employee-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 0.75rem;
+    color: var(--text-color-secondary, #94a3b8);
+    margin-top: 4px;
+}
+
+.employee-code {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+}
+
+.employee-salary {
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    color: #10b981;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.text-primary {
+    color: #667eea;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .period-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .payroll-table-container {
+        overflow-x: scroll;
+    }
+
+    .payroll-table {
+        min-width: 800px;
+    }
+}

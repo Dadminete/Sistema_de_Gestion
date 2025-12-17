@@ -1,0 +1,553 @@
+.cliente-selector {
+  /* Remove background as it's now handled by GlassCard */
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.selector-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  color: var(--text-color-primary, #1e293b);
+  padding: 20px 20px 0 20px;
+}
+
+.selector-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.search-container {
+  position: relative;
+  padding: 0 20px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-color-secondary, #64748b);
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 40px 12px 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--text-color-primary, #1e293b);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.search-input::placeholder {
+  color: var(--text-color-secondary, #94a3b8);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.clear-btn:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--glass-bg, rgba(255, 255, 255, 0.95));
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
+  margin-top: 5px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: var(--glass-shadow, 0 8px 32px 0 rgba(31, 38, 135, 0.08));
+}
+
+.dropdown-item {
+  padding: 12px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  transition: background 0.2s;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.cliente-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cliente-nombre {
+  font-weight: 600;
+  color: var(--text-color-primary, #1e293b);
+  font-size: 0.875rem;
+}
+
+.cliente-detalles {
+  display: flex;
+  gap: 15px;
+  font-size: 0.75rem;
+  color: var(--text-color-secondary, #64748b);
+}
+
+.codigo, .telefono {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cliente-seleccionado {
+  margin: 20px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.seleccionado-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #10b981;
+}
+
+.seleccionado-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-row {
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.info-row label {
+  font-weight: 600;
+  color: var(--text-color-primary, #1e293b);
+  min-width: 80px;
+}
+
+.info-row span {
+  color: var(--text-color-primary, #1e293b);
+}
+
+/* Estilos para el filtro de día de facturación */
+.filter-toggle {
+  background: none;
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  border-radius: 6px;
+  padding: 6px;
+  color: var(--text-color-secondary, #64748b);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.filter-toggle:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.filter-toggle.active {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.filters-section {
+  background: rgba(102, 126, 234, 0.05);
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 0 20px 15px 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-color-primary, #1e293b);
+}
+
+.day-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-select {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.2));
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: var(--text-color-primary, #1e293b);
+  transition: all 0.2s ease;
+}
+
+.day-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.clear-filter-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.clear-filter-btn:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.filter-info {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.filter-count {
+  font-size: 0.75rem;
+  color: var(--text-color-secondary, #64748b);
+  font-style: italic;
+}
+
+.dia-facturacion {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #667eea;
+  font-weight: 500;
+}
+
+.no-results {
+  text-align: center;
+  color: var(--text-color-secondary, #64748b);
+  font-style: italic;
+  cursor: default;
+}
+
+.no-results:hover {
+  background: transparent;
+}
+
+.loading-indicator {
+  padding: 16px 20px;
+  text-align: center;
+  color: var(--text-color-secondary, #64748b);
+  font-size: 0.875rem;
+}
+
+/* Estilos para información de facturas */
+.facturas-info {
+  margin: 20px;
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.facturas-info.loading {
+  background: rgba(156, 163, 175, 0.05);
+  border-color: rgba(156, 163, 175, 0.1);
+}
+
+.facturas-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  color: var(--text-color-primary, #1e293b);
+  font-size: 0.875rem;
+}
+
+.loading-content {
+  text-align: center;
+  color: var(--text-color-secondary, #64748b);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.ultima-factura {
+  margin-bottom: 16px;
+}
+
+.factura-item-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+  color: var(--text-color-secondary, #64748b);
+  font-weight: 600;
+}
+
+.factura-item-header.warning {
+  color: #f59e0b;
+}
+
+.factura-item {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.factura-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 0.875rem;
+}
+
+.factura-info-row:last-child {
+  margin-bottom: 0;
+}
+
+.factura-info-row.pendiente {
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 0.75rem;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.factura-numero {
+  font-family: monospace;
+  font-weight: 600;
+  color: var(--text-color-primary, #1e293b);
+}
+
+.factura-estado {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.factura-fecha {
+  color: var(--text-color-secondary, #64748b);
+  font-size: 0.75rem;
+}
+
+.factura-monto {
+  font-weight: 600;
+  color: var(--text-color-primary, #1e293b);
+}
+
+.monto-pendiente {
+  font-weight: 600;
+  color: #ef4444;
+}
+
+.facturas-pendientes-resumen {
+  margin-bottom: 12px;
+}
+
+.resumen-item {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.resumen-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.resumen-count {
+  font-size: 0.875rem;
+  color: var(--text-color-primary, #1e293b);
+  font-weight: 600;
+}
+
+.resumen-total {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  color: #f59e0b;
+  font-size: 0.875rem;
+}
+
+.facturas-pendientes-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.factura-pendiente-item {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.factura-vencimiento {
+  color: #ef4444;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.mas-facturas {
+  text-align: center;
+  color: var(--text-color-secondary, #64748b);
+  font-size: 0.75rem;
+  font-style: italic;
+  padding: 8px;
+  background: rgba(156, 163, 175, 0.05);
+  border-radius: 4px;
+}
+
+/* Estilos adicionales para facturas */
+.resumen-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.resumen-left, .resumen-right {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.resumen-vencidas {
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.resumen-vencido {
+  font-size: 0.75rem;
+  color: #dc2626;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.factura-estado-small {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.factura-pendiente-item.vencida {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.factura-pendiente-item.vencida .factura-vencimiento {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* Estilos para indicadores de búsqueda y carga */
+.search-input.searching {
+  background: rgba(59, 130, 246, 0.05);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.search-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.search-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Mejor estilo para estados de error */
+.dropdown-item.no-results span[style*="color: #ef4444"] {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dropdown-item.no-results span[style*="color: #6b7280"] {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}

@@ -1,0 +1,18 @@
+[2025-12-13T20:44:04.744Z] --- STARTING FIX ---
+[2025-12-13T20:44:04.781Z] Fixing Categoria Nomina...
+[2025-12-13T20:44:04.820Z] ERROR: 
+Invalid `prisma.categoriaCuenta.updateMany()` invocation:
+
+
+Error validating datasource `db`: the URL must start with the protocol `prisma://` or `prisma+postgres://`
+[2025-12-13T20:44:04.839Z] PrismaClientKnownRequestError: 
+Invalid `prisma.categoriaCuenta.updateMany()` invocation:
+
+
+Error validating datasource `db`: the URL must start with the protocol `prisma://` or `prisma+postgres://`
+    at ei.handleRequestError (E:\Web\DB_Sistema_2.0_NEON\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (E:\Web\DB_Sistema_2.0_NEON\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (E:\Web\DB_Sistema_2.0_NEON\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (E:\Web\DB_Sistema_2.0_NEON\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async main (file:///E:/Web/DB_Sistema_2.0_NEON/fix_data_final.js:23:28)
+[2025-12-13T20:44:04.927Z] --- FINISHED ---

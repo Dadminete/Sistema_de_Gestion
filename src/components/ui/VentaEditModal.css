@@ -1,0 +1,144 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+}
+
+.theme-dark .modal-content {
+  background-color: #333;
+  color: #f0f0f0;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  min-height: 3rem; /* Increased minimum height for better visibility */
+  box-sizing: border-box; /* Ensure padding is included in height calculation */
+}
+
+.theme-dark .form-group input,
+.theme-dark .form-group select {
+  background-color: #444;
+  border-color: #666;
+  color: #f0f0f0;
+  box-sizing: border-box;
+}
+
+.theme-dark .sale-detail-item .item-quantity {
+  background-color: #444;
+  border-color: #666;
+  color: #f0f0f0;
+  box-sizing: border-box;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-cancel,
+.btn-save {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-cancel {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.theme-dark .btn-cancel {
+  background-color: #555;
+  color: #f0f0f0;
+}
+
+.btn-save {
+  background-color: var(--primary-color, #007bff);
+  color: #fff;
+}
+
+.sale-details-editor {
+  margin-top: 1rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
+.theme-dark .sale-details-editor {
+  border-top-color: #444;
+}
+
+.sale-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.sale-detail-item .item-name {
+  flex-grow: 1;
+}
+
+.sale-detail-item .item-quantity {
+  width: 70px;
+  text-align: center;
+  padding: 0.75rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  min-height: 3rem; /* Match the height of other form inputs */
+  box-sizing: border-box;
+}
+
+.btn-delete-item {
+  background: none;
+  border: none;
+  color: #F44336;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.theme-dark .btn-delete-item {
+  color: #ff6b6b;
+}

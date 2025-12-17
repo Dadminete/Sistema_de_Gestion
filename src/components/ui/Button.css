@@ -1,0 +1,89 @@
+.button {
+  border-radius: var(--components-button-border-radius, 8px);
+  padding: var(--components-button-padding, 10px 20px);
+  font-weight: var(--typography-hierarchy-button-font-weight, 600);
+  font-size: var(--typography-hierarchy-button-font-size, 1rem);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button.primary {
+  background-color: var(--components-button-variants-primary-background-color, #007bff) !important;
+  color: var(--components-button-variants-primary-color, #ffffff) !important;
+  box-shadow: var(--components-button-primary-box-shadow, none);
+}
+
+.button.primary:hover {
+  background-color: #0056b3 !important;
+}
+
+.button.secondary {
+  background-color: var(--components-button-variants-secondary-background-color, #6c757d) !important;
+  color: var(--components-button-variants-secondary-color, #ffffff) !important;
+}
+
+.button.secondary:hover {
+  background-color: #5a6268;
+}
+
+.button.danger {
+  background-color: var(--color-danger, #dc3545);
+  color: var(--color-button-text, #ffffff);
+}
+
+.button.danger:hover {
+  background-color: #c82333;
+}
+
+.button.text {
+  background-color: var(--components-button-variants-text-background-color, transparent);
+  color: var(--components-button-variants-text-color, #007bff);
+  box-shadow: none;
+}
+
+.button.text:hover {
+  background-color: #f8f9fa;
+  transform: none;
+  box-shadow: none;
+}
+
+.button.support {
+  background-color: var(--components-button-variants-support-background-color, #17a2b8);
+  color: var(--components-button-variants-support-color, #ffffff);
+  width: var(--components-button-variants-support-width);
+}
+
+.button.support:hover {
+  background-color: #138496;
+}
+
+.button.iconOnly {
+  background-color: transparent;
+  color: var(--colors-text-secondary, #6c757d);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 50%;
+}
+
+.button.iconOnly:hover {
+  background-color: #f8f9fa;
+  transform: none;
+  box-shadow: none;
+}

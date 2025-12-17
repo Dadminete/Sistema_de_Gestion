@@ -1,0 +1,157 @@
+/* Base styling for the KPI widget card */
+.kpi-widget {
+  background-color: var(--components-card-background-color);
+  color: var(--colors-text-card);
+  border: var(--components-card-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--components-card-box-shadow);
+  overflow: hidden;
+  /* Ensures the bar at the bottom is contained */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Pushes the bar to the bottom */
+  height: 100%;
+  /* Ensure it takes full height in its grid cell */
+}
+
+.kpi-widget .card-content {
+  padding: 0.75rem 1rem;
+  /* Reduced vertical padding */
+  flex-grow: 1;
+  /* Allows content to take available space */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Align items vertically in the center */
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.kpi-title {
+  font-size: 0.8rem;
+  /* Smaller font size */
+  color: var(--colors-text-secondary);
+  text-transform: uppercase;
+  margin: 0;
+  font-weight: 500;
+}
+
+.kpi-icon {
+  background-color: var(--colors-background-icon);
+  /* Light background for icon */
+  border: 1px solid var(--colors-border-icon);
+  border-radius: var(--border-radius-sm);
+  padding: 0.4rem;
+  /* Padding around the icon */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  /* Adjust icon size if needed */
+  color: var(--colors-text-icon);
+  /* Icon color */
+}
+
+.kpi-value-container {
+  display: flex;
+  align-items: flex-end;
+  /* Align value and percentage at the bottom */
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  /* Allow wrapping on smaller screens */
+}
+
+.kpi-value {
+  font-size: 1.8rem;
+  /* Larger value font size */
+  font-weight: 700;
+  /* Bolder value */
+  color: var(--colors-text-primary);
+  line-height: 1;
+  /* Prevent extra space above/below */
+}
+
+.kpi-percentage {
+  font-size: 0.8rem;
+  /* Smaller percentage font size */
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.kpi-percentage.positive {
+  color: var(--colors-success-main);
+  /* Green for positive */
+}
+
+.kpi-percentage.negative {
+  color: var(--colors-danger-main);
+  /* Red for negative */
+}
+
+.kpi-percentage.bright-red {
+  color: #ff0000;
+  /* Bright red text */
+  text-shadow: 0 0 1px rgba(255, 0, 0, 0.2);
+}
+
+.kpi-subtext {
+  font-size: 0.7rem;
+  /* Smaller subtext font size */
+  color: var(--colors-text-tertiary);
+  /* Lighter subtext color */
+  margin-top: 0.5rem;
+}
+
+.kpi-custom-content {
+  margin-top: 0.5rem;
+}
+
+/* New style for the colored bar at the bottom */
+.kpi-bar {
+  height: 4px;
+  width: 100%;
+  border-bottom-left-radius: var(--border-radius-md);
+  border-bottom-right-radius: var(--border-radius-md);
+}
+
+/* Theme-specific adjustments */
+body.light .kpi-widget {
+  background-color: #ffffff;
+  border-color: #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  color: #6c757d;
+}
+
+body.light .kpi-icon {
+  background-color: #f0f2f5;
+  border-color: #e0e0e0;
+  color: #616161;
+}
+
+body.dark .kpi-widget {
+  background-color: #363636;
+  /* Slightly lighter dark gray for card background */
+  border-color: #555555;
+  /* Soft gray border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+}
+
+body.dark .kpi-icon {
+  background-color: #2d2d2d;
+  /* Darker background for icon */
+  border-color: #555555;
+  /* Soft gray border for icon */
+  color: #cccccc;
+  /* Lighter icon color */
+}

@@ -1,0 +1,370 @@
+/* Categorias Page Styles - Adapted from Users Page */
+
+.dashboard-layout {
+  padding: 2rem;
+  background-color: var(--colors-background-default);
+  color: var(--colors-text-primary);
+  min-height: calc(100vh - 60px); /* Adjust based on your layout's header height */
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--colors-divider);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-left {
+  flex: 1;
+  min-width: 200px;
+}
+
+.breadcrumb {
+  font-size: 0.875rem;
+  color: var(--colors-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--colors-text-primary);
+}
+
+.dashboard-header p {
+  font-size: 1rem;
+  color: var(--colors-text-secondary);
+  margin-top: 0.5rem;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Enhanced New Category Button (similar to New User Button) */
+.header-right .button.primary {
+  background: linear-gradient(135deg, var(--colors-primary-main), #5a7bc8);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(74, 105, 187, 0.3);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.header-right .button.primary:hover {
+  background: linear-gradient(135deg, #3d5aa0, var(--colors-primary-main));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 105, 187, 0.4);
+}
+
+.header-right .button.primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(74, 105, 187, 0.3);
+}
+
+.header-right .button.primary .material-icons {
+  font-size: 1.1rem;
+  margin-right: 0.25rem;
+}
+
+/* Status badges */
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-badge.success {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: var(--colors-success-main);
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.status-badge.danger {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+/* Table actions */
+.table-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Individual action button */
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Edit button */
+.edit-btn {
+  background-color: var(--colors-primary-main);
+  color: white;
+}
+
+.edit-btn:hover:not(:disabled) {
+  background-color: var(--colors-primary-dark);
+}
+
+/* Delete button */
+.delete-btn {
+  background-color: var(--colors-error-main);
+  color: white;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background-color: var(--colors-error-dark);
+}
+
+/* Icon sizing */
+.action-btn .material-icons {
+  font-size: 16px;
+}
+
+/* Modal Form Styles */
+.modal-body form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--colors-text-primary);
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--colors-divider);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: var(--colors-background-default);
+  color: var(--colors-text-primary);
+  transition: all 0.2s ease-in-out;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--colors-primary-main);
+  box-shadow: 0 0 0 3px rgba(74, 105, 187, 0.1);
+  background-color: var(--colors-background-paper);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-group select {
+  cursor: pointer;
+}
+
+/* Compact inputs */
+.compact-input {
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  height: 38px !important;
+}
+
+/* Checkbox styling */
+.checkbox-group {
+  grid-column: 1 / -1; /* Make checkbox group full width */
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--colors-text-secondary);
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  display: none;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--colors-divider);
+  border-radius: 6px;
+  background: var(--colors-background-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+  background: var(--colors-primary-main);
+  border-color: var(--colors-primary-main);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.checkbox-label:hover .checkmark {
+  border-color: var(--colors-primary-main);
+}
+
+.checkbox-label input[type="checkbox"]:disabled + .checkmark {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.checkbox-label input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--colors-border);
+  grid-column: 1 / -1; /* Make form actions full width */
+}
+
+/* Icon and Color cells in DataTable */
+.icon-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.color-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid var(--colors-divider);
+}
+
+/* Error and loading message styles */
+.error-message {
+  background: var(--error-background, #f8d7da);
+  border: 1px solid var(--error-border, #f5c6cb);
+  color: var(--error-text, #721c24);
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--colors-text-secondary);
+}
+
+.loading-message .material-icons {
+  font-size: 2rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dashboard-layout {
+    padding: 1rem;
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .header-right {
+    justify-content: center;
+  }
+  
+  .modal-body form {
+    grid-template-columns: 1fr;
+  }
+}

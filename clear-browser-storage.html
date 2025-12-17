@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Storage del Navegador</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background-color: #c82333;
+        }
+        .success {
+            color: #28a745;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .info {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .login-link {
+            background-color: #007bff;
+            text-decoration: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .login-link:hover {
+            background-color: #0056b3;
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Limpiar Storage del Navegador</h1>
+        <div class="info">
+            <strong>Problema:</strong> Es posible que tengas tokens antiguos almacenados en el navegador que están causando problemas con el login.
+        </div>
+        
+        <h3>Datos actualmente almacenados:</h3>
+        <div id="currentData">Cargando...</div>
+        
+        <h3>Limpiar datos:</h3>
+        <button onclick="clearLocalStorage()">Limpiar localStorage</button>
+        <button onclick="clearSessionStorage()">Limpiar sessionStorage</button>
+        <button onclick="clearAllCookies()">Limpiar Cookies</button>
+        <button onclick="clearAll()">🗑️ LIMPIAR TODO</button>
+        
+        <div id="result"></div>
+        
+        <a href="http://172.16.0.23:5173/" class="login-link">🚀 Ir al Login (después de limpiar)</a>
+        
+        <div class="info" style="margin-top: 20px;">
+            <strong>Instrucciones:</strong><br>
+            1. Haz clic en "LIMPIAR TODO"<br>
+            2. Haz clic en "Ir al Login"<br>
+            3. Intenta hacer login con tus credenciales<br>
+        </div>
+    </div>
+
+    <script>
+        function showCurrentData() {
+            let data = '<h4>localStorage:</h4>';
+            if (localStorage.length === 0) {
+                data += '<em>Vacío</em><br>';
+            } else {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    data += `<strong>${key}:</strong> ${value.substring(0, 50)}${value.length > 50 ? '...' : ''}<br>`;
+                }
+            }
+            
+            data += '<h4>sessionStorage:</h4>';
+            if (sessionStorage.length === 0) {
+                data += '<em>Vacío</em><br>';
+            } else {
+                for (let i = 0; i < sessionStorage.length; i++) {
+                    const key = sessionStorage.key(i);
+                    const value = sessionStorage.getItem(key);
+                    data += `<strong>${key}:</strong> ${value.substring(0, 50)}${value.length > 50 ? '...' : ''}<br>`;
+                }
+            }
+            
+            data += '<h4>Cookies:</h4>';
+            if (document.cookie) {
+                document.cookie.split(';').forEach(cookie => {
+                    data += `${cookie.trim()}<br>`;
+                });
+            } else {
+                data += '<em>No hay cookies</em>';
+            }
+            
+            document.getElementById('currentData').innerHTML = data;
+        }
+
+        function clearLocalStorage() {
+            localStorage.clear();
+            showResult('✅ localStorage limpiado');
+            showCurrentData();
+        }
+
+        function clearSessionStorage() {
+            sessionStorage.clear();
+            showResult('✅ sessionStorage limpiado');
+            showCurrentData();
+        }
+
+        function clearAllCookies() {
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+            showResult('✅ Cookies limpiadas');
+            showCurrentData();
+        }
+
+        function clearAll() {
+            clearLocalStorage();
+            clearSessionStorage();
+            clearAllCookies();
+            showResult('🎉 ¡TODO LIMPIADO! Ahora puedes hacer login sin problemas.');
+        }
+
+        function showResult(message) {
+            document.getElementById('result').innerHTML = `<div class="success">${message}</div>`;
+        }
+
+        // Mostrar datos actuales al cargar
+        showCurrentData();
+    </script>
+</body>
+</html>

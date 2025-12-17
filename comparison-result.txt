@@ -1,0 +1,22 @@
+﻿=== COMPARACI├ôN DETALLADA ===
+
+PAGOS CON M├ëTODO CAJA/EFECTIVO: 7
+  PAG-2025-00001: RD$1400 - Factura: FAC-2025-00002
+  PAG-2025-00003: RD$1000 - Factura: FAC-2025-00003
+  PAG-2025-00004: RD$1200 - Factura: FAC-2025-00006
+  PAG-2025-00006: RD$1000 - Factura: FAC-2025-00008
+  PAG-2025-00007: RD$100 - Factura: FAC-2025-00008
+  PAG-2025-00008: RD$200 - Factura: FAC-2025-00009
+TOTAL PAGOS CAJA: RD$4900
+
+MOVIMIENTOS CON M├ëTODO CAJA (INGRESOS): 7
+  Pago Factura #FAC-2025-00002 - caja (Backfill): RD$1400 - CajaID: e6a3f6db-6df2-4d05-8413-b164d4f95560
+  Pago Factura #FAC-2025-00003 - caja (Backfill): RD$1000 - CajaID: e6a3f6db-6df2-4d05-8413-b164d4f95560
+  Pago Factura #N/A - efectivo (Backfill): RD$500 - CajaID: e6a3f6db-6df2-4d05-8413-b164d4f95560
+  Pago Factura #FAC-2025-00006 - caja - : RD$1200 - CajaID: e6a3f6db-6df2-4d05-8413-b164d4f95560
+  Pago Factura #FAC-2025-00008 - caja - : RD$1000 - CajaID: e6a3f6db-6df2-4d05-8413-b164d4f95560
+  Pago Factura #FAC-2025-00008 - efectivo - Pago parcial adicional desde facturas parciales: RD$100 - CajaID: e6a3f6db-6df2-4d05-8413-b164d4f95560
+  Pago Factura #FAC-2025-00009 - caja - : RD$200 - CajaID: e6a3f6db-6df2-4d05-8413-b164d4f95560
+TOTAL MOVIMIENTOS CAJA: RD$5400
+
+DIFERENCIA: RD$-500

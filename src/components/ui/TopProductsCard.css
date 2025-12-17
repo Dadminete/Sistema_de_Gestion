@@ -1,0 +1,44 @@
+.top-products-card {
+    background-color: var(--components-card-background-color);
+    color: var(--colors-text-card);
+    border: var(--components-card-border);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--components-card-box-shadow);
+    padding: var(--components-card-padding);
+    height: 100%;
+}
+
+.top-products-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.top-products-table th, .top-products-table td {
+    padding: 0.75rem 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color); /* Lighter border for rows */
+    font-size: 0.9rem;
+}
+
+.top-products-table th {
+    font-weight: 600;
+    color: var(--colors-text-secondary); /* Gray for headers */
+    border-bottom-width: 2px; /* Thicker border for header */
+    border-bottom-color: var(--border-color);
+}
+
+.top-products-table td:first-child {
+    font-weight: 600;
+    color: var(--text-color);
+    width: 40px; /* Fixed width for number column */
+    text-align: center;
+}
+
+.top-products-table td:last-child {
+    font-weight: 600;
+    text-align: right;
+}
+
+.top-products-table tbody tr:last-child td {
+    border-bottom: none;
+}

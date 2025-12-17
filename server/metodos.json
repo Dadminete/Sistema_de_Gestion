@@ -1,0 +1,20 @@
+[
+  {
+    "_count": {
+      "metodoPago": 1
+    },
+    "metodoPago": "efectivo"
+  },
+  {
+    "_count": {
+      "metodoPago": 2
+    },
+    "metodoPago": "caja"
+  },
+  {
+    "_count": {
+      "metodoPago": 1
+    },
+    "metodoPago": "transferencia"
+  }
+]

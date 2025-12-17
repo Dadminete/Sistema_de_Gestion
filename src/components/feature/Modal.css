@@ -1,0 +1,210 @@
+:root {
+    --modal-bg: #fff;
+    --modal-overlay-bg: rgba(0, 0, 0, 0.5);
+    --modal-header-border: #dee2e6;
+    --modal-text-color: #212529;
+}
+
+[data-theme='dark'] {
+    --modal-bg: #2a2a2e;
+    --modal-header-border: #495057;
+    --modal-text-color: #f8f9fa;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--modal-overlay-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--modal-bg);
+    color: var(--modal-text-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Modal Size Variants */
+.modal-sm {
+    width: 90%;
+    max-width: 400px;
+}
+
+.modal-md {
+    width: 90%;
+    max-width: 600px;
+}
+
+.modal-lg {
+    width: 90%;
+    max-width: 800px;
+}
+
+.modal-xl {
+    width: 95%;
+    max-width: 1200px;
+}
+
+.modal-full {
+    width: 95vw;
+    max-width: 1400px;
+    max-height: 90vh;
+}
+
+/* Increase specificity to avoid being overridden by page-level modal styles */
+.modal-overlay .modal-content {
+    width: 90% !important;
+    max-width: 600px !important;
+}
+
+/* Override for specific modal sizes */
+.modal-overlay .modal-sm {
+    width: 90% !important;
+    max-width: 400px !important;
+}
+
+.modal-overlay .modal-md {
+    width: 90% !important;
+    max-width: 600px !important;
+}
+
+.modal-overlay .modal-lg {
+    width: 90% !important;
+    max-width: 800px !important;
+}
+
+.modal-overlay .modal-xl {
+    width: 95% !important;
+    max-width: 1200px !important;
+}
+
+.modal-overlay .modal-full {
+    width: 95vw !important;
+    max-width: 1400px !important;
+    max-height: 90vh !important;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--modal-header-border);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--modal-text-color);
+}
+
+.modal-body {
+    padding-top: 0.5rem;
+}
+
+/* Improve form layout inside modal */
+.modal-content .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px; /* Slightly larger spacing between fields */
+}
+
+.modal-content .form-group {
+    flex: 1 1 calc(50% - 12px);
+    min-width: 260px;
+}
+
+.modal-content .form-group-full {
+    flex: 1 1 100%;
+}
+
+/* Ensure form elements within modal are theme-aware */
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.modal-content select {
+    background-color: var(--modal-bg);
+    color: var(--modal-text-color);
+    border: 1px solid var(--modal-header-border);
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    height: 30px;
+}
+.modal-content textarea {
+    background-color: var(--modal-bg);
+    color: var(--modal-text-color);
+    border: 1px solid var(--modal-header-border);
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-content label {
+    color: var(--modal-text-color);
+}
+
+/* Set consistent, even more compact height for inputs and selects */
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.modal-content select,
+.modal-content textarea {
+    height: 40px;
+    padding: 10px 12px;
+    font-size: 0.95em;
+}
+
+/* Adjust focus styles for inputs within modal */
+.modal-content input[type="text"]:focus,
+.modal-content input[type="number"]:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+    outline: none;
+}
+
+/* Specific styles for select arrow in modal */
+.modal-content select {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.6c-5%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.6c0%204.8%201.8%209.3%205.4%2013.2l128%20128c3.9%203.9%208.4%205.7%2013.2%205.7s9.3-1.8%2013.2-5.7l128-128c3.9-3.9%205.7-8.4%205.7-13.2%200-4.8-1.8-9.3-5.7-13.2z%22%2F%3E');
+    background-repeat: no-repeat;
+    background-position: right 8px top 50%;
+    background-size: 10px auto;
+    padding-right: 25px;
+}
+
+/* Ensure calendar icon is visible for date inputs inside modal */
+.modal-content input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 1;
+    filter: none;
+    cursor: pointer;
+}
+
+[data-theme='dark'] .modal-content input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+.modal-content input[type="date"] {
+    padding-right: 32px;
+}

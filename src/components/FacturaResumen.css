@@ -1,0 +1,115 @@
+.factura-resumen {
+    /* Background is now handled by parent GlassCard */
+    padding: 0;
+}
+
+.resumen-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: var(--text-color-primary, #1e293b);
+    padding: 20px 20px 0 20px;
+}
+
+.resumen-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.resumen-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0 20px;
+}
+
+.resumen-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.resumen-row label {
+    font-weight: 500;
+    color: var(--text-color-secondary, #64748b);
+}
+
+.monto {
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    color: var(--text-color-primary, #1e293b);
+    font-size: 0.875rem;
+}
+
+.monto.descuento {
+    color: #ef4444;
+}
+
+.itbis-row {
+    background: rgba(102, 126, 234, 0.05);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px dashed var(--glass-border, rgba(255, 255, 255, 0.1));
+    margin: 0 20px;
+}
+
+.itbis-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+}
+
+.currency {
+    font-weight: 600;
+    color: var(--text-color-secondary, #64748b);
+}
+
+.itbis-input {
+    border: none;
+    outline: none;
+    width: 120px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-color-primary, #1e293b);
+    text-align: right;
+    background: transparent;
+}
+
+.itbis-input::-webkit-inner-spin-button,
+.itbis-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.resumen-divider {
+    height: 2px;
+    background: linear-gradient(to right, transparent, #667eea, transparent);
+    margin: 10px 20px;
+}
+
+.total-row {
+    background: var(--primary-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+    padding: 15px;
+    border-radius: 8px;
+    margin: 5px 20px 20px 20px;
+}
+
+.total-row label {
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.monto.total {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+}

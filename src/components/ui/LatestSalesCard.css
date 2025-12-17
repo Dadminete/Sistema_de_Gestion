@@ -1,0 +1,65 @@
+.latest-sales-card {
+    background-color: var(--components-card-background-color);
+    color: var(--colors-text-card);
+    border: var(--components-card-border);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--components-card-box-shadow);
+    padding: var(--components-card-padding);
+    height: 100%;
+}
+
+.latest-sales-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.latest-sales-table th, .latest-sales-table td {
+    padding: 0.75rem 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--components-border-color, var(--border-color));
+    font-size: var(--font-size-sm, 0.9rem);
+}
+
+.latest-sales-table th {
+    font-weight: 600;
+    color: var(--colors-text-secondary);
+}
+
+.status-badge {
+    padding: var(--badge-padding, 0.25rem 0.6rem);
+    border-radius: var(--border-radius-sm, 12px);
+    font-size: var(--font-size-xs, 0.8rem);
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+/* Status colours use CSS variables with sensible fallbacks */
+.status-completed {
+    background-color: var(--status-completed-bg, rgba(76, 175, 80, 0.12));
+    color: var(--status-completed-color, #4caf50);
+}
+
+.status-pending {
+    background-color: var(--status-pending-bg, rgba(255, 152, 0, 0.12));
+    color: var(--status-pending-color, #ff9800);
+}
+
+.status-cancelled {
+    background-color: var(--status-cancelled-bg, rgba(244, 67, 54, 0.12));
+    color: var(--status-cancelled-color, #f44336);
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-row:hover {
+    background-color: var(--hover-background, rgba(0,0,0,0.03)); /* Light hover effect */
+}
+
+.error-message {
+    color: var(--danger-color, #f44336);
+    text-align: center;
+    padding: var(--spacing-md, 1rem);
+}

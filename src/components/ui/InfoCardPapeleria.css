@@ -1,0 +1,35 @@
+.info-card-papeleria {
+    padding: 1rem;
+    border-radius: 12px;
+    background-color: var(--components-card-background-color);
+    color: var(--colors-text-card);
+    border: var(--components-card-border);
+    box-shadow: var(--components-card-box-shadow);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.info-card-papeleria .card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.info-card-papeleria .card-icon {
+    margin-right: 1rem;
+    /* Color is now controlled by a prop */
+}
+
+.info-card-papeleria .card-icon .material-icons {
+    font-size: 2rem;
+}
+
+.info-card-papeleria .card-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.info-card-papeleria .card-content {
+    font-size: 0.9rem;
+}

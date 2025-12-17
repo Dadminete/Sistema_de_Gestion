@@ -1,0 +1,70 @@
+.sales-list-container {
+    background-color: var(--colors-background-paper);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    overflow-x: auto; /* Allow horizontal scrolling for tables on small screens */
+}
+
+.sales-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.sales-table th,
+.sales-table td {
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--colors-divider);
+}
+
+.sales-table th {
+    background-color: var(--colors-background-default);
+    font-weight: 600;
+    color: var(--colors-text-primary);
+}
+
+.sales-table tbody tr:hover {
+    background-color: var(--colors-action-hover);
+}
+
+/* Responsive adjustments for the table */
+@media (max-width: 768px) {
+    .sales-table thead {
+        display: none; /* Hide table headers on small screens */
+    }
+
+    .sales-table,
+    .sales-table tbody,
+    .sales-table tr,
+    .sales-table td {
+        display: block; /* Make table elements behave like block elements */
+        width: 100%;
+    }
+
+    .sales-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid var(--colors-divider);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .sales-table td {
+        text-align: right;
+        padding-left: 50%; /* Make space for pseudo-elements */
+        position: relative;
+    }
+
+    .sales-table td::before {
+        content: attr(data-label); /* Use data-label for column names */
+        position: absolute;
+        left: 0.75rem;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: 600;
+        color: var(--colors-text-secondary);
+    }
+}

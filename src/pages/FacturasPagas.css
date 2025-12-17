@@ -1,0 +1,332 @@
+/* FacturasPagas.css - Glass morphism styling for paid invoices page */
+
+/* CSS Variables for consistent theming */
+:root {
+  /* Glass morphism base */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: rgba(0, 0, 0, 0.1);
+  
+  /* Success theme colors for paid invoices */
+  --success-primary: #10b981;
+  --success-secondary: #059669;
+  --success-light: #d1fae5;
+  --success-dark: #047857;
+  
+  /* Text colors */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  
+  /* Background colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  
+  /* Success gradients */
+  --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --success-gradient-light: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+}
+
+/* Dark mode variables */
+body.dark {
+  --glass-bg: rgba(17, 24, 39, 0.8);
+  --glass-border: rgba(75, 85, 99, 0.3);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
+  
+  --success-primary: #10b981;
+  --success-secondary: #059669;
+  --success-light: rgba(16, 185, 129, 0.1);
+  --success-dark: #34d399;
+  
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  
+  --bg-primary: #1f2937;
+  --bg-secondary: #111827;
+  
+  --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --success-gradient-light: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%);
+}
+
+/* Main page container */
+.facturas-pagas-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, 
+    rgba(16, 185, 129, 0.05) 0%, 
+    rgba(5, 150, 105, 0.02) 50%, 
+    transparent 100%);
+  padding: 2rem;
+}
+
+body.dark .facturas-pagas-page {
+  background: linear-gradient(135deg, 
+    rgba(16, 185, 129, 0.1) 0%, 
+    rgba(5, 150, 105, 0.05) 50%, 
+    transparent 100%);
+}
+
+/* Glass header styling */
+.glass-header {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--success-gradient);
+  opacity: 0.6;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.header-icon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--success-primary);
+  background: var(--success-light);
+  padding: 0.75rem;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+body.dark .header-icon {
+  background: var(--success-light);
+  color: var(--success-dark);
+}
+
+.header-text {
+  flex: 1;
+}
+
+.header-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  background: var(--success-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.header-subtitle {
+  margin: 0.5rem 0 0 0;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stats-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.stats-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.stats-icon.success {
+  background: var(--success-light);
+  color: var(--success-primary);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.stats-content {
+  flex: 1;
+}
+
+.stats-label {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stats-value {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Table container */
+.table-container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px var(--glass-shadow);
+}
+
+/* Invoice number styling */
+.paid-invoice-number {
+  font-weight: 600;
+  color: var(--success-primary);
+  padding: 0.25rem 0.5rem;
+  background: var(--success-light);
+  border-radius: 6px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+body.dark .paid-invoice-number {
+  color: var(--success-dark);
+  background: var(--success-light);
+}
+
+/* Amount cell styling */
+.amount-cell {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+/* Payment method styling */
+.payment-method {
+  font-size: 0.875rem;
+  color: var(--success-secondary);
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  background: var(--success-light);
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  display: inline-block;
+}
+
+body.dark .payment-method {
+  color: var(--success-dark);
+  background: var(--success-light);
+}
+
+/* Payment date styling */
+.payment-date {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  background: rgba(16, 185, 129, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  display: inline-block;
+}
+
+body.dark .payment-date {
+  color: var(--text-primary);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Status badge for paid invoices */
+.status-badge-paid {
+  background: var(--success-light);
+  color: var(--success-secondary);
+  padding: 0.35rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+body.dark .status-badge-paid {
+  background: var(--success-light);
+  color: var(--success-dark);
+}
+
+/* Action buttons - using DataTable.css styles */
+
+/* Loading state */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+  gap: 1rem;
+}
+
+.loading-container svg {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--success-primary);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .facturas-pagas-page {
+    padding: 1rem;
+  }
+  
+  .glass-header {
+    padding: 1.5rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .header-title {
+    font-size: 1.5rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .stats-card {
+    padding: 1rem;
+  }
+  
+  .stats-value {
+    font-size: 1.5rem;
+  }
+}
