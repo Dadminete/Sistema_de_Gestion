@@ -533,7 +533,7 @@ const CuentasPorPagar: React.FC = () => {
 
       {/* Modal Formulario */}
       <Modal
-        open={modalFormOpen}
+        isOpen={modalFormOpen}
         onClose={() => {
           setModalFormOpen(false);
           resetForm();
@@ -679,7 +679,7 @@ const CuentasPorPagar: React.FC = () => {
 
       {/* Modal Pago */}
       <Modal
-        open={modalPagoOpen}
+        isOpen={modalPagoOpen}
         onClose={() => {
           setModalPagoOpen(false);
           setFormPago({
@@ -810,7 +810,7 @@ const CuentasPorPagar: React.FC = () => {
 
       {/* Modal Detalles */}
       <Modal
-        open={modalDetalleOpen}
+        isOpen={modalDetalleOpen}
         onClose={() => {
           setModalDetalleOpen(false);
           setCuentaSeleccionada(null);

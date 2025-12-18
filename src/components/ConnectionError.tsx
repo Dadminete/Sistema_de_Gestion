@@ -1,5 +1,6 @@
 import React from 'react';
-import { AlertCircle, RefreshCw, Wifi, WifiOff } from 'lucide-react';
+import { AlertCircle, RefreshCw, WifiOff } from 'lucide-react';
+import './ConnectionError.css';
 
 interface ConnectionErrorProps {
   error: Error;
@@ -112,19 +113,12 @@ export const ConnectionError: React.FC<ConnectionErrorProps> = ({
           {isRetrying ? 'Reintentando...' : 'Reintentar'}
         </button>
       )}
-      
-      <style jsx>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 };
 
 // Hook para manejar estados de carga con reintentos
-export const useApiRequest = <T>(
+export const useApiRequest = <T,>(
   apiCall: () => Promise<T>,
   dependencies: any[] = []
 ) => {

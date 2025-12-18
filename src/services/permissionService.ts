@@ -35,10 +35,7 @@ export class PermissionService {
       orderBy: [
         { categoria: 'asc' },
         { nombrePermiso: 'asc' }
-      ],
-      cacheStrategy: {
-        ttl: 300, // Cache por 5 minutos
-      },
+      ]
     })
   }
 
@@ -46,10 +43,7 @@ export class PermissionService {
   static async getPermissionsByCategory(categoria: string) {
     return await prisma.permiso.findMany({
       where: { categoria, activo: true },
-      orderBy: { nombrePermiso: 'asc' },
-      cacheStrategy: {
-        ttl: 300,
-      },
+      orderBy: { nombrePermiso: 'asc' }
     })
   }
 
@@ -77,10 +71,7 @@ export class PermissionService {
           },
           where: { activo: true }
         }
-      },
-      cacheStrategy: {
-        ttl: 300,
-      },
+      }
     })
   }
 

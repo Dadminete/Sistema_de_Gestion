@@ -12,11 +12,11 @@ import { FaSort, FaSortUp, FaSortDown, FaChevronLeft, FaChevronRight, FaAngleDou
 import './DataTable.css';
 
 interface DataTableProps<T extends object> {
-    columns: ColumnDef<T>[];
-    data: T[];
+    columns: ColumnDef<any>[];
+    data: any[];
     isLoading: boolean;
     tableName: string;
-    getRowProps?: (row: T) => React.HTMLAttributes<HTMLTableRowElement>;
+    getRowProps?: (row: any) => React.HTMLAttributes<HTMLTableRowElement>;
 }
 
 const DataTable = <T extends object>({ columns, data, isLoading, tableName, getRowProps }: DataTableProps<T>) => {
