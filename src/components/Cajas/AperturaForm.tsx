@@ -62,9 +62,6 @@ const AperturaForm: React.FC<AperturaFormProps> = ({ form, setForm, onSubmit, is
                                 <div className="caja-info">
                                     <div className="caja-header">
                                         <h4>{caja.nombre}</h4>
-                                        <span className={`estado-badge ${estaAbierta ? 'abierta' : 'cerrada'}`}>
-                                            {estaAbierta ? '🟢 Abierta' : '🔴 Cerrada'}
-                                        </span>
                                     </div>
                                     <span className="current-balance">
                                         Balance actual: {formatCurrency(caja.saldoActual)}
@@ -101,6 +98,9 @@ const AperturaForm: React.FC<AperturaFormProps> = ({ form, setForm, onSubmit, is
                                         disabled={estaAbierta}
                                         title={estaAbierta ? "Esta caja ya está abierta" : ""}
                                     />
+                                    <span className={`estado-badge ${estaAbierta ? 'abierta' : 'cerrada'}`}>
+                                        {estaAbierta ? '🟢 Abierta' : '🔴 Cerrada'}
+                                    </span>
                                 </div>
                             </div>
                         );

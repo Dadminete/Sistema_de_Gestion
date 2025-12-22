@@ -400,8 +400,9 @@
 
 /* Header Enhanced */
 .dashboard-header-enhanced {
-  margin-bottom: 2rem;
+  margin-bottom: 0;
   padding: 2rem 2rem 0 2rem;
+  border-bottom: none;
 }
 
 .header-content {
@@ -410,7 +411,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
+  border: none;
 }
 
 .header-text h1 {
@@ -757,13 +759,17 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--gray-900);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .stats-section, 
 .charts-section, 
 .tables-section {
   margin-bottom: 2rem;
+}
+
+.stats-section {
+  margin-top: 0.5rem;
 }
 
 .charts-section {

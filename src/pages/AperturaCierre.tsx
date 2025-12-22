@@ -36,6 +36,8 @@ const AperturaCierre: React.FC = () => {
     gastosDelDia: 0,
     totalVentasPapeleria: 0,
     observaciones: '',
+    montosFinales: {} as Record<string, number>,
+    resumenCajas: {} as Record<string, { ingresos: number; gastos: number }>,
   });
   const [montoInicialDia, setMontoInicialDia] = useState(0);
 
@@ -68,6 +70,11 @@ const AperturaCierre: React.FC = () => {
       }
 
       setResumenDiario(nuevosResumenes);
+      // Actualizar también en el form de cierre
+      setCierreForm(prev => ({
+        ...prev,
+        resumenCajas: nuevosResumenes,
+      }));
     };
 
     fetchResumenes();
@@ -164,7 +171,17 @@ const AperturaCierre: React.FC = () => {
         }));
 
         if (activeCajas.length > 0) {
-          setCierreForm(prev => ({ ...prev, cajaId: activeCajas[0].id }));
+          // Inicializar montosFinales con todos los IDs de cajas a 0
+          const montosIniciales = activeCajas.reduce((acc, caja) => {
+            acc[caja.id] = 0;
+            return acc;
+          }, {} as Record<string, number>);
+          
+          setCierreForm(prev => ({ 
+            ...prev, 
+            cajaId: activeCajas[0].id,
+            montosFinales: montosIniciales
+          }));
         }
       } else {
         console.error('Error: getAllCajas() returned invalid data:', cajasData);
@@ -285,7 +302,16 @@ const AperturaCierre: React.FC = () => {
 
   const handleCierreSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!cierreForm.cajaId || cierreForm.montoFinal < 0) return;
+    
+    const montosFinales = cierreForm.montosFinales || {};
+    const cajasParaCerrar = Object.entries(montosFinales)
+      .filter(([, monto]) => monto > 0)
+      .map(([cajaId]) => cajaId);
+
+    if (cajasParaCerrar.length === 0) {
+      Swal.fire('Advertencia', 'Ingrese montos finales para al menos una caja.', 'warning');
+      return;
+    }
 
     const usuarioId = localStorage.getItem('user_id');
     if (!usuarioId) {
@@ -295,32 +321,47 @@ const AperturaCierre: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const cierreData: CierreCaja = {
-        cajaId: cierreForm.cajaId,
-        montoFinal: cierreForm.montoFinal,
-        ingresosDelDia: cierreForm.ingresosDelDia,
-        gastosDelDia: cierreForm.gastosDelDia,
-        fechaCierre: new Date().toISOString(),
-        usuarioId,
-        observaciones: cierreForm.observaciones,
-      };
+      const cierresPromises = cajasParaCerrar.map(async (cajaId) => {
+        const caja = cajas.find(c => c.id === cajaId);
+        if (!caja) return;
 
-      await cerrarCaja(cierreData);
+        const resumen = resumenDiario[cajaId] || { ingresos: 0, gastos: 0 };
+        
+        const cierreData: CierreCaja = {
+          cajaId,
+          montoFinal: montosFinales[cajaId],
+          ingresosDelDia: resumen.ingresos || 0,
+          gastosDelDia: resumen.gastos || 0,
+          fechaCierre: new Date().toISOString(),
+          usuarioId,
+          observaciones: cierreForm.observaciones,
+        };
+
+        return await cerrarCaja(cierreData);
+      });
+
+      await Promise.all(cierresPromises);
 
       setCierreForm(prev => ({
         ...prev,
+        cajaId: '',
         montoFinal: 0,
         ingresosDelDia: 0,
         gastosDelDia: 0,
         totalVentasPapeleria: 0,
         observaciones: '',
+        montosFinales: {},
+        resumenCajas: prev.resumenCajas,
       }));
 
       await fetchCajasData();
-      Swal.fire('Éxito', 'Cierre de caja realizado exitosamente.', 'success');
+      const mensaje = cajasParaCerrar.length === 1 
+        ? 'Cierre de caja realizado exitosamente.'
+        : `Cierre de ${cajasParaCerrar.length} cajas realizado exitosamente.`;
+      Swal.fire('Éxito', mensaje, 'success');
     } catch (error) {
-      console.error('Error en cierre de caja:', error);
-      Swal.fire('Error', 'Error al realizar el cierre de caja', 'error');
+      console.error('Error en cierre de cajas:', error);
+      Swal.fire('Error', 'Error al realizar el cierre de cajas', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -387,6 +428,7 @@ const AperturaCierre: React.FC = () => {
               onSubmit={handleCierreSubmit}
               isSubmitting={isSubmitting}
               cajas={cajas}
+              cajasAbiertas={cajasAbiertas}
             />
           )}
         </div>

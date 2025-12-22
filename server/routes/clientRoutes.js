@@ -1145,15 +1145,74 @@ router.get('/dashboard/overview', requirePermission('clientes.dashboard'), async
     // 1. Total clients
     const totalClientes = await prisma.cliente.count();
 
-    // 2. Active clients
+    // 2. Active clients (case-insensitive)
     const clientesActivos = await prisma.cliente.count({
-      where: { estado: 'activo' }
+      where: { 
+        estado: {
+          in: ['activo', 'Activo', 'ACTIVO']
+        }
+      }
     });
+
+    // 2b. Inactive/Cancelled clients
+    const clientesInactivos = await prisma.cliente.count({
+      where: { 
+        estado: {
+          in: ['inactivo', 'Inactivo', 'INACTIVO', 'cancelado', 'Cancelado', 'CANCELADO']
+        }
+      }
+    });
+
+    // 2c. Total amount for clients with billing day 15
+    const montoDia15 = await prisma.suscripcion.aggregate({
+      where: {
+        diaFacturacion: 15,
+        estado: {
+          in: ['activo', 'Activo', 'ACTIVO']
+        }
+      },
+      _sum: {
+        precioMensual: true
+      }
+    });
+
+    const totalMontoDia15 = montoDia15._sum.precioMensual || 0;
+
+    // 2d. Total amount for clients with billing day 30, 20, 10
+    const montoOtrosDias = await prisma.suscripcion.aggregate({
+      where: {
+        diaFacturacion: {
+          in: [30, 20, 10]
+        },
+        estado: {
+          in: ['activo', 'Activo', 'ACTIVO']
+        }
+      },
+      _sum: {
+        precioMensual: true
+      }
+    });
+
+    const totalMontoOtrosDias = montoOtrosDias._sum.precioMensual || 0;
 
     // 3. Active subscriptions
     const suscripcionesActivas = await prisma.suscripcion.count({
       where: { estado: 'activo' }
     });
+
+    // 3b. Total amount of unpaid invoices
+    const facturasPendientes = await prisma.facturaCliente.aggregate({
+      where: {
+        estado: {
+          in: ['pendiente', 'Pendiente', 'PENDIENTE', 'parcial', 'Parcial', 'PARCIAL']
+        }
+      },
+      _sum: {
+        total: true
+      }
+    });
+
+    const montoFacturasPorPagar = facturasPendientes._sum.total || 0;
 
     // 4. Current month revenue (from invoices)
     const now = new Date();
@@ -1339,10 +1398,10 @@ router.get('/dashboard/overview', requirePermission('clientes.dashboard'), async
 
     const response = {
       stats: [
-        { title: 'Total Clientes', value: totalClientes.toString(), change: '+0%', icon: 'Users', color: 'blue', trend: 'up', bgColor: 'from-blue-50 to-blue-100' },
-        { title: 'POR INGRESAR', value: `$${Number(ingresoMesActual).toLocaleString()}`, change: '+0%', icon: 'DollarSign', color: 'red', trend: 'up', bgColor: 'from-red-50 to-red-100' },
-        { title: 'Suscripciones Activas', value: suscripcionesActivas.toString(), change: '+0%', icon: 'Activity', color: 'purple', trend: 'up', bgColor: 'from-purple-50 to-purple-100' },
-        { title: 'Tickets Abiertos', value: ticketsAbiertos.toString(), change: '0%', icon: 'FileText', color: 'red', trend: 'down', bgColor: 'from-red-50 to-red-100' },
+        { title: 'Clientes Activos', value: clientesActivos.toString(), change: '+0%', icon: 'Users', color: 'blue', trend: 'up', bgColor: 'from-blue-50 to-blue-100' },
+        { title: 'Monto Día 15', value: `$${Number(totalMontoDia15).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, change: '0%', icon: 'DollarSign', color: 'red', trend: 'neutral', bgColor: 'from-red-50 to-red-100' },
+        { title: 'Días 30, 20, 10', value: `$${Number(totalMontoOtrosDias).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, change: '+0%', icon: 'DollarSign', color: 'green', trend: 'up', bgColor: 'from-green-50 to-green-100' },
+        { title: 'Facturas por Pagar', value: `$${Number(montoFacturasPorPagar).toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, change: '+0%', icon: 'FileText', color: 'purple', trend: 'up', bgColor: 'from-purple-50 to-purple-100' },
       ],
       clientGrowth,
       revenueData,

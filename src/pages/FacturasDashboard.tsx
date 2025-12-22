@@ -45,14 +45,18 @@ const FacturasDashboard: React.FC = () => {
       ]);
       setEstadisticas(stats);
       
-      // Ordenar facturas por último pago realizado
+      // Ordenar facturas por último pago realizado (descendente)
       const facturasOrdenadas = (facturas.facturas || []).sort((a: any, b: any) => {
         const pagosA = a.pagos?.filter((pago: any) => pago.estado === 'confirmado') || [];
         const pagosB = b.pagos?.filter((pago: any) => pago.estado === 'confirmado') || [];
         
-        if (pagosA.length === 0 && pagosB.length === 0) return 0;
-        if (pagosA.length === 0) return 1;
-        if (pagosB.length === 0) return -1;
+        // Facturas sin pagos van al final
+        if (pagosA.length === 0 && pagosB.length === 0) {
+          // Si ambas no tienen pagos, ordenar por fecha de factura descendente
+          return new Date(b.fechaFactura).getTime() - new Date(a.fechaFactura).getTime();
+        }
+        if (pagosA.length === 0) return 1;  // a va después
+        if (pagosB.length === 0) return -1; // b va después
         
         const getUltimaFechaPago = (pagos: any[]) => {
           return pagos.reduce((ultimaFecha, pago) => {
@@ -64,6 +68,7 @@ const FacturasDashboard: React.FC = () => {
         const fechaUltimaA = getUltimaFechaPago(pagosA);
         const fechaUltimaB = getUltimaFechaPago(pagosB);
         
+        // Ordenar descendente: más reciente primero
         return fechaUltimaB.getTime() - fechaUltimaA.getTime();
       });
       
@@ -253,9 +258,9 @@ const FacturasDashboard: React.FC = () => {
         />
 
         <KpiWidget
-          title="PENDIENTES"
-          value={(estadisticas?.facturasPendientes || 0).toString()}
-          percentage={formatearMoneda(estadisticas?.totalPendiente || 0)}
+          title="Facturas Pendientes"
+          value={formatearMoneda(estadisticas?.totalPendiente || 0)}
+          percentage={(estadisticas?.facturasPendientes || 0).toString()}
           percentageClass="text-yellow-500"
           icon={<Clock className="w-5 h-5" />}
           barColor="#f59e0b" // Amber

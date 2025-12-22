@@ -56,10 +56,16 @@ const ListadoCajas: React.FC = () => {
       const cajasData = await getAllCajas();
       // Mostrar todas las cajas activas
       const cajasActivas = cajasData.filter(caja => caja.activa);
-      // Ordenar alfabéticamente por nombre
+      // Ordenar con Caja Principal primero, luego alfabéticamente
       const sortedCajas = cajasActivas.sort((a, b) => {
         const nameA = (a.nombre || '').toLowerCase();
         const nameB = (b.nombre || '').toLowerCase();
+        
+        // Si una de las cajas es "Caja Principal", ponerla primero
+        if (nameA.includes('principal') || nameA === 'caja principal') return -1;
+        if (nameB.includes('principal') || nameB === 'caja principal') return 1;
+        
+        // Para el resto, orden alfabético normal
         return nameA.localeCompare(nameB, 'es');
       });
       setCajas(sortedCajas);
@@ -624,11 +630,23 @@ const ListadoCajas: React.FC = () => {
               onChange={(e) => handleCajaSelect(e.target.value)}
             >
               <option value="">Seleccionar una caja...</option>
-              {cajas.map((caja) => (
-                <option key={caja.id} value={caja.id}>
-                  {caja.nombre} - Balance: {formatCurrency(caja.saldoActual)}
-                </option>
-              ))}
+              {cajas
+                .sort((a, b) => {
+                  const nameA = (a.nombre || '').toLowerCase();
+                  const nameB = (b.nombre || '').toLowerCase();
+                  
+                  // Si una de las cajas es "Caja Principal", ponerla primero
+                  if (nameA.includes('principal') || nameA === 'caja principal') return -1;
+                  if (nameB.includes('principal') || nameB === 'caja principal') return 1;
+                  
+                  // Para el resto, orden alfabético normal
+                  return nameA.localeCompare(nameB, 'es');
+                })
+                .map((caja) => (
+                  <option key={caja.id} value={caja.id}>
+                    {caja.nombre} - Balance: {formatCurrency(caja.saldoActual)}
+                  </option>
+                ))}
             </select>
           </div>
 

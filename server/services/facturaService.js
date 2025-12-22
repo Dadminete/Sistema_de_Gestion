@@ -628,7 +628,7 @@ class FacturaService {
 
     // Pagar factura
     async pagarFactura(facturaId, data) {
-        const { monto, metodoPago, cuentaBancariaId, cajaId, usuarioId, observaciones } = data;
+        const { monto, descuento, metodoPago, cuentaBancariaId, cajaId, usuarioId, observaciones } = data;
 
         const factura = await prisma.facturaCliente.findUnique({
             where: { id: facturaId },
@@ -662,14 +662,22 @@ class FacturaService {
             }
         }
 
+        // Crear fecha de pago en zona horaria local (América/Santo_Domingo)
+        const now = new Date();
+        const fechaPagoLocal = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
+        
+        // Preparar descuento
+        const descuentoFinal = parseFloat(descuento || 0);
+        
         // Crear pago
         const pago = await prisma.pagoCliente.create({
             data: {
                 facturaId,
                 clienteId: factura.clienteId,
                 numeroPago,
-                fechaPago: new Date(),
+                fechaPago: fechaPagoLocal,
                 monto: parseFloat(monto),
+                descuento: descuentoFinal,
                 metodoPago,
                 cuentaBancariaId: cuentaBancariaId && cuentaBancariaId !== '' ? cuentaBancariaId : undefined,
                 cajaId: cajaIdFinal && cajaIdFinal !== '' ? cajaIdFinal : undefined,

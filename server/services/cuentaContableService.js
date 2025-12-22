@@ -39,68 +39,20 @@ const getBankAccountBalance = async (cuentaBancariaId, saldoInicial) => {
 };
 
 const getCajaBalance = async (cajaId, saldoInicial) => {
-  // Get all payments made to this caja
-  const pagos = await prisma.pagoCliente.findMany({
-    where: {
-      cajaId,
-      estado: { not: 'anulado' }
-    },
-    select: { monto: true },
-  });
-
-  // Get all sales made from this caja
-  const ventas = await prisma.ventaPapeleria.findMany({
-    where: {
-      cajaId,
-      estado: { not: 'anulada' }
-    },
-    select: { total: true },
-  });
-
-  // Get accounting entries (asientos contables) that affect this caja
-  const detallesAsientos = await prisma.detalleAsiento.findMany({
-    where: { cajaId },
-    select: {
-      debe: true,
-      haber: true,
-      asiento: {
-        select: {
-          estado: true,
-        },
-      },
-    },
-  });
-
-  // Get movements for this caja
+  // Solo usar movimientosContable como fuente única de verdad
   const movimientos = await prisma.movimientoContable.findMany({
-    where: { cajaId: cajaId },
+    where: { 
+      cajaId: cajaId
+    },
     select: { tipo: true, monto: true },
   });
 
-  // Filter only posted entries
-  const detallesContabilizados = detallesAsientos.filter(
-    d => d.asiento && d.asiento.estado === 'contabilizado'
-  );
-
-  // Calculate balance
+  // Calcular balance desde movimientos únicamente
   let balance = parseFloat(saldoInicial || 0);
 
-  // Add all payments received (ingresos)
-  balance += pagos.reduce((sum, pago) => sum + parseFloat(pago.monto || 0), 0);
-
-  // Add all sales (ingresos)
-  balance += ventas.reduce((sum, venta) => sum + parseFloat(venta.total || 0), 0);
-
-  // Process accounting entries: debe increases balance, haber decreases it
-  balance += detallesContabilizados.reduce((sum, detalle) => {
-    const debe = parseFloat(detalle.debe || 0);
-    const haber = parseFloat(detalle.haber || 0);
-    return sum + debe - haber;
-  }, 0);
-
-  // Process movements: ingresos increase balance, gastos decrease it
+  // Procesar movimientos: ingresos aumentan, egresos disminuyen
   balance += movimientos.reduce((sum, mov) => {
-    const monto = parseFloat(mov.monto);
+    const monto = parseFloat(mov.monto || 0);
     return mov.tipo === 'ingreso' ? sum + monto : sum - monto;
   }, 0);
 

@@ -31,6 +31,7 @@ const FacturasPagar: React.FC = () => {
 
     // Form state
     const [montoPagar, setMontoPagar] = useState(0);
+    const [descuento, setDescuento] = useState(0);
     const [formaPago, setFormaPago] = useState('efectivo');
     const [cuentaBancariaId, setCuentaBancariaId] = useState<string>();
     const [cajaId, setCajaId] = useState<string>();
@@ -67,6 +68,7 @@ const FacturasPagar: React.FC = () => {
         }
 
         setMontoPagar(pendiente);
+        setDescuento(0);
         setFormaPago('efectivo');
         setCuentaBancariaId(undefined);
         setCajaId(undefined);
@@ -82,6 +84,16 @@ const FacturasPagar: React.FC = () => {
             return;
         }
 
+        if (descuento < 0) {
+            Swal.fire('Error', 'El descuento no puede ser negativo', 'error');
+            return;
+        }
+
+        if (descuento > montoPagar) {
+            Swal.fire('Error', 'El descuento no puede ser mayor al monto a pagar', 'error');
+            return;
+        }
+
         if (!formaPago) {
             Swal.fire('Error', 'Debe seleccionar una forma de pago', 'error');
             return;
@@ -91,10 +103,13 @@ const FacturasPagar: React.FC = () => {
             setProcesandoPago(true);
             await facturaService.pagarFactura(facturaSeleccionada.id, {
                 monto: montoPagar,
+                descuento: descuento,
                 metodoPago: formaPago,
                 cuentaBancariaId,
                 cajaId,
-                observaciones
+                observaciones: descuento > 0 
+                    ? `${observaciones ? observaciones + ' - ' : ''}Descuento aplicado: ${formatearMoneda(descuento)}`
+                    : observaciones
             });
 
             setModalOpen(false);
@@ -236,7 +251,7 @@ const FacturasPagar: React.FC = () => {
                         <input
                             type="number"
                             value={montoPagar}
-                            onChange={(e) => setMontoPagar(parseFloat(e.target.value))}
+                            onChange={(e) => setMontoPagar(parseFloat(e.target.value) || 0)}
                             style={{
                                 width: '100%',
                                 padding: '10px',
@@ -246,6 +261,39 @@ const FacturasPagar: React.FC = () => {
                                 fontWeight: 'bold'
                             }}
                         />
+                    </div>
+
+                    <div className="form-group" style={{ marginBottom: '15px' }}>
+                        <label style={{ display: 'block', marginBottom: '5px', fontWeight: 600, color: '#dc2626' }}>
+                            Descuento (Opcional)
+                        </label>
+                        <input
+                            type="number"
+                            value={descuento}
+                            onChange={(e) => setDescuento(parseFloat(e.target.value) || 0)}
+                            min="0"
+                            max={montoPagar}
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                border: '1px solid #fecaca',
+                                borderRadius: '6px',
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                                backgroundColor: descuento > 0 ? '#fef2f2' : 'white'
+                            }}
+                            placeholder="0.00"
+                        />
+                        {descuento > 0 && (
+                            <p style={{ 
+                                marginTop: '5px', 
+                                fontSize: '14px', 
+                                color: '#059669',
+                                fontWeight: 600 
+                            }}>
+                                Monto efectivo a pagar: {formatearMoneda(montoPagar - descuento)}
+                            </p>
+                        )}
                     </div>
 
                     <FormaPagoSelector

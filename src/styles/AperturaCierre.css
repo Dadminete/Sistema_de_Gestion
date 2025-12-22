@@ -315,14 +315,14 @@
 /* Forms */
 .apertura-form,
 .cierre-form {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 /* Grid para cajas de apertura */
 .cajas-apertura-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin: 2rem 0;
 }
@@ -398,15 +398,17 @@
 }
 
 .estado-badge {
-  font-size: 0.75rem;
+  font-size: 0.45rem;
   font-weight: 600;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
+  padding: 0.1rem 0.3rem;
+  border-radius: 8px;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.1rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  margin-top: 0.5rem;
+  align-self: flex-start;
 }
 
 .estado-badge.abierta {
@@ -426,6 +428,40 @@
   color: var(--text-secondary);
   display: block;
   margin-bottom: 0.25rem;
+}
+
+.caja-resumen-dia {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.resumen-item {
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.resumen-item small {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.resumen-item span {
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.resumen-item.ingreso span {
+  color: #10B981;
+}
+
+.resumen-item.gasto span {
+  color: #EF4444;
 }
 
 .warning-text {
@@ -526,7 +562,7 @@ textarea.form-input {
 /* Stats Summary Row (Cierre) */
 .stats-summary-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin: 2rem 0;
 }

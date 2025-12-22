@@ -20,6 +20,7 @@ interface Pago {
     id: string;
     numeroPago: string;
     monto: number;
+    descuento?: number;
     metodoPago: string;
     fechaPago: string;
     estado: string;
@@ -276,6 +277,32 @@ const FacturaDetalle: React.FC = () => {
                                         <label>Monto:</label>
                                         <span className="font-bold" style={{ color: '#059669' }}>{formatearMoneda(pago.monto)}</span>
                                     </div>
+                                    {pago.descuento && pago.descuento > 0 && (
+                                        <div className="info-row">
+                                            <label>Descuento Aplicado:</label>
+                                            <span style={{
+                                                fontWeight: 600,
+                                                color: '#dc2626',
+                                                backgroundColor: '#fee2e2',
+                                                padding: '4px 8px',
+                                                borderRadius: '6px',
+                                                fontSize: '0.875rem'
+                                            }}>
+                                                -{formatearMoneda(pago.descuento)}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {pago.descuento && pago.descuento > 0 && (
+                                        <div className="info-row">
+                                            <label>Monto Efectivo:</label>
+                                            <span className="font-bold" style={{ 
+                                                color: '#059669',
+                                                fontSize: '1.125rem'
+                                            }}>
+                                                {formatearMoneda(pago.monto - pago.descuento)}
+                                            </span>
+                                        </div>
+                                    )}
                                     <div className="info-row">
                                         <label>Método:</label>
                                         <span style={{

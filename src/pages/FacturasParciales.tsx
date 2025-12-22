@@ -142,8 +142,24 @@ const FacturasParciales: React.FC = () => {
                 return;
             }
             
+            // Preguntar por descuento
+            const descuentoInput = prompt(
+                `Ingrese el monto de descuento (opcional):\n\nMonto a pagar: ${formatearMoneda(monto)}\n\nDeje en blanco si no hay descuento:`,
+                '0'
+            );
+            
+            if (!descuentoInput) return;
+            
+            const descuento = parseFloat(descuentoInput.replace(/[^0-9.]/g, '') || '0');
+            
+            if (isNaN(descuento) || descuento < 0) {
+                alert('Por favor ingrese un descuento válido.');
+                return;
+            }
+            
             const confirmacion = window.confirm(
                 `¿Confirma el pago de ${formatearMoneda(monto)} para la factura ${factura.numeroFactura}?\n\n` +
+                `Descuento: ${descuento > 0 ? formatearMoneda(descuento) : 'Sin descuento'}\n\n` +
                 `Se registrará como pago en efectivo.`
             );
             
@@ -151,8 +167,9 @@ const FacturasParciales: React.FC = () => {
             
             await facturaService.pagarFactura(factura.id, {
                 monto: monto,
+                descuento: descuento,
                 metodoPago: 'efectivo',
-                observaciones: 'Pago parcial adicional desde facturas parciales'
+                observaciones: descuento > 0 ? `Pago parcial con descuento de ${formatearMoneda(descuento)}` : 'Pago parcial adicional desde facturas parciales'
             });
             
             // Recargar las facturas para reflejar el cambio
@@ -161,7 +178,7 @@ const FacturasParciales: React.FC = () => {
             const nuevoMontoPendiente = montoPendiente - monto;
             
             if (nuevoMontoPendiente > 0) {
-                alert(`¡Pago registrado exitosamente!\n\nMonto pagado: ${formatearMoneda(monto)}\nMonto pendiente: ${formatearMoneda(nuevoMontoPendiente)}`);
+                alert(`¡Pago registrado exitosamente!\n\nMonto pagado: ${formatearMoneda(monto)}\nDescuento aplicado: ${descuento > 0 ? formatearMoneda(descuento) : 'RD$0.00'}\nMonto pendiente: ${formatearMoneda(nuevoMontoPendiente)}`);
             } else {
                 alert(`¡Factura pagada completamente!\n\nLa factura ${factura.numeroFactura} ha sido marcada como pagada.`);
             }
@@ -176,9 +193,30 @@ const FacturasParciales: React.FC = () => {
         try {
             const montoPendiente = calcularMontoPendiente(factura);
             
+            // Preguntar por descuento
+            const descuentoInput = prompt(
+                `Ingrese el monto de descuento (opcional):\n\nMonto pendiente: ${formatearMoneda(montoPendiente)}\n\nDeje en blanco si no hay descuento:`,
+                '0'
+            );
+            
+            if (descuentoInput === null) return; // Usuario canceló
+            
+            const descuento = parseFloat(descuentoInput.replace(/[^0-9.]/g, '') || '0');
+            
+            if (isNaN(descuento) || descuento < 0) {
+                alert('Por favor ingrese un descuento válido.');
+                return;
+            }
+            
+            if (descuento > montoPendiente) {
+                alert(`El descuento no puede ser mayor al monto pendiente (${formatearMoneda(montoPendiente)}).`);
+                return;
+            }
+            
             const confirmacion = window.confirm(
                 `¿Confirma que desea completar el pago total de la factura ${factura.numeroFactura}?\n\n` +
                 `Monto pendiente: ${formatearMoneda(montoPendiente)}\n` +
+                `Descuento: ${descuento > 0 ? formatearMoneda(descuento) : 'Sin descuento'}\n` +
                 `Cliente: ${factura.cliente.nombre} ${factura.cliente.apellidos}\n\n` +
                 `Se registrará como pago en efectivo y la factura quedará totalmente pagada.`
             );
@@ -187,8 +225,9 @@ const FacturasParciales: React.FC = () => {
             
             await facturaService.pagarFactura(factura.id, {
                 monto: montoPendiente,
+                descuento: descuento,
                 metodoPago: 'efectivo',
-                observaciones: 'Pago completado desde facturas parciales'
+                observaciones: descuento > 0 ? `Pago completado con descuento de ${formatearMoneda(descuento)}` : 'Pago completado desde facturas parciales'
             });
             
             // Recargar las facturas para reflejar el cambio

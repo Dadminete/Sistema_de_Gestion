@@ -1412,6 +1412,7 @@ model PagoCliente {
   numeroPago       String          @unique @map("numero_pago") @db.VarChar(30)
   fechaPago        DateTime        @map("fecha_pago") @db.Date
   monto            Decimal         @db.Decimal(12, 2)
+  descuento        Decimal         @default(0) @map("descuento") @db.Decimal(12, 2)
   moneda           String          @default("DOP") @db.VarChar(3)
   metodoPago       String          @map("metodo_pago") @db.VarChar(30)
   numeroReferencia String?         @map("numero_referencia") @db.VarChar(50)
