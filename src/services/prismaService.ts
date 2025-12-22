@@ -4,17 +4,14 @@ import type { Prisma, Usuario } from '@prisma/client';
 export class PrismaService {
   // Get all users
   static async getUsuarios() {
-    return await prisma.usuario.findMany({
-      cacheStrategy: { ttl: 60 },
-    });
+    return await prisma.usuario.findMany();
   }
 
   // Get user by ID
   static async getUsuarioById(id: string) {
     try {
       return await prisma.usuario.findUnique({
-        where: { id },
-        cacheStrategy: { ttl: 60 },
+        where: { id }
       });
     } catch (error) {
       console.error(`Error fetching user by ID ${id}:`, error);
