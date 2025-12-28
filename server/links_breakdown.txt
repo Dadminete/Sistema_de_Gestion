@@ -1,0 +1,17 @@
+﻿--- CAJAS ---
+Caja: Caja Principal | ID: e6a3f6db-6df2-4d05-8413-b164d4f95560 | CC ID: 690c7df3-9de4-49b7-8069-bcd3e83dd8be | CC Name: Caja Principal | Balance: 370
+Caja: Papelería | ID: 76f92b6c-ab51-4784-a57c-16db4227fd9e | CC ID: b5757b6c-d95e-42f1-a739-7836c599daac | CC Name: Papelería | Balance: 3160
+Caja: Caja Fuerte | ID: 35165dfc-a499-430f-bcae-7722af0c92bb | CC ID: 3df860f8-362f-42f9-a47f-6a94fd995d7f | CC Name: Caja Fuerte | Balance: 14500
+
+--- BANCOS ---
+Bank: Ban Fondesa | Acc: 1005304710 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos
+Bank: Ban Fondesa | Acc: 55021 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos
+Bank: Banco Popular  | Acc: 829544964 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos
+Bank: Banco Popular  | Acc: 846618437 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos
+Bank: Banco BHD León | Acc: 18922470015 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos
+Bank: Banco BHD León | Acc: 18922470023 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos
+Bank: BanReservas | Acc: 9602452734 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos
+Bank: BanReservas | Acc: 9607579545 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos
+Bank: BanReservas | Acc: -9106 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos
+Bank: QIK | Acc: 1001099805 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos
+Bank: QIK | Acc: -2247 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos

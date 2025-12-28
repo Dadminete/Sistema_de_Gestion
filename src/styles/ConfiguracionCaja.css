@@ -188,7 +188,7 @@
 /* Acciones del formulario */
 .form-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   padding-top: 24px;
   border-top: 1px solid rgba(203, 213, 225, 0.4);
 }
@@ -328,7 +328,7 @@
   }
 
   .form-actions {
-    justify-content: stretch;
+    justify-content: flex-start;
   }
 
   .btn {

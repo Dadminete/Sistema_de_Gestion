@@ -27,3 +27,32 @@
 .estado-badge.abierto    { background: rgba(59, 130, 246, 0.12); color: #1d4ed8; border-color: rgba(59, 130, 246, 0.35); }
 .estado-badge.en_proceso { background: rgba(245, 158, 11, 0.12); color: #92400e; border-color: rgba(245, 158, 11, 0.35); }
 .estado-badge.resuelto   { background: rgba(16, 185, 129, 0.12); color: #065f46; border-color: rgba(16, 185, 129, 0.35); }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .priority-badge,
+  .estado-badge {
+    padding: clamp(2px, 0.5vw, 3px) clamp(6px, 1.2vw, 8px);
+    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+    gap: clamp(4px, 0.8vw, 6px);
+  }
+
+  .priority-badge .material-icons,
+  .estado-badge .material-icons {
+    font-size: clamp(14px, 3vw, 16px);
+  }
+}
+
+@media (max-width: 480px) {
+  .priority-badge,
+  .estado-badge {
+    padding: clamp(1px, 0.3vw, 2px) clamp(5px, 1vw, 6px);
+    font-size: clamp(0.6rem, 1.2vw, 0.7rem);
+    gap: clamp(3px, 0.6vw, 4px);
+  }
+
+  .priority-badge .material-icons,
+  .estado-badge .material-icons {
+    font-size: clamp(12px, 2.5vw, 14px);
+  }
+}

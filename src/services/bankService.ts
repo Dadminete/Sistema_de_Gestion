@@ -137,3 +137,16 @@ export const getClientPaymentsByBank = async (bankId: string): Promise<ClientPay
   const response = await apiClient.get(`/banks/${bankId}/client-payments`);
   return response;
 };
+
+// Stats
+export interface MonthlyStats {
+  ingresosDelMes: number;
+  gastosDelMes: number;
+  balanceActual: number;
+  transaccionesPendientes: number;
+}
+
+export const getMonthlyStats = async (): Promise<MonthlyStats> => {
+  const response = await apiClient.get('/banks/stats/monthly');
+  return response;
+};

@@ -55,16 +55,18 @@ const FacturasCrear: React.FC = () => {
 
     useEffect(() => {
         console.log('🔄 useEffect - Cliente seleccionado cambió:', clienteSeleccionado);
-        if (clienteSeleccionado) {
-            console.log('✅ Hay cliente, cargando suscripciones...');
+        // Solo cargar suscripciones si NO estamos editando una factura existente
+        // o si el cliente cambió después de haber cargado la factura inicial
+        if (clienteSeleccionado && !facturaId) {
+            console.log('✅ Hay cliente y no es edición, cargando suscripciones...');
             cargarSuscripcionesCliente();
-        } else {
+        } else if (!clienteSeleccionado) {
             console.log('❌ No hay cliente, limpiando datos...');
             setSuscripciones([]);
             setDetalles([]);
             resetearFechas();
         }
-    }, [clienteSeleccionado]);
+    }, [clienteSeleccionado, facturaId]);
 
     const generarNumeroFactura = async () => {
         try {
@@ -347,11 +349,11 @@ const FacturasCrear: React.FC = () => {
                                     </div>
                                     <div className="info-field">
                                         <label>Período Inicio</label>
-                                        <input type="date" value={periodoInicio} readOnly />
+                                        <input type="date" value={periodoInicio} onChange={(e) => setPeriodoInicio(e.target.value)} />
                                     </div>
                                     <div className="info-field">
                                         <label>Período Fin</label>
-                                        <input type="date" value={periodoFin} readOnly />
+                                        <input type="date" value={periodoFin} onChange={(e) => setPeriodoFin(e.target.value)} />
                                     </div>
                                 </div>
                             </GlassCard>

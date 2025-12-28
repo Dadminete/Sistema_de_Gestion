@@ -486,7 +486,7 @@ class FacturaService {
                     cuentasPorCobrar: true
                 },
                 orderBy: {
-                    fechaFactura: 'desc'
+                    updatedAt: 'desc'
                 },
                 skip: (page - 1) * limit,
                 take: limit
@@ -530,7 +530,13 @@ class FacturaService {
                                 bank: true
                             }
                         },
-                        caja: true
+                        caja: true,
+                        recibidoPor: {
+                            select: {
+                                nombre: true,
+                                apellido: true
+                            }
+                        }
                     }
                 },
                 cuentasPorCobrar: true,
@@ -665,10 +671,10 @@ class FacturaService {
         // Crear fecha de pago en zona horaria local (América/Santo_Domingo)
         const now = new Date();
         const fechaPagoLocal = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
-        
+
         // Preparar descuento
         const descuentoFinal = parseFloat(descuento || 0);
-        
+
         // Crear pago
         const pago = await prisma.pagoCliente.create({
             data: {
@@ -697,6 +703,8 @@ class FacturaService {
                     metodoMovimiento = 'banco';
                 }
 
+                // El monto a registrar en caja es solo lo que el cliente paga
+                // El descuento es administrativo y no entra en caja
                 await movimientoContableService.createMovimiento({
                     tipo: 'ingreso',
                     monto: parseFloat(monto),
@@ -754,6 +762,47 @@ class FacturaService {
         }
 
         return pago;
+    }
+
+    // Actualizar un pago existente de una factura
+    async actualizarPagoFactura(pagoId, data) {
+        const { monto, descuento, metodoPago, estado, observaciones } = data;
+
+        const pago = await prisma.pagoCliente.findUnique({ where: { id: pagoId } });
+        if (!pago) throw new Error('Pago no encontrado');
+
+        // Actualizar pago
+        await prisma.pagoCliente.update({
+            where: { id: pagoId },
+            data: {
+                monto: monto !== undefined ? parseFloat(monto) : pago.monto,
+                descuento: descuento !== undefined ? parseFloat(descuento) : pago.descuento,
+                metodoPago: metodoPago || pago.metodoPago,
+                estado: estado || pago.estado,
+                observaciones: observaciones !== undefined ? observaciones : pago.observaciones
+            }
+        });
+
+        // Recalcular estado de la factura según pagos confirmados
+        const facturaId = pago.facturaId;
+        if (facturaId) {
+            const factura = await prisma.facturaCliente.findUnique({ where: { id: facturaId } });
+            if (factura) {
+                const totalPagado = await prisma.pagoCliente.aggregate({
+                    where: { facturaId, estado: 'confirmado' },
+                    _sum: { monto: true }
+                });
+                const pagado = totalPagado._sum.monto || 0;
+                let nuevoEstado = factura.estado;
+                if (pagado >= factura.total) nuevoEstado = 'pagada';
+                else if (pagado > 0) nuevoEstado = 'parcial';
+                else nuevoEstado = 'pendiente';
+
+                await prisma.facturaCliente.update({ where: { id: facturaId }, data: { estado: nuevoEstado } });
+            }
+        }
+
+        return true;
     }
 
     // Anular factura
@@ -872,6 +921,7 @@ class FacturaService {
             include: {
                 factura: {
                     select: {
+                        id: true,
                         numeroFactura: true
                     }
                 },
@@ -910,10 +960,10 @@ class FacturaService {
         pagos.forEach(pago => {
             const mes = new Date(pago.fechaPago).getMonth() + 1;
             const monto = parseFloat(pago.monto);
-            
+
             pagosPorMes[mes].pagos.push(pago);
             pagosPorMes[mes].total += monto;
-            
+
             // Clasificar por método de pago
             if (pago.cuentaBancaria) {
                 pagosPorMes[mes].totalBanco += monto;
@@ -998,6 +1048,102 @@ class FacturaService {
         }
 
         return resultados;
+    }
+    // Revertir pago (borrar pago y movimiento asociado)
+    async revertirPago(pagoId, usuarioId) {
+        // 1. Obtener el pago
+        const pago = await prisma.pagoCliente.findUnique({
+            where: { id: pagoId },
+            include: {
+                factura: true
+            }
+        });
+
+        if (!pago) {
+            throw new Error('Pago no encontrado');
+        }
+
+        if (pago.estado === 'anulado') {
+            throw new Error('El pago ya está anulado');
+        }
+
+        const facturaId = pago.facturaId;
+        const totalPago = parseFloat(pago.monto);
+
+        // 2. Buscar el movimiento contable asociado
+        // Intentamos buscarlo por la descripción que generamos al crear el pago
+        const descripcionBusqueda = `Pago Factura #${pago.factura.numeroFactura}`;
+        const movimiento = await prisma.movimientoContable.findFirst({
+            where: {
+                tipo: 'ingreso',
+                monto: pago.monto,
+                descripcion: {
+                    contains: descripcionBusqueda
+                },
+                fecha: {
+                    gte: new Date(new Date(pago.createdAt).getTime() - 60000), // +/- 1 minuto
+                    lte: new Date(new Date(pago.createdAt).getTime() + 60000)
+                }
+            }
+        });
+
+        // 3. Borrar el movimiento contable si existe (esto recalcula saldos de caja/banco)
+        if (movimiento) {
+            await movimientoContableService.deleteMovimiento(movimiento.id);
+        } else {
+            console.warn(`No se encontró movimiento contable para el pago ${pagoId}`);
+        }
+
+        // 4. Borrar el pago
+        await prisma.pagoCliente.delete({
+            where: { id: pagoId }
+        });
+
+        // 5. Recalcular estado de la factura
+        if (facturaId) {
+            const factura = await prisma.facturaCliente.findUnique({
+                where: { id: facturaId },
+                include: {
+                    pagos: {
+                        where: { estado: 'confirmado' }
+                    }
+                }
+            });
+
+            if (factura) {
+                const totalPagado = factura.pagos.reduce((sum, p) => sum + parseFloat(p.monto), 0);
+
+                let nuevoEstado = 'pendiente';
+                if (totalPagado >= parseFloat(factura.total)) {
+                    nuevoEstado = 'pagada';
+                } else if (totalPagado > 0) {
+                    nuevoEstado = 'parcial';
+                }
+
+                await prisma.facturaCliente.update({
+                    where: { id: facturaId },
+                    data: { estado: nuevoEstado }
+                });
+
+                // 6. Actualizar cuenta por cobrar
+                const cuentaPorCobrar = await prisma.cuentaPorCobrar.findFirst({
+                    where: { facturaId: facturaId }
+                });
+
+                if (cuentaPorCobrar) {
+                    const montoPendiente = Math.max(0, parseFloat(factura.total) - totalPagado);
+                    await prisma.cuentaPorCobrar.update({
+                        where: { id: cuentaPorCobrar.id },
+                        data: {
+                            montoPendiente,
+                            estado: montoPendiente === 0 ? 'pagada' : 'pendiente'
+                        }
+                    });
+                }
+            }
+        }
+
+        return { message: 'Pago revertido exitosamente' };
     }
 }
 

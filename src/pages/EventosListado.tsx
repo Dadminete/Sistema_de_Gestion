@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getEventos, updateEvento, deleteEvento, createEvento, type Evento } from '../services/eventService';
 import { useAuth } from '../context/AuthProvider';
+import { Pencil, Trash2, X } from 'lucide-react';
 import DataTable from '../components/ui/DataTable';
 import type { ColumnDef } from '@tanstack/react-table';
 import Swal from 'sweetalert2';
@@ -142,10 +143,10 @@ const EventosListado: React.FC = () => {
             cell: ({ row }) => (
                 <div className="action-buttons">
                     <button className="btn-icon btn-edit" onClick={() => handleEdit(row.original)} title="Editar">
-                        <span className="material-icons">edit</span>
+                        <Pencil size={18} strokeWidth={2.5} />
                     </button>
                     <button className="btn-icon btn-delete" onClick={() => handleDelete(row.original)} title="Eliminar">
-                        <span className="material-icons">delete</span>
+                        <Trash2 size={18} strokeWidth={2.5} />
                     </button>
                 </div>
             ),
@@ -201,7 +202,7 @@ const EventosListado: React.FC = () => {
                                 onClick={() => setIsModalOpen(false)}
                                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
                             >
-                                <span className="material-icons">close</span>
+                                <X size={20} strokeWidth={2.5} />
                             </button>
                         </div>
 

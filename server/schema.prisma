@@ -91,6 +91,7 @@ model Usuario {
   rolesAsignados            UsuarioRole[]          @relation("AsignadoPor")
   usuariosRoles             UsuarioRole[]
   ventasPapeleria           VentaPapeleria[]
+  pagosCuentasPorPagar      PagoCuentaPorPagar[]
 
   @@index([ultimoAcceso])
   @@map("usuarios")
@@ -1465,27 +1466,50 @@ model CuentaPorCobrar {
 }
 
 model CuentaPorPagar {
-  id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  proveedorId      String?    @map("proveedor_id") @db.Uuid
-  numeroDocumento  String     @unique @map("numero_documento") @db.VarChar(30)
-  tipoDocumento    String     @map("tipo_documento") @db.VarChar(20)
-  fechaEmision     DateTime   @map("fecha_emision") @db.Date
-  fechaVencimiento DateTime   @map("fecha_vencimiento") @db.Date
-  concepto         String     @db.VarChar(200)
-  montoOriginal    Decimal    @map("monto_original") @db.Decimal(12, 2)
-  montoPendiente   Decimal    @map("monto_pendiente") @db.Decimal(12, 2)
-  moneda           String     @default("DOP") @db.VarChar(3)
-  estado           String     @default("pendiente") @db.VarChar(20)
-  diasVencido      Int        @default(0) @map("dias_vencido")
+  id               String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  proveedorId      String?                @map("proveedor_id") @db.Uuid
+  numeroDocumento  String                 @unique @map("numero_documento") @db.VarChar(30)
+  tipoDocumento    String                 @map("tipo_documento") @db.VarChar(20)
+  fechaEmision     DateTime               @map("fecha_emision") @db.Date
+  fechaVencimiento DateTime               @map("fecha_vencimiento") @db.Date
+  concepto         String                 @db.VarChar(200)
+  montoOriginal    Decimal                @map("monto_original") @db.Decimal(12, 2)
+  montoPendiente   Decimal                @map("monto_pendiente") @db.Decimal(12, 2)
+  cuotaMensual     Decimal?               @map("cuota_mensual") @db.Decimal(12, 2)
+  moneda           String                 @default("DOP") @db.VarChar(3)
+  estado           String                 @default("pendiente") @db.VarChar(20)
+  diasVencido      Int                    @default(0) @map("dias_vencido")
   observaciones    String?
-  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
-  proveedor        Proveedor? @relation(fields: [proveedorId], references: [id])
+  createdAt        DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  proveedor        Proveedor?             @relation(fields: [proveedorId], references: [id])
+  pagos            PagoCuentaPorPagar[]
 
   @@index([proveedorId])
   @@index([estado])
   @@index([fechaVencimiento])
   @@map("cuentas_por_pagar")
+}
+
+model PagoCuentaPorPagar {
+  id                 String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cuentaPorPagarId   String         @map("cuenta_por_pagar_id") @db.Uuid
+  monto              Decimal        @db.Decimal(12, 2)
+  fechaPago          DateTime       @map("fecha_pago") @db.Date
+  metodoPago         String         @map("metodo_pago") @db.VarChar(50)
+  numeroReferencia   String?        @map("numero_referencia") @db.VarChar(100)
+  observaciones      String?
+  creadoPorId        String?        @map("creado_por") @db.Uuid
+  createdAt          DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  cuentaPorPagar     CuentaPorPagar @relation(fields: [cuentaPorPagarId], references: [id], onDelete: Cascade)
+  creadoPor          Usuario?       @relation(fields: [creadoPorId], references: [id])
+
+  @@index([cuentaPorPagarId])
+  @@index([fechaPago])
+  @@index([creadoPorId])
+  @@index([metodoPago])
+  @@map("pagos_cuentas_por_pagar")
 }
 
 model PagoFijo {
@@ -1534,7 +1558,7 @@ model PagoPagoFijo {
 model Traspaso {
   id                    String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   numeroTraspaso        String          @unique @map("numero_traspaso") @db.VarChar(30)
-  fechaTraspaso         DateTime        @map("fecha_traspaso") @db.Date
+  fechaTraspaso         DateTime        @map("fecha_traspaso") @db.Timestamptz(6)
   monto                 Decimal         @db.Decimal(12, 2)
   moneda                String          @default("DOP") @db.VarChar(3)
   conceptoTraspaso      String          @map("concepto_traspaso")

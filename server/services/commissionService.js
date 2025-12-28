@@ -24,21 +24,39 @@ class CommissionService {
         try {
             console.log('[Commission Service] Creating commission type with data:', data);
             
-            // Validaciones
-            if (!data.nombre || !data.nombre.trim()) {
+            // Validaciones - aceptar tanto 'nombre' como 'nombreTipo'
+            const nombre = data.nombreTipo || data.nombre;
+            if (!nombre || !String(nombre).trim()) {
                 throw new Error('El nombre del tipo de comisión es requerido');
             }
 
-            const porcentaje = parseFloat(data.porcentaje);
-            if (isNaN(porcentaje) || porcentaje < 0 || porcentaje > 100) {
+            // Manejo para porcentajeBase o porcentaje, y montoFijo o monto
+            let porcentajeBase = data.porcentajeBase !== undefined ? parseFloat(data.porcentajeBase) : null;
+            let montoFijo = data.montoFijo !== undefined ? parseFloat(data.montoFijo) : null;
+
+            // Validar al menos uno de los dos campos
+            const tieneValorValido = (porcentajeBase !== null && porcentajeBase > 0) || 
+                                     (montoFijo !== null && montoFijo > 0);
+
+            if (!tieneValorValido) {
+                throw new Error('El tipo de comisión debe tener un porcentaje o un monto fijo válido');
+            }
+
+            // Si tienen ambos, validarlos
+            if (porcentajeBase !== null && (isNaN(porcentajeBase) || porcentajeBase < 0 || porcentajeBase > 100)) {
                 throw new Error('El porcentaje debe ser un número válido entre 0 y 100');
+            }
+
+            if (montoFijo !== null && (isNaN(montoFijo) || montoFijo < 0)) {
+                throw new Error('El monto fijo debe ser un número válido positivo');
             }
 
             return await this.prisma.TipoComision.create({
                 data: {
-                    nombreTipo: data.nombre.trim(),
+                    nombreTipo: String(nombre).trim(),
                     descripcion: data.descripcion?.trim() || null,
-                    porcentajeBase: porcentaje,
+                    porcentajeBase: porcentajeBase,
+                    montoFijo: montoFijo,
                     activo: data.activo !== undefined ? data.activo : true
                 }
             });
@@ -50,14 +68,35 @@ class CommissionService {
 
     async updateCommissionType(id, data) {
         try {
+            const updateData = {};
+
+            // Aceptar tanto 'nombre' como 'nombreTipo'
+            if (data.nombreTipo || data.nombre) {
+                const nombre = data.nombreTipo || data.nombre;
+                if (String(nombre).trim()) {
+                    updateData.nombreTipo = String(nombre).trim();
+                }
+            }
+
+            if (data.descripcion !== undefined) {
+                updateData.descripcion = data.descripcion?.trim() || null;
+            }
+
+            if (data.porcentajeBase !== undefined && data.porcentajeBase !== null) {
+                updateData.porcentajeBase = parseFloat(data.porcentajeBase);
+            }
+
+            if (data.montoFijo !== undefined && data.montoFijo !== null) {
+                updateData.montoFijo = parseFloat(data.montoFijo);
+            }
+
+            if (data.activo !== undefined) {
+                updateData.activo = data.activo;
+            }
+
             return await this.prisma.TipoComision.update({
                 where: { id: parseInt(id) },
-                data: {
-                    ...(data.nombre && { nombreTipo: data.nombre }),
-                    ...(data.descripcion && { descripcion: data.descripcion }),
-                    ...(data.porcentaje !== undefined && { porcentajeBase: parseFloat(data.porcentaje) }),
-                    ...(data.activo !== undefined && { activo: data.activo })
-                }
+                data: updateData
             });
         } catch (error) {
             console.error('Error in updateCommissionType:', error);
@@ -320,7 +359,7 @@ class CommissionService {
                         }
                     },
                     tipoComision: {
-                        select: { id: true, nombreTipo: true, porcentajeBase: true }
+                        select: { id: true, nombreTipo: true, porcentajeBase: true, montoFijo: true }
                     }
                 }
             });
@@ -345,29 +384,11 @@ class CommissionService {
                     const montoBase = parseFloat(comision.montoBase) || 0;
                     const nuevoPorcentaje = montoBase > 0 ? (montoComisionFinal / montoBase) * 100 : 0;
                     
-                    // Actualizar la comisión con el monto recalculado
-                    await transaction.Comision.update({
-                        where: { id: comisionId },
-                        data: {
-                            montoComision: montoComisionFinal,
-                            porcentajeAplicado: nuevoPorcentaje
-                        }
-                    });
-                    
                     console.log('[Commission Service] Monto recalculado:', montoComisionFinal);
                 } else if (comision.tipoComision.porcentajeBase && parseFloat(comision.tipoComision.porcentajeBase) > 0) {
                     const porcentaje = parseFloat(comision.tipoComision.porcentajeBase);
                     const montoBase = parseFloat(comision.montoBase) || 0;
                     montoComisionFinal = (montoBase * porcentaje) / 100;
-                    
-                    // Actualizar la comisión con el monto recalculado
-                    await transaction.Comision.update({
-                        where: { id: comisionId },
-                        data: {
-                            montoComision: montoComisionFinal,
-                            porcentajeAplicado: porcentaje
-                        }
-                    });
                     
                     console.log('[Commission Service] Monto recalculado por porcentaje:', montoComisionFinal);
                 } else {
@@ -383,15 +404,16 @@ class CommissionService {
             console.log('[Commission Service] Commission found:', {
                 id: comision.id,
                 monto: comision.montoComision,
+                montoFinal: montoComisionFinal,
                 empleado: `${comision.empleado?.nombres} ${comision.empleado?.apellidos}`
             });
 
             // Usar una transacción para asegurar consistencia
-            const result = await this.prisma.$transaction(async (transaction) => {
+            const result = await this.prisma.$transaction(async (trx) => {
                 console.log('[Commission Service] Starting transaction...');
                 
                 // Actualizar el estado de la comisión
-                const updatedComision = await transaction.Comision.update({
+                const updatedComision = await trx.Comision.update({
                     where: { id: comisionId },
                     data: {
                         estado: 'PAGADO',
@@ -414,7 +436,7 @@ class CommissionService {
                 });
 
                 // Buscar o crear una categoría para comisiones
-                let categoriaComisiones = await transaction.CategoriaCuenta.findFirst({
+                let categoriaComisiones = await trx.CategoriaCuenta.findFirst({
                     where: {
                         OR: [
                             { nombre: { contains: 'Comisiones', mode: 'insensitive' } },
@@ -426,7 +448,7 @@ class CommissionService {
 
                 if (!categoriaComisiones) {
                     // Si no existe, buscar una categoría de gastos generales
-                    categoriaComisiones = await transaction.CategoriaCuenta.findFirst({
+                    categoriaComisiones = await trx.CategoriaCuenta.findFirst({
                         where: {
                             tipo: 'gasto',
                             activa: true
@@ -439,7 +461,7 @@ class CommissionService {
                 }
 
                 // Buscar la caja principal
-                const cajaPrincipal = await transaction.Caja.findFirst({
+                const cajaPrincipal = await trx.Caja.findFirst({
                     where: {
                         OR: [
                             { nombre: { equals: 'Caja', mode: 'insensitive' } },
@@ -457,7 +479,7 @@ class CommissionService {
                 // Obtener usuario del sistema si no se proporciona usuarioId
                 let finalUsuarioId = usuarioId;
                 if (!finalUsuarioId) {
-                    const sistemaUser = await transaction.Usuario.findFirst({
+                    const sistemaUser = await trx.Usuario.findFirst({
                         where: {
                             OR: [
                                 { username: 'system' },
@@ -487,11 +509,11 @@ class CommissionService {
 
                 console.log('[Commission Service] Creating MovimientoContable with data:', movimientoData);
 
-                const movimiento = await transaction.MovimientoContable.create({
+                const movimiento = await trx.MovimientoContable.create({
                     data: movimientoData
                 });
 
-                console.log('[Commission Service] MovimientoContable created:', movimiento);
+                console.log('[Commission Service] MovimientoContable created with ID:', movimiento.id);
 
                 return updatedComision;
             });
@@ -512,8 +534,13 @@ class CommissionService {
                 console.log('[Commission Service] Recalculating caja balance for ID:', cajaPrincipal.id);
                 console.log('[Commission Service] Caja balance before:', cajaPrincipal.saldoActual);
                 
-                const nuevoSaldo = await CajaService.recalculateAndUpdateSaldo(cajaPrincipal.id);
-                console.log('[Commission Service] Caja balance after recalculation:', nuevoSaldo);
+                try {
+                    const nuevoSaldo = await CajaService.recalculateAndUpdateSaldo(cajaPrincipal.id);
+                    console.log('[Commission Service] Caja balance after recalculation:', nuevoSaldo);
+                } catch (cajaError) {
+                    console.error('[Commission Service] Error recalculating caja balance:', cajaError);
+                    // No lanzar error aquí, solo log, ya que la comisión se pagó correctamente
+                }
             }
 
             return result;

@@ -78,7 +78,7 @@ const AveriasDashboard: React.FC = () => {
 
   const cssVar = (name: string, fallback: string) => {
     if (typeof window === 'undefined') return fallback;
-    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const v = getComputedStyle(document.body).getPropertyValue(name).trim();
     return v || fallback;
   };
 
@@ -228,7 +228,7 @@ const AveriasDashboard: React.FC = () => {
     scales: {
       x: {
         ticks: {
-          color: '#ffffff',
+          color: cssVar('--av-text', '#1f2937'),
           font: { size: 12, weight: '500' },
         },
         grid: { display: false },
@@ -237,7 +237,7 @@ const AveriasDashboard: React.FC = () => {
       y: {
         beginAtZero: true,
         ticks: {
-          color: '#ffffff',
+          color: cssVar('--av-text', '#1f2937'),
           font: { size: 12, weight: '500' },
         },
         grid: {

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
+import { Pencil, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getProductos, getCategorias, createProducto, updateProducto, deleteProducto, type ProductoPapeleria, type CategoriaPapeleria } from '../services/papeleriaApi';
 import Button from '../components/ui/Button';
@@ -11,32 +12,32 @@ import Swal from 'sweetalert2';
 
 // Utility function to format numbers as currency
 const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('es-DO', {
-    style: 'currency',
-    currency: 'DOP',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount);
+    return new Intl.NumberFormat('es-DO', {
+        style: 'currency',
+        currency: 'DOP',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(amount);
 };
 
 const initialProductState = {
-  codigo: '',
-  nombre: '',
-  descripcion: '',
-  categoriaId: null,
-  marca: '',
-  modelo: '',
-  unidadMedida: 'unidad',
-  precioCompra: 0,
-  precioVenta: 0,
-  margenGanancia: 0,
-  stockMinimo: 0,
-  stockActual: 0,
-  ubicacion: '',
-  codigoBarras: '',
-  imagen: '',
-  activo: true,
-  proveedorId: null,
+    codigo: '',
+    nombre: '',
+    descripcion: '',
+    categoriaId: null,
+    marca: '',
+    modelo: '',
+    unidadMedida: 'unidad',
+    precioCompra: 0,
+    precioVenta: 0,
+    margenGanancia: 0,
+    stockMinimo: 0,
+    stockActual: 0,
+    ubicacion: '',
+    codigoBarras: '',
+    imagen: '',
+    activo: true,
+    proveedorId: null,
 };
 
 const ProductosPapeleria: React.FC = () => {
@@ -151,13 +152,13 @@ const ProductosPapeleria: React.FC = () => {
         const { name, value, type } = e.target;
         const isCheckbox = type === 'checkbox';
         const isNumber = ['precioCompra', 'precioVenta', 'stockActual', 'stockMinimo', 'margenGanancia'].includes(name);
-        
+
         setFormData(prev => ({
             ...prev,
-            [name]: isCheckbox 
-                ? (e.target as HTMLInputElement).checked 
-                : (name === 'categoriaId' && value === '') 
-                    ? null 
+            [name]: isCheckbox
+                ? (e.target as HTMLInputElement).checked
+                : (name === 'categoriaId' && value === '')
+                    ? null
                     : (isNumber ? Number(value) : value),
         }));
     };
@@ -259,10 +260,10 @@ const ProductosPapeleria: React.FC = () => {
             cell: ({ row }) => (
                 <div className="table-actions">
                     <button onClick={() => openModalForEdit(row.original)} className="action-btn edit-btn" title="Editar">
-                        <span className="material-icons">edit</span>
+                        <Pencil size={18} strokeWidth={2.5} />
                     </button>
                     <button onClick={() => handleDelete(row.original.id)} className="action-btn delete-btn" title="Eliminar">
-                        <span className="material-icons">delete</span>
+                        <Trash2 size={18} strokeWidth={2.5} />
                     </button>
                 </div>
             ),
@@ -277,18 +278,18 @@ const ProductosPapeleria: React.FC = () => {
                     <p>Gestiona los productos de tu papelería.</p>
                 </div>
             </header>
-            
+
             {isLoadingProductos ? (
                 <div className="loading-message" style={{ textAlign: 'center', padding: '2rem' }}>
                     <p>Cargando productos...</p>
                 </div>
             ) : (
-                <DataTable 
-                    columns={columns} 
+                <DataTable
+                    columns={columns}
                     data={productos || []}
                     createAction={{
-                      label: 'Nuevo Producto',
-                      onClick: openModalForCreate,
+                        label: 'Nuevo Producto',
+                        onClick: openModalForCreate,
                     }}
                 />
             )}
@@ -330,7 +331,7 @@ const ProductosPapeleria: React.FC = () => {
                             </select>
                         </div>
                     </div>
-                     <div className="form-grid-3">
+                    <div className="form-grid-3">
                         <div className="form-group">
                             <label>Precio de Compra</label>
                             <input type="number" name="precioCompra" value={formData.precioCompra} onChange={handleChange} step="0.01" required />

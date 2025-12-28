@@ -93,6 +93,17 @@ export const pagarFactura = async (facturaId: string, data: {
   return await apiClient.post(`${API_URL}/${facturaId}/pagar`, data);
 };
 
+// Actualizar pago existente
+export const actualizarPago = async (pagoId: string, data: {
+  monto?: number;
+  descuento?: number;
+  metodoPago?: string;
+  estado?: string;
+  observaciones?: string;
+}) => {
+  return await apiClient.put(`${API_URL}/pagos/${pagoId}`, data);
+};
+
 // Anular factura
 export const anularFactura = async (facturaId: string, motivo: string) => {
   return await apiClient.post(`${API_URL}/${facturaId}/anular`, { motivo });
@@ -112,6 +123,10 @@ export default {
     return await apiClient.put(`${API_URL}/${id}`, data);
   },
   pagarFactura,
+  actualizarPago,
+  revertirPago: async (pagoId: string) => {
+    return await apiClient.post(`${API_URL}/pagos/${pagoId}/revertir`, {});
+  },
   anularFactura,
 
   // Reactivar factura

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Eye, Pencil, Trash2, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { averiasService } from '../services/averiasService';
 import DataTable from '../components/ui/DataTable';
@@ -30,7 +31,7 @@ const AveriasListar: React.FC = () => {
       setLoading(true);
       const resp = await averiasService.getAverias();
       const aviasArray = Array.isArray(resp) ? resp : (resp?.data || []);
-      const sortedAverias = aviasArray.sort((a, b) => {
+      const sortedAverias = aviasArray.sort((a: Averia, b: Averia) => {
         const clienteA = `${a.cliente?.nombre || ''} ${a.cliente?.apellidos || ''}`;
         const clienteB = `${b.cliente?.nombre || ''} ${b.cliente?.apellidos || ''}`;
         return clienteA.localeCompare(clienteB, 'es');
@@ -107,18 +108,18 @@ const AveriasListar: React.FC = () => {
       id: 'acciones',
       header: 'Acciones',
       cell: ({ row }) => (
-        <div className="dt-actions">
-          <button className="action-button icon-only" onClick={(e) => { e.stopPropagation(); handleView(row.original.id); }} title="Ver">
-            <span className="material-icons">visibility</span>
+        <div className="table-actions">
+          <button className="action-btn view-btn" onClick={(e) => { e.stopPropagation(); handleView(row.original.id); }} title="Ver">
+            <Eye size={18} strokeWidth={2.5} />
           </button>
-          <button className="action-button icon-only" onClick={(e) => { e.stopPropagation(); handleEdit(row.original.id); }} title="Editar">
-            <span className="material-icons">edit</span>
+          <button className="action-btn edit-btn" onClick={(e) => { e.stopPropagation(); handleEdit(row.original.id); }} title="Editar">
+            <Pencil size={18} strokeWidth={2.5} />
           </button>
-          <button className="action-button icon-only" onClick={(e) => { e.stopPropagation(); handleDelete(row.original.id); }} title="Eliminar">
-            <span className="material-icons">delete</span>
+          <button className="action-btn delete-btn" onClick={(e) => { e.stopPropagation(); handleDelete(row.original.id); }} title="Eliminar">
+            <Trash2 size={18} strokeWidth={2.5} />
           </button>
-          <button className="action-button icon-only" onClick={(e) => { e.stopPropagation(); handleClose(row.original.id); }} title="Cerrar">
-            <span className="material-icons">task_alt</span>
+          <button className="action-btn reactivate-btn" onClick={(e) => { e.stopPropagation(); handleClose(row.original.id); }} title="Cerrar">
+            <CheckCircle size={18} strokeWidth={2.5} />
           </button>
         </div>
       )

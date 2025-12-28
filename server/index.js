@@ -73,7 +73,8 @@ try {
 } catch (_) { }
 
 const app = express();
-const PORT = process.env.PORT || 54116; // Default port for backend server
+// Ensure PORT is a number to avoid string concatenation on fallback
+const PORT = Number(process.env.PORT) || 54116; // Default port for backend server
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Fix BigInt serialization
@@ -1277,6 +1278,7 @@ app.use('/api/papeleria/ventas', ventaPapeleriaRoutes);
 
 // Mount missing routers
 app.use('/api/banks', bankRoutes);
+console.log('[server] bankRoutes mounted at /api/banks');
 app.use('/api/clients', authenticateToken, attachUserPermissions, clientRoutes);
 // Contabilidad
 app.use('/api/contabilidad/cuentas-contables', cuentaContableRoutes);
@@ -3719,9 +3721,15 @@ const startServer = (port) => {
       throw error;
     }
     if (error.code === 'EADDRINUSE') {
-      console.warn(`Port ${port} is already in use, trying port ${port + 1}...`);
+      const currentPort = Number(port) || 54116;
+      let nextPort = currentPort + 1;
+      if (nextPort >= 65535) {
+        // Wrap to a safe development port if we exceed valid range
+        nextPort = 3000;
+      }
+      console.warn(`Port ${currentPort} is already in use, trying port ${nextPort}...`);
       server.close(() => {
-        startServer(port + 1);
+        startServer(nextPort);
       });
     } else {
       console.error(`Error starting server: ${error.code}`);

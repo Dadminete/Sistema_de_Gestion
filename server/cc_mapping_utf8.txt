@@ -1,0 +1,12 @@
+﻿--- BANK ACCOUNT TO CC MAPPING ---
+Bank: Ban Fondesa | Acc: 1005304710 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos | Balance: 218477.44
+Bank: Ban Fondesa | Acc: 55021 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos | Balance: 218477.44
+Bank: Banco Popular  | Acc: 829544964 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos | Balance: 218477.44
+Bank: Banco Popular  | Acc: 846618437 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos | Balance: 218477.44
+Bank: Banco BHD León | Acc: 18922470015 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos | Balance: 218477.44
+Bank: Banco BHD León | Acc: 18922470023 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos | Balance: 218477.44
+Bank: BanReservas | Acc: 9602452734 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos | Balance: 218477.44
+Bank: BanReservas | Acc: 9607579545 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos | Balance: 218477.44
+Bank: BanReservas | Acc: -9106 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos | Balance: 218477.44
+Bank: QIK | Acc: 1001099805 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos | Balance: 218477.44
+Bank: QIK | Acc: -2247 | CC ID: 579021f5-b600-46d3-98a7-c68533bf7ea7 | CC Name: Bancos | Balance: 218477.44

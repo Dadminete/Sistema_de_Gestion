@@ -122,6 +122,30 @@ const traspasoService = {
   },
 
   /**
+   * Actualizar un traspaso existente
+   */
+  async updateTraspaso(id: string, data: CreateTraspasoData) {
+    try {
+      const response = await api.put(`/traspasos/${id}`, data);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || 'Error al actualizar traspaso');
+    }
+  },
+
+  /**
+   * Eliminar un traspaso
+   */
+  async deleteTraspaso(id: string) {
+    try {
+      const response = await api.delete(`/traspasos/${id}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || 'Error al eliminar traspaso');
+    }
+  },
+
+  /**
    * Filtrar traspasos por fechas
    */
   async getTraspasosByFecha(fechaInicio: string, fechaFin: string) {

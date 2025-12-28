@@ -1,0 +1,256 @@
+/* CuentasContables.css - Responsive layout for cuentas contables page */
+:root {
+  --cc-primary: #2563eb;
+  --cc-success: #16a34a;
+  --cc-danger: #dc2626;
+  --cc-text: #0f172a;
+  --cc-muted: #64748b;
+  --cc-border: #e2e8f0;
+  --cc-bg: #ffffff;
+  --cc-panel: #f8fafc;
+}
+
+body.dark {
+  --cc-primary: #60a5fa;
+  --cc-success: #22c55e;
+  --cc-danger: #f87171;
+  --cc-text: #e2e8f0;
+  --cc-muted: #94a3b8;
+  --cc-border: #475569;
+  --cc-bg: #0f172a;
+  --cc-panel: #111827;
+}
+
+.cuentas-contables {
+  padding: clamp(16px, 3vw, 24px);
+  background: var(--cc-panel);
+  min-height: 100vh;
+  color: var(--cc-text);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 3vw, 24px);
+}
+
+.cuentas-contables .header {
+  background: var(--cc-bg);
+  border: 1px solid var(--cc-border);
+  border-radius: clamp(10px, 2vw, 14px);
+  padding: clamp(16px, 3vw, 22px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(12px, 2vw, 16px);
+  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.25);
+}
+
+.cuentas-contables h1 {
+  margin: 0;
+  font-size: clamp(20px, 4vw, 26px);
+  letter-spacing: -0.3px;
+}
+
+.cuentas-contables .error {
+  color: var(--cc-danger);
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid var(--cc-danger);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-weight: 600;
+}
+
+.cuentas-contables .loading {
+  background: var(--cc-bg);
+  border: 1px solid var(--cc-border);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  color: var(--cc-muted);
+}
+
+.table-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 10px);
+}
+
+.action-btn {
+  width: clamp(32px, 5vw, 36px);
+  height: clamp(32px, 5vw, 36px);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  background: var(--cc-panel);
+}
+
+.action-btn svg {
+  width: clamp(14px, 3.2vw, 16px);
+  height: clamp(14px, 3.2vw, 16px);
+}
+
+.action-btn.edit-btn {
+  color: var(--cc-primary);
+  border-color: rgba(37, 99, 235, 0.25);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.action-btn.edit-btn:hover {
+  background: rgba(37, 99, 235, 0.14);
+  transform: translateY(-1px);
+}
+
+.action-btn.delete-btn {
+  color: var(--cc-danger);
+  border-color: rgba(220, 38, 38, 0.25);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.action-btn.delete-btn:hover {
+  background: rgba(220, 38, 38, 0.14);
+  transform: translateY(-1px);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  padding: clamp(6px, 1.8vw, 8px) clamp(10px, 2vw, 12px);
+  border-radius: 999px;
+  font-size: clamp(11px, 2.6vw, 12px);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.status-badge.success {
+  color: var(--cc-success);
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.status-badge.danger {
+  color: var(--cc-danger);
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.2);
+}
+
+form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+form .form-group label {
+  font-weight: 600;
+  color: var(--cc-text);
+  font-size: clamp(12px, 2.6vw, 13px);
+}
+
+form .form-group input,
+form .form-group select {
+  padding: clamp(10px, 2.6vw, 12px) clamp(12px, 3vw, 14px);
+  border: 1px solid var(--cc-border);
+  border-radius: 10px;
+  font-size: clamp(13px, 3vw, 14px);
+  background: var(--cc-bg);
+  color: var(--cc-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+form .form-group input:focus,
+form .form-group select:focus {
+  outline: none;
+  border-color: var(--cc-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+form .form-group.checkbox label {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: clamp(10px, 2vw, 12px);
+  margin-top: clamp(12px, 2vw, 16px);
+}
+
+@media (max-width: 1024px) {
+  .cuentas-contables {
+    padding: clamp(14px, 4vw, 18px);
+  }
+
+  .cuentas-contables .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cuentas-contables h1 {
+    font-size: clamp(20px, 4vw, 24px);
+  }
+}
+
+@media (max-width: 768px) {
+  .cuentas-contables .header {
+    gap: clamp(10px, 3vw, 14px);
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .action-btn {
+    width: clamp(30px, 8vw, 34px);
+    height: clamp(30px, 8vw, 34px);
+  }
+
+  .status-badge {
+    min-width: 80px;
+    font-size: clamp(10px, 3vw, 11px);
+    padding: clamp(5px, 2vw, 7px) clamp(8px, 3vw, 10px);
+  }
+}
+
+@media (max-width: 480px) {
+  .cuentas-contables {
+    padding: clamp(10px, 5vw, 14px);
+  }
+
+  .cuentas-contables .header {
+    padding: clamp(12px, 4vw, 16px);
+    gap: clamp(8px, 3vw, 12px);
+  }
+
+  .cuentas-contables h1 {
+    font-size: clamp(18px, 5vw, 22px);
+  }
+
+  form .form-group {
+    margin-bottom: 12px;
+    gap: 6px;
+  }
+
+  form .form-group input,
+  form .form-group select {
+    font-size: clamp(12px, 3.5vw, 13px);
+    padding: clamp(8px, 3vw, 10px) clamp(10px, 3vw, 12px);
+  }
+
+  .form-actions {
+    gap: 10px;
+  }
+
+  .action-btn {
+    width: clamp(28px, 9vw, 32px);
+    height: clamp(28px, 9vw, 32px);
+  }
+}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DataTable from '../components/ui/DataTable';
+import { Pencil, Trash2 } from 'lucide-react';
 import Modal from '../components/ui/Modal';
 import { RoleService } from '../services/roleService';
 import { PermisoService, type Permiso } from '../services/permisoService';
@@ -35,8 +36,8 @@ const Roles: React.FC = () => {
       const data = await RoleService.getRoles();
       // Ordenar alfabéticamente por nombre
       const sortedRoles = data.sort((a, b) => {
-        const nameA = (a.nombre || '').toLowerCase();
-        const nameB = (b.nombre || '').toLowerCase();
+        const nameA = (a.nombreRol || '').toLowerCase();
+        const nameB = (b.nombreRol || '').toLowerCase();
         return nameA.localeCompare(nameB, 'es');
       });
       setRoles(sortedRoles);
@@ -88,7 +89,7 @@ const Roles: React.FC = () => {
       Swal.fire('Error', 'No se puede eliminar un rol del sistema', 'error');
       return;
     }
-    
+
     const result = await Swal.fire({
       title: '¿Estás seguro?',
       text: `¿Quieres eliminar el rol "${role.nombreRol}"?`,
@@ -223,7 +224,7 @@ const Roles: React.FC = () => {
             className="action-btn edit-btn"
             title="Editar"
           >
-            <span className="material-icons">edit</span>
+            <Pencil size={18} strokeWidth={2.5} />
           </button>
           <button
             onClick={() => handleDelete(row.original)}
@@ -231,7 +232,7 @@ const Roles: React.FC = () => {
             title="Eliminar"
             disabled={row.original.esSistema}
           >
-            <span className="material-icons">delete</span>
+            <Trash2 size={18} strokeWidth={2.5} />
           </button>
         </div>
       ),
@@ -246,7 +247,7 @@ const Roles: React.FC = () => {
       <div className="dashboard-header">
         <div className="header-left">
           <div className="breadcrumb">
-          <h1>Gestión de Roles</h1></div>
+            <h1>Gestión de Roles</h1></div>
           <p>Administra los roles del sistema y sus permisos.</p>
         </div>
         <div className="header-right">

@@ -9,6 +9,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import toast from 'react-hot-toast';
 import { Pencil, Trash2 } from 'lucide-react';
 import Swal from 'sweetalert2';
+import './CuentasContables.css';
 
 // Utility function to format numbers as currency
 const formatCurrency = (amount: number): string => {

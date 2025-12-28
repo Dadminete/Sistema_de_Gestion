@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getTareas, updateTarea, deleteTarea, toggleTareaCompletada, createTarea, type Tarea } from '../services/taskService';
+import { Undo2, CheckCircle2, Pencil, Trash2, X } from 'lucide-react';
 import { useAuth } from '../context/AuthProvider';
 import DataTable from '../components/ui/DataTable';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -167,13 +168,17 @@ const TareasListado: React.FC = () => {
                         onClick={() => handleToggleCompletada(row.original)}
                         title={row.original.completada ? 'Marcar como pendiente' : 'Marcar como completada'}
                     >
-                        <span className="material-icons">{row.original.completada ? 'undo' : 'check_circle'}</span>
+                        {row.original.completada ? (
+                            <Undo2 size={18} strokeWidth={2.5} />
+                        ) : (
+                            <CheckCircle2 size={18} strokeWidth={2.5} />
+                        )}
                     </button>
                     <button className="btn-icon btn-edit" onClick={() => handleEdit(row.original)} title="Editar">
-                        <span className="material-icons">edit</span>
+                        <Pencil size={18} strokeWidth={2.5} />
                     </button>
                     <button className="btn-icon btn-delete" onClick={() => handleDelete(row.original)} title="Eliminar">
-                        <span className="material-icons">delete</span>
+                        <Trash2 size={18} strokeWidth={2.5} />
                     </button>
                 </div>
             ),
@@ -222,7 +227,7 @@ const TareasListado: React.FC = () => {
                         <div className="modal-header">
                             <h2>{editingTarea ? 'Editar Tarea' : 'Nueva Tarea'}</h2>
                             <button className="modal-close" onClick={() => setIsModalOpen(false)}>
-                                <span className="material-icons">close</span>
+                                <X size={20} strokeWidth={2.5} />
                             </button>
                         </div>
                         <form onSubmit={handleSubmit}>

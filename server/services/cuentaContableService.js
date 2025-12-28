@@ -8,22 +8,9 @@ const getBankAccountBalance = async (cuentaBancariaId, saldoInicial) => {
     select: { tipo: true, monto: true },
   });
 
-  // 2. Get payments from clients
-  const pagos = await prisma.pagoCliente.findMany({
-    where: {
-      cuentaBancariaId,
-      estado: 'confirmado'
-    },
-    select: { monto: true }
-  });
-
   let balance = parseFloat(saldoInicial || 0);
 
-  // Add payments (always positive income)
-  const totalPagos = pagos.reduce((sum, pago) => sum + parseFloat(pago.monto || 0), 0);
-  balance += totalPagos;
-
-  // Process movements
+  // Process movements (source of truth including payments, transfers, etc.)
   const balanceMovimientos = movimientos.reduce((acc, mov) => {
     const monto = parseFloat(mov.monto);
     return mov.tipo === 'ingreso' ? acc + monto : acc - monto;
@@ -31,8 +18,8 @@ const getBankAccountBalance = async (cuentaBancariaId, saldoInicial) => {
   balance += balanceMovimientos;
 
   // Debug log (only if significant)
-  if (movimientos.length > 0 || pagos.length > 0) {
-    // console.log(`[BankCalc] ID: ${cuentaBancariaId} -> Movs: ${movimientos.length}, Pagos: ${pagos.length}, Balance: ${balance}`);
+  if (movimientos.length > 0) {
+    // console.log(`[BankCalc] ID: ${cuentaBancariaId} -> Movs: ${movimientos.length}, Balance: ${balance}`);
   }
 
   return balance;
@@ -41,7 +28,7 @@ const getBankAccountBalance = async (cuentaBancariaId, saldoInicial) => {
 const getCajaBalance = async (cajaId, saldoInicial) => {
   // Solo usar movimientosContable como fuente única de verdad
   const movimientos = await prisma.movimientoContable.findMany({
-    where: { 
+    where: {
       cajaId: cajaId
     },
     select: { tipo: true, monto: true },
@@ -136,12 +123,9 @@ const CuentaContableService = {
     }
     // For BANKS
     else if (cuenta.cuentasBancarias && cuenta.cuentasBancarias.length > 0) {
-      console.log(`[CalculateBalance] Processing ${cuenta.cuentasBancarias.length} bank accounts for ${cuenta.nombre} (${cuenta.id})`);
-
       const balances = await Promise.all(
         cuenta.cuentasBancarias.map(async (cb) => {
           const bal = await getBankAccountBalance(cb.id, 0);
-          console.log(`  > Account: ${cb.nombreOficialCuenta} (${cb.tipoCuenta}) - ID: ${cb.id} - Active: ${cb.activo} - Balance: ${bal}`);
           return bal;
         })
       );
@@ -155,6 +139,17 @@ const CuentaContableService = {
     return finalBalance;
   },
 
+  async recalculateAndUpdateSaldo(cuentaId) {
+    const nuevoSaldo = await this.calculateAccountBalance(cuentaId);
+
+    await prisma.cuentaContable.update({
+      where: { id: cuentaId },
+      data: { saldoActual: nuevoSaldo }
+    });
+
+    return nuevoSaldo;
+  },
+
   async getAll() {
     const cuentas = await prisma.cuentaContable.findMany({
       where: { activa: true },
@@ -165,28 +160,16 @@ const CuentaContableService = {
       orderBy: { codigo: 'asc' },
     });
 
-    const cuentasWithCorrectedBalance = await Promise.all(
-      cuentas.map(async (cuenta) => {
-        // Use the centralized calculation logic
-        const finalBalance = await this.calculateAccountBalance(cuenta.id);
+    return cuentas.map(c => ({
+      ...c,
+      saldoInicial: parseFloat(c.saldoInicial || 0),
+      saldoActual: parseFloat(c.saldoActual || 0)
+    }));
+  },
 
-        return {
-          id: cuenta.id,
-          codigo: cuenta.codigo,
-          nombre: cuenta.nombre,
-          categoriaId: cuenta.categoriaId,
-          tipoCuenta: cuenta.tipoCuenta,
-          moneda: cuenta.moneda,
-          saldoInicial: parseFloat(cuenta.saldoInicial || 0),
-          saldoActual: finalBalance,
-          activa: cuenta.activa,
-          createdAt: cuenta.createdAt,
-          updatedAt: cuenta.updatedAt,
-        };
-      })
-    );
-
-    return cuentasWithCorrectedBalance;
+  // Exponer balance individual por cuenta bancaria (sin agrupar por cuenta contable)
+  async getBankAccountBalance(cuentaBancariaId, saldoInicial = 0) {
+    return getBankAccountBalance(cuentaBancariaId, saldoInicial);
   },
 
   async getById(id) {

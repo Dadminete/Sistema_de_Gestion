@@ -1041,7 +1041,8 @@
 @media (max-width: 1024px) {
   .dashboard-content {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    padding: clamp(1.5rem, 2.5vw, 2rem);
   }
   
   .dashboard-right-sidebar {
@@ -1050,134 +1051,1003 @@
   
   .charts-section {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: clamp(1rem, 2vw, 1.5rem);
   }
   
   .tables-section {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: clamp(1rem, 2vw, 1.25rem);
+  }
+
+  .dashboard-kpis {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: clamp(1rem, 2vw, 1.25rem);
+  }
+
+  .clients-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: clamp(1rem, 2vw, 1.25rem);
   }
 }
 
 @media (max-width: 768px) {
+  .clients-dashboard-container {
+    min-height: 100vh;
+  }
+
   .dashboard-content {
-    padding: 1rem;
-    gap: 1rem;
+    padding: clamp(12px, 2vw, 16px);
+    gap: clamp(12px, 2vw, 16px);
+  }
+
+  /* Header compacto */
+  .dashboard-header {
+    padding: clamp(12px, 2vw, 16px) clamp(16px, 3vw, 20px);
+    margin-bottom: clamp(12px, 2vw, 16px);
   }
 
   .dashboard-header-enhanced {
-    padding: 1rem;
+    padding: clamp(12px, 2vw, 16px) clamp(16px, 3vw, 20px) 0 clamp(16px, 3vw, 20px);
   }
 
   .header-content {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: clamp(12px, 2vw, 16px);
+    margin-bottom: clamp(6px, 1vw, 8px);
+  }
+
+  .header-text h1 {
+    font-size: clamp(20px, 4vw, 24px);
+    gap: clamp(8px, 1.5vw, 12px);
+    margin-bottom: clamp(3px, 0.5vw, 4px);
+  }
+
+  .header-icon {
+    font-size: clamp(28px, 5vw, 36px);
+  }
+
+  .header-text p {
+    font-size: clamp(13px, 2.5vw, 15px);
+  }
+
+  .dashboard-header h1 {
+    font-size: clamp(20px, 4vw, 24px);
+    margin-bottom: clamp(4px, 1vw, 6px);
+  }
+
+  .subtitle {
+    font-size: clamp(13px, 2.5vw, 14px);
+  }
+
+  /* Header actions compactos */
+  .header-actions {
+    display: flex;
+    gap: clamp(10px, 2vw, 12px);
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .search-box {
+    width: 100%;
   }
 
   .search-box input {
     width: 100%;
-    min-width: 250px;
+    min-width: auto;
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px) clamp(10px, 2vw, 12px) clamp(36px, 7vw, 44px);
+    font-size: clamp(13px, 2.5vw, 14px);
+    border-radius: clamp(8px, 1.5vw, 10px);
   }
 
+  .search-box svg {
+    left: clamp(10px, 2vw, 12px);
+    width: clamp(16px, 3.5vw, 18px);
+    height: clamp(16px, 3.5vw, 18px);
+  }
+
+  .sidebar-toggle,
+  .header-button {
+    width: clamp(36px, 7vw, 40px);
+    height: clamp(36px, 7vw, 40px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .sidebar-toggle svg,
+  .header-button svg {
+    width: clamp(18px, 4vw, 22px);
+    height: clamp(18px, 4vw, 22px);
+  }
+
+  /* Search results compactos */
   .search-results {
-    padding: 1rem;
+    padding: clamp(14px, 2.5vw, 18px);
   }
 
   .search-results-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: clamp(8px, 1.5vw, 10px);
+    margin-bottom: clamp(12px, 2vw, 16px);
   }
 
+  .search-results-header h2 {
+    font-size: clamp(16px, 3.5vw, 20px);
+  }
+
+  .results-count {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  /* Stats grid compacto */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: clamp(10px, 2vw, 14px);
+    margin-bottom: clamp(12px, 2vw, 16px);
+  }
+
+  .dashboard-kpis {
+    grid-template-columns: 1fr;
+    gap: clamp(10px, 2vw, 14px);
+    margin-bottom: clamp(12px, 2vw, 16px);
+  }
+
+  .stat-card {
+    padding: clamp(12px, 2.5vw, 16px);
+    border-radius: clamp(10px, 2vw, 12px);
+    border-left-width: clamp(3px, 0.6vw, 4px);
+  }
+
+  .stat-icon {
+    width: clamp(40px, 8vw, 48px);
+    height: clamp(40px, 8vw, 48px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .stat-icon svg,
+  .stat-icon .material-icons {
+    font-size: clamp(20px, 4vw, 24px) !important;
+    width: clamp(20px, 4vw, 24px);
+    height: clamp(20px, 4vw, 24px);
+  }
+
+  .stat-label {
+    font-size: clamp(12px, 2.5vw, 13px);
+    margin-bottom: clamp(4px, 1vw, 6px);
+  }
+
+  .stat-value {
+    font-size: clamp(24px, 5vw, 28px);
+    margin-bottom: clamp(3px, 0.5vw, 4px);
+  }
+
+  .stat-subtext {
+    font-size: clamp(11px, 2vw, 12px);
+  }
+
+  /* Clients grid compacto */
   .clients-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: clamp(12px, 2vw, 16px);
   }
 
   .client-card {
-    padding: 1rem;
+    padding: clamp(12px, 2.5vw, 16px);
+    gap: clamp(10px, 2vw, 12px);
+    border-radius: clamp(10px, 2vw, 12px);
+  }
+
+  .client-avatar-large {
+    width: clamp(56px, 11vw, 64px);
+    height: clamp(56px, 11vw, 64px);
+    font-size: clamp(20px, 4vw, 24px);
+  }
+
+  .client-info .client-name {
+    font-size: clamp(16px, 3.5vw, 18px);
+    margin-bottom: clamp(3px, 0.5vw, 4px);
+  }
+
+  .client-email {
+    font-size: clamp(12px, 2.5vw, 13px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .client-meta {
+    gap: clamp(8px, 1.5vw, 10px);
+  }
+
+  .client-category {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .status-badge {
+    padding: clamp(4px, 1vw, 5px) clamp(10px, 2vw, 12px);
+    font-size: clamp(10px, 2vw, 11px);
+    border-radius: 999px;
+  }
+
+  .client-actions {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .client-actions .action-button {
+    padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2.5vw, 14px);
+    font-size: clamp(12px, 2.5vw, 13px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  /* Tables compactos */
+  .clients-table-section {
+    margin-bottom: clamp(12px, 2vw, 16px);
   }
 
   .clients-table {
-    font-size: 0.8rem;
+    font-size: clamp(12px, 2.5vw, 13px);
   }
 
   .clients-table th,
   .clients-table td {
-    padding: 0.75rem 0.5rem;
+    padding: clamp(10px, 2vw, 12px) clamp(8px, 1.5vw, 10px);
+  }
+
+  .clients-table th {
+    font-size: clamp(11px, 2vw, 12px);
   }
 
   .client-cell {
-    min-width: 150px;
+    min-width: 160px;
+    gap: clamp(8px, 1.5vw, 10px);
+  }
+
+  .client-avatar {
+    width: clamp(36px, 7vw, 40px);
+    height: clamp(36px, 7vw, 40px);
+    font-size: clamp(14px, 3vw, 16px);
+  }
+
+  .client-details .client-name {
+    font-size: clamp(13px, 2.5vw, 14px);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .client-id {
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  .email-cell,
+  .phone-cell,
+  .category-cell {
+    max-width: 140px;
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .actions-cell {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .action-btn {
+    width: clamp(28px, 6vw, 32px);
+    height: clamp(28px, 6vw, 32px);
+    border-radius: clamp(5px, 1vw, 6px);
+  }
+
+  .action-btn svg {
+    width: clamp(16px, 3.5vw, 18px);
+    height: clamp(16px, 3.5vw, 18px);
+  }
+
+  /* Dashboard grid compacto */
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: clamp(12px, 2vw, 16px);
+    margin-bottom: clamp(12px, 2vw, 16px);
+  }
+
+  .card {
+    padding: clamp(12px, 2.5vw, 16px);
+    border-radius: clamp(10px, 2vw, 12px);
+  }
+
+  .card h2 {
+    font-size: clamp(15px, 3vw, 17px);
+    margin-bottom: clamp(12px, 2vw, 16px);
+  }
+
+  /* Category list compacto */
+  .category-list {
+    gap: clamp(8px, 1.5vw, 10px);
+  }
+
+  .category-item {
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    border-left-width: clamp(2px, 0.5vw, 3px);
+  }
+
+  .category-name {
+    font-size: clamp(13px, 2.5vw, 14px);
+  }
+
+  .category-count {
+    padding: clamp(3px, 0.8vw, 4px) clamp(10px, 2vw, 12px);
+    font-size: clamp(11px, 2vw, 12px);
+  }
+
+  /* Clients list compacto */
+  .clients-list {
+    gap: clamp(10px, 2vw, 12px);
+  }
+
+  .client-item {
+    padding: clamp(12px, 2.5vw, 14px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    border-left-width: clamp(2px, 0.5vw, 3px);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(8px, 1.5vw, 10px);
+  }
+
+  .client-info .client-name {
+    font-size: clamp(14px, 3vw, 16px);
+    margin-bottom: clamp(3px, 0.5vw, 4px);
+  }
+
+  .client-meta {
+    font-size: clamp(11px, 2vw, 12px);
+  }
+
+  .status-badge {
+    align-self: flex-start;
+    margin-top: 0;
+  }
+
+  /* Charts section compacto */
+  .charts-section {
+    grid-template-columns: 1fr;
+    gap: clamp(12px, 2vw, 16px);
+  }
+
+  .tables-section {
+    grid-template-columns: 1fr;
+    gap: clamp(12px, 2vw, 16px);
+  }
+
+  .chart-container {
+    min-height: 300px;
+  }
+
+  .chart-container.large {
+    min-height: 320px;
+  }
+
+  .chart-controls {
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .filter-select {
+    padding: clamp(6px, 1.5vw, 8px);
+    font-size: clamp(12px, 2.5vw, 13px);
+    border-radius: clamp(5px, 1vw, 6px);
+  }
+
+  /* Data table compacto */
+  .data-table {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .data-table th {
+    padding: clamp(10px, 2vw, 12px) clamp(6px, 1.5vw, 8px);
+    font-size: clamp(11px, 2vw, 12px);
+  }
+
+  .data-table td {
+    padding: clamp(10px, 2vw, 12px) clamp(6px, 1.5vw, 8px);
+  }
+
+  .data-table .client-avatar {
+    width: clamp(28px, 6vw, 32px);
+    height: clamp(28px, 6vw, 32px);
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .badge {
+    padding: clamp(3px, 0.8vw, 4px) clamp(10px, 2vw, 12px);
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  .action-button {
+    padding: clamp(6px, 1.5vw, 8px);
+    border-radius: clamp(5px, 1vw, 6px);
+  }
+
+  .action-button svg {
+    width: clamp(16px, 3.5vw, 18px);
+    height: clamp(16px, 3.5vw, 18px);
+  }
+
+  /* Notifications compactas */
+  .notifications-panel .notifications-list {
+    gap: clamp(8px, 1.5vw, 10px);
+  }
+
+  .notification-item {
+    gap: clamp(8px, 1.5vw, 10px);
+    padding: clamp(10px, 2vw, 12px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    border-left-width: clamp(2px, 0.5vw, 3px);
+  }
+
+  .notification-dot {
+    width: clamp(6px, 1.5vw, 8px);
+    height: clamp(6px, 1.5vw, 8px);
+    margin-top: clamp(3px, 0.5vw, 4px);
+  }
+
+  .notification-message {
+    font-size: clamp(12px, 2.5vw, 13px);
+    margin-bottom: clamp(3px, 0.5vw, 4px);
+  }
+
+  .notification-time {
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  /* Quick actions compactas */
+  .quick-actions-panel .quick-actions-buttons {
+    gap: clamp(8px, 1.5vw, 10px);
+  }
+
+  .quick-action-button {
+    gap: clamp(6px, 1.5vw, 8px);
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    font-size: clamp(13px, 2.5vw, 14px);
+  }
+
+  .quick-action-button svg {
+    width: clamp(18px, 4vw, 20px);
+    height: clamp(18px, 4vw, 20px);
+  }
+
+  /* Table actions compactas */
+  .table-actions {
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .view-all-link {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .download-button {
+    gap: clamp(6px, 1.5vw, 8px);
+    padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2.5vw, 14px);
+    border-radius: clamp(5px, 1vw, 6px);
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .download-button svg {
+    width: clamp(16px, 3.5vw, 18px);
+    height: clamp(16px, 3.5vw, 18px);
+  }
+
+  /* Section titles compactos */
+  .section-title {
+    font-size: clamp(16px, 3.5vw, 20px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .stats-section,
+  .charts-section,
+  .tables-section {
+    margin-bottom: clamp(12px, 2vw, 16px);
+  }
+
+  /* Estados de carga y error compactos */
+  .loading,
+  .error {
+    height: 300px;
+    gap: clamp(10px, 2vw, 12px);
+  }
+
+  .spinner {
+    width: clamp(36px, 7vw, 40px);
+    height: clamp(36px, 7vw, 40px);
+    border-width: clamp(3px, 0.6vw, 4px);
+  }
+
+  .loading p,
+  .error p {
+    font-size: clamp(13px, 2.5vw, 14px);
+  }
+
+  .error svg {
+    width: clamp(40px, 8vw, 48px);
+    height: clamp(40px, 8vw, 48px);
+  }
+
+  .no-results {
+    padding: clamp(16px, 3vw, 20px);
+    font-size: clamp(13px, 2.5vw, 14px);
+  }
+}
+
+@media (max-width: 480px) {
+  .clients-dashboard-container {
+    font-size: clamp(13px, 2.8vw, 14px);
+  }
+
+  .dashboard-content {
+    padding: clamp(10px, 2vw, 12px);
+    gap: clamp(10px, 2vw, 12px);
+  }
+
+  /* Header ultra compacto */
+  .dashboard-header {
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 16px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .dashboard-header-enhanced {
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 16px) 0 clamp(12px, 2.5vw, 16px);
+  }
+
+  .header-content {
+    gap: clamp(10px, 2vw, 12px);
+    margin-bottom: clamp(4px, 1vw, 6px);
+  }
+
+  .header-text h1 {
+    font-size: clamp(18px, 4.5vw, 22px);
+    gap: clamp(6px, 1.5vw, 8px);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .header-icon {
+    font-size: clamp(24px, 5.5vw, 32px);
+  }
+
+  .header-text p {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .dashboard-header h1 {
+    font-size: clamp(18px, 4.5vw, 22px);
+    margin-bottom: clamp(3px, 1vw, 4px);
+  }
+
+  .subtitle {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  /* Header actions ultra compactos */
+  .header-actions {
+    gap: clamp(8px, 2vw, 10px);
+  }
+
+  .search-box input {
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2vw, 12px) clamp(8px, 2vw, 10px) clamp(32px, 7vw, 40px);
+    font-size: clamp(12px, 2.5vw, 13px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .search-box svg {
+    left: clamp(8px, 2vw, 10px);
+    width: clamp(14px, 3.5vw, 16px);
+    height: clamp(14px, 3.5vw, 16px);
+  }
+
+  .sidebar-toggle,
+  .header-button {
+    width: clamp(32px, 7vw, 36px);
+    height: clamp(32px, 7vw, 36px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+  }
+
+  .sidebar-toggle svg,
+  .header-button svg {
+    width: clamp(16px, 4vw, 18px);
+    height: clamp(16px, 4vw, 18px);
+  }
+
+  /* Search results ultra compactos */
+  .search-results {
+    padding: clamp(10px, 2.5vw, 12px);
+  }
+
+  .search-results-header {
+    gap: clamp(6px, 1.5vw, 8px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .search-results-header h2 {
+    font-size: clamp(14px, 3.5vw, 18px);
+  }
+
+  .results-count {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  /* Stats ultra compactos */
+  .stats-grid {
+    gap: clamp(8px, 2vw, 10px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .dashboard-kpis {
+    gap: clamp(8px, 2vw, 10px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .stat-card {
+    padding: clamp(10px, 2.5vw, 12px);
+    border-radius: clamp(8px, 2vw, 10px);
+    border-left-width: clamp(3px, 0.6vw, 3px);
+  }
+
+  .stat-icon {
+    width: clamp(36px, 8vw, 42px);
+    height: clamp(36px, 8vw, 42px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+    margin-bottom: clamp(8px, 2vw, 10px);
+  }
+
+  .stat-icon svg,
+  .stat-icon .material-icons {
+    font-size: clamp(18px, 4vw, 20px) !important;
+    width: clamp(18px, 4vw, 20px);
+    height: clamp(18px, 4vw, 20px);
+  }
+
+  .stat-label {
+    font-size: clamp(11px, 2.5vw, 12px);
+    margin-bottom: clamp(3px, 1vw, 4px);
+  }
+
+  .stat-value {
+    font-size: clamp(20px, 5vw, 24px);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .stat-subtext {
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  /* Clients grid ultra compacto */
+  .clients-grid {
+    gap: clamp(10px, 2vw, 12px);
+  }
+
+  .client-card {
+    padding: clamp(10px, 2.5vw, 12px);
+    gap: clamp(8px, 2vw, 10px);
+    border-radius: clamp(8px, 2vw, 10px);
+  }
+
+  .client-avatar-large {
+    width: clamp(48px, 11vw, 56px);
+    height: clamp(48px, 11vw, 56px);
+    font-size: clamp(18px, 4vw, 20px);
+  }
+
+  .client-info .client-name {
+    font-size: clamp(14px, 3.5vw, 16px);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .client-email {
+    font-size: clamp(11px, 2.5vw, 12px);
+    margin-bottom: clamp(8px, 2vw, 10px);
+  }
+
+  .client-meta {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .client-category {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  .status-badge {
+    padding: clamp(3px, 1vw, 4px) clamp(8px, 2vw, 10px);
+    font-size: clamp(9px, 2vw, 10px);
+  }
+
+  .client-actions {
+    gap: clamp(4px, 1.5vw, 6px);
+  }
+
+  .client-actions .action-button {
+    padding: clamp(5px, 1.5vw, 6px) clamp(10px, 2.5vw, 12px);
+    font-size: clamp(11px, 2.5vw, 12px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+  }
+
+  /* Tables ultra compactos */
+  .clients-table-section {
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .clients-table {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  .clients-table th,
+  .clients-table td {
+    padding: clamp(8px, 2vw, 10px) clamp(6px, 1.5vw, 8px);
+  }
+
+  .clients-table th {
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  .client-cell {
+    min-width: 140px;
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .client-avatar {
+    width: clamp(32px, 7vw, 36px);
+    height: clamp(32px, 7vw, 36px);
+    font-size: clamp(12px, 3vw, 14px);
+  }
+
+  .client-details .client-name {
+    font-size: clamp(12px, 2.5vw, 13px);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .client-id {
+    font-size: clamp(9px, 2vw, 10px);
   }
 
   .email-cell,
   .phone-cell,
   .category-cell {
     max-width: 120px;
-  }}
-
-  .dashboard-header h1 {
-    font-size: 1.5rem;
+    font-size: clamp(11px, 2.5vw, 12px);
   }
 
-  .dashboard-kpis {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  .actions-cell {
+    gap: clamp(4px, 1.5vw, 6px);
   }
 
+  .action-btn {
+    width: clamp(26px, 6vw, 30px);
+    height: clamp(26px, 6vw, 30px);
+    border-radius: clamp(4px, 1vw, 5px);
+  }
+
+  .action-btn svg {
+    width: clamp(14px, 3.5vw, 16px);
+    height: clamp(14px, 3.5vw, 16px);
+  }
+
+  /* Dashboard grid ultra compacto */
   .dashboard-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .stat-card {
-    padding: 1rem;
+    gap: clamp(10px, 2vw, 12px);
+    margin-bottom: clamp(10px, 2vw, 12px);
   }
 
   .card {
-    padding: 1rem;
-  }
-
-  .client-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .status-badge {
-    align-self: flex-start;
-    margin-top: 0.5rem;
-  }
-
-  .data-table {
-    font-size: 0.875rem;
-  }
-
-  .data-table th,
-  .data-table td {
-    padding: 0.5rem 0.25rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .dashboard-container {
-    padding: 0.5rem;
-  }
-
-  .stats-grid {
-    gap: 0.75rem;
-  }
-
-  .stat-card {
-    padding: 0.75rem;
-  }
-
-  .stat-value {
-    font-size: 1.25rem;
+    padding: clamp(10px, 2.5vw, 12px);
+    border-radius: clamp(8px, 2vw, 10px);
   }
 
   .card h2 {
-    font-size: 1rem;
+    font-size: clamp(14px, 3vw, 16px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  /* Category list ultra compacto */
+  .category-list {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .category-item {
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+    border-left-width: clamp(2px, 0.5vw, 3px);
+  }
+
+  .category-name {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .category-count {
+    padding: clamp(2px, 0.8vw, 3px) clamp(8px, 2vw, 10px);
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  /* Clients list ultra compacto */
+  .clients-list {
+    gap: clamp(8px, 2vw, 10px);
+  }
+
+  .client-item {
+    padding: clamp(10px, 2.5vw, 12px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .client-info .client-name {
+    font-size: clamp(13px, 3vw, 14px);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .client-meta {
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  /* Charts section ultra compacto */
+  .charts-section {
+    gap: clamp(10px, 2vw, 12px);
+  }
+
+  .tables-section {
+    gap: clamp(10px, 2vw, 12px);
+  }
+
+  .chart-container {
+    min-height: 260px;
+  }
+
+  .chart-container.large {
+    min-height: 280px;
+  }
+
+  .chart-controls {
+    margin-bottom: clamp(8px, 2vw, 10px);
+  }
+
+  .filter-select {
+    padding: clamp(5px, 1.5vw, 6px);
+    font-size: clamp(11px, 2.5vw, 12px);
+    border-radius: clamp(4px, 1vw, 5px);
+  }
+
+  /* Data table ultra compacto */
+  .data-table {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  .data-table th {
+    padding: clamp(8px, 2vw, 10px) clamp(5px, 1.5vw, 6px);
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  .data-table td {
+    padding: clamp(8px, 2vw, 10px) clamp(5px, 1.5vw, 6px);
+  }
+
+  .data-table .client-avatar {
+    width: clamp(26px, 6vw, 28px);
+    height: clamp(26px, 6vw, 28px);
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  .badge {
+    padding: clamp(2px, 0.8vw, 3px) clamp(8px, 2vw, 10px);
+    font-size: clamp(9px, 2vw, 10px);
+  }
+
+  .action-button {
+    padding: clamp(5px, 1.5vw, 6px);
+    border-radius: clamp(4px, 1vw, 5px);
+  }
+
+  .action-button svg {
+    width: clamp(14px, 3.5vw, 16px);
+    height: clamp(14px, 3.5vw, 16px);
+  }
+
+  /* Notifications ultra compactas */
+  .notifications-panel .notifications-list {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .notification-item {
+    gap: clamp(6px, 1.5vw, 8px);
+    padding: clamp(8px, 2vw, 10px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+  }
+
+  .notification-dot {
+    width: clamp(5px, 1.5vw, 6px);
+    height: clamp(5px, 1.5vw, 6px);
+    margin-top: clamp(2px, 0.5vw, 3px);
+  }
+
+  .notification-message {
+    font-size: clamp(11px, 2.5vw, 12px);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .notification-time {
+    font-size: clamp(9px, 2vw, 10px);
+  }
+
+  /* Quick actions ultra compactas */
+  .quick-actions-panel .quick-actions-buttons {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .quick-action-button {
+    gap: clamp(5px, 1.5vw, 6px);
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .quick-action-button svg {
+    width: clamp(16px, 4vw, 18px);
+    height: clamp(16px, 4vw, 18px);
+  }
+
+  /* Table actions ultra compactas */
+  .table-actions {
+    margin-bottom: clamp(8px, 2vw, 10px);
+  }
+
+  .view-all-link {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  .download-button {
+    gap: clamp(5px, 1.5vw, 6px);
+    padding: clamp(5px, 1.5vw, 6px) clamp(10px, 2.5vw, 12px);
+    border-radius: clamp(4px, 1vw, 5px);
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  .download-button svg {
+    width: clamp(14px, 3.5vw, 16px);
+    height: clamp(14px, 3.5vw, 16px);
+  }
+
+  /* Section titles ultra compactos */
+  .section-title {
+    font-size: clamp(14px, 3.5vw, 18px);
+    margin-bottom: clamp(8px, 2vw, 10px);
+  }
+
+  .stats-section,
+  .charts-section,
+  .tables-section {
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  /* Estados ultra compactos */
+  .loading,
+  .error {
+    height: 250px;
+    gap: clamp(8px, 2vw, 10px);
+  }
+
+  .spinner {
+    width: clamp(32px, 7vw, 36px);
+    height: clamp(32px, 7vw, 36px);
+    border-width: clamp(3px, 0.6vw, 3px);
+  }
+
+  .loading p,
+  .error p {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .error svg {
+    width: clamp(36px, 8vw, 40px);
+    height: clamp(36px, 8vw, 40px);
+  }
+
+  .no-results {
+    padding: clamp(12px, 3vw, 16px);
+    font-size: clamp(12px, 2.5vw, 13px);
   }
 }

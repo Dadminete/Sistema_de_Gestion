@@ -1,6 +1,7 @@
 :root {
     --table-bg: #fff;
     --table-header-bg: #f8f9fa;
+    --table-header-text: #ffffff;
     --table-border-color: #dee2e6;
     --table-text-color: #212529;
     --table-hover-bg: #f1f3f5;
@@ -13,9 +14,10 @@
     --badge-inactive-text: #991b1b;
 }
 
-[data-theme='dark'] {
+body.dark {
     --table-bg: #2a2a2e;
     --table-header-bg: #343a40;
+    --table-header-text: #f8f9fa;
     --table-border-color: #495057;
     --table-text-color: #f8f9fa;
     --table-hover-bg: #3e444a;
@@ -56,10 +58,23 @@
 }
 /* Light mode default */
 .data-table th {
-    background-color: rgb(23, 162, 184);
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
     font-weight: 600;
     cursor: pointer;
     user-select: none;
+}
+
+/* Override for light mode to keep the nice color */
+:root .data-table th {
+    background-color: rgb(23, 162, 184);
+    color: #ffffff;
+}
+
+/* Dark mode */
+body.dark .data-table th {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
 }
 
 .data-table th .sort-icon {

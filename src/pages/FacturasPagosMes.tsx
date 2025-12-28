@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import facturaService from '../services/facturaService';
 import { formatearMoneda } from '../utils/facturaUtils';
@@ -10,6 +11,7 @@ interface Pago {
     monto: number;
     metodoPago: string;
     factura: {
+        id?: string;
         numeroFactura: string;
     };
     cliente: {
@@ -26,6 +28,7 @@ interface MesPagos {
 }
 
 const FacturasPagosMes: React.FC = () => {
+    const navigate = useNavigate();
     const [pagosPorMes, setPagosPorMes] = useState<MesPagos[]>([]);
     const [loading, setLoading] = useState(true);
     const [año, setAño] = useState(new Date().getFullYear());
@@ -177,7 +180,11 @@ const FacturasPagosMes: React.FC = () => {
                                                 <td style={{ padding: '12px 20px', fontSize: '14px', color: '#374151' }}>
                                                     {pago.cliente?.nombre || 'Cliente'} {pago.cliente?.apellidos || 'Desconocido'}
                                                 </td>
-                                                <td style={{ padding: '12px 20px', fontSize: '14px', color: '#3b82f6' }}>
+                                                <td
+                                                    style={{ padding: '12px 20px', fontSize: '14px', color: '#3b82f6', cursor: pago.factura?.id ? 'pointer' : 'default', textDecoration: pago.factura?.id ? 'underline' : 'none' }}
+                                                    onClick={() => pago.factura?.id && navigate(`/facturas/${pago.factura.id}`)}
+                                                    title={pago.factura?.id ? 'Ver detalle de la factura' : 'Factura sin identificador'}
+                                                >
                                                     {pago.factura?.numeroFactura || 'N/A'}
                                                 </td>
                                                 <td style={{ padding: '12px 20px', fontSize: '14px', color: '#374151', textTransform: 'capitalize' }}>

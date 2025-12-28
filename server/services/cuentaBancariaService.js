@@ -20,15 +20,12 @@ const getAccountsByBankId = async (bankId) => {
       orderBy: { numeroCuenta: 'asc' }
     });
 
+    const { CuentaContableService } = require('./cuentaContableService');
+
     // Transform the data to match frontend expectations
     const transformedAccounts = await Promise.all(accounts.map(async (account) => {
-      // Calculate balance from movimientos
-      const movimientos = await prisma.movimientoContable.findMany({
-        where: { cuentaBancariaId: account.id },
-      });
-      const balance = movimientos.reduce((sum, mov) => {
-        return sum + (mov.tipo === 'ingreso' ? parseFloat(mov.monto) : -parseFloat(mov.monto));
-      }, 0);
+      // Calculate balance using centralized logic
+      const balance = await CuentaContableService.getBankAccountBalance(account.id, 0);
 
       return {
         id: account.id,

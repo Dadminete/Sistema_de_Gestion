@@ -264,6 +264,8 @@
   overflow-x: auto;
   border-radius: 12px;
   border: 1px solid rgba(203, 213, 225, 0.4);
+  display: flex;
+  flex-direction: column;
 }
 
 .historial-table {
@@ -436,6 +438,94 @@
 
 .estadistica-value.gasto {
   color: #b91c1c;
+}
+
+/* Gráficos */
+.graficos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.grafico-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(203, 213, 225, 0.4);
+}
+
+.grafico-card h3 {
+  margin: 0 0 20px 0;
+  color: #1e293b;
+  font-size: 18px;
+  font-weight: 700;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(203, 213, 225, 0.4);
+}
+
+.grafico-card .recharts-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+/* Resumen detallado */
+.resumen-detallado {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(203, 213, 225, 0.4);
+  margin-bottom: 32px;
+}
+
+.resumen-detallado h3 {
+  margin: 0 0 24px 0;
+  color: #1e293b;
+  font-size: 18px;
+  font-weight: 700;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(203, 213, 225, 0.4);
+}
+
+.resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.resumen-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(203, 213, 225, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resumen-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+}
+
+.resumen-label {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.resumen-valor {
+  color: #3b82f6;
+  font-size: 28px;
+  font-weight: 700;
+  font-family: 'Monaco', 'Consolas', monospace;
 }
 
 /* DataTable de Cajas */
@@ -678,58 +768,730 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .listado-cajas {
-    padding: 16px;
+    padding: clamp(14px, 2vw, 20px);
+  }
+
+  .graficos-container {
+    grid-template-columns: 1fr;
   }
 
   .page-header {
-    padding: 20px;
+    padding: clamp(18px, 2.5vw, 22px);
   }
 
   .page-header h1 {
-    font-size: 24px;
+    font-size: clamp(22px, 3.5vw, 26px);
+  }
+
+  .page-header p {
+    font-size: clamp(14px, 2vw, 15px);
   }
 
   .caja-selector {
-    padding: 20px;
+    padding: clamp(18px, 2.5vw, 22px);
+    gap: clamp(16px, 2.5vw, 20px);
+  }
+
+  .estadisticas-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: clamp(16px, 2.5vw, 20px);
+  }
+}
+
+@media (max-width: 768px) {
+  .listado-cajas {
+    padding: clamp(10px, 2vw, 14px);
+  }
+
+  .page-header {
+    padding: clamp(12px, 2.5vw, 16px);
+    margin-bottom: clamp(12px, 2vw, 16px);
+    border-radius: clamp(10px, 2vw, 14px);
+  }
+
+  .page-header h1 {
+    font-size: clamp(18px, 4vw, 22px);
+    margin-bottom: clamp(4px, 1vw, 6px);
+  }
+
+  .page-header p {
+    font-size: clamp(12px, 2.5vw, 14px);
+  }
+
+  /* Selector de caja compacto */
+  .caja-selector {
+    padding: clamp(12px, 2.5vw, 16px);
     flex-direction: column;
     align-items: stretch;
+    gap: clamp(12px, 2vw, 16px);
+    margin-bottom: clamp(12px, 2vw, 16px);
+    border-radius: clamp(10px, 2vw, 14px);
   }
 
   .selector-group {
     min-width: auto;
   }
 
+  .selector-group label {
+    font-size: clamp(11px, 2vw, 13px);
+    margin-bottom: clamp(4px, 1vw, 6px);
+  }
+
+  .selector-group select {
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2vw, 12px);
+    font-size: clamp(12px, 2.5vw, 13px);
+    border-radius: clamp(8px, 1.5vw, 10px);
+  }
+
+  /* Filtros de fecha compactos */
   .date-filters {
     flex-direction: column;
     align-items: stretch;
+    gap: clamp(10px, 2vw, 14px);
   }
 
+  .date-group label {
+    font-size: clamp(11px, 2vw, 13px);
+    margin-bottom: clamp(4px, 1vw, 6px);
+  }
+
+  .date-group input[type="date"] {
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2vw, 12px);
+    font-size: clamp(12px, 2.5vw, 13px);
+    border-radius: clamp(8px, 1.5vw, 10px);
+  }
+
+  /* Información de caja compacta */
   .caja-info-card {
-    padding: 20px;
+    padding: clamp(12px, 2.5vw, 16px);
+    margin-bottom: clamp(12px, 2vw, 16px);
+    border-radius: clamp(10px, 2vw, 14px);
+  }
+
+  .caja-info-header {
+    margin-bottom: clamp(12px, 2vw, 16px);
+    padding-bottom: clamp(12px, 2vw, 16px);
+  }
+
+  .caja-info-header h3 {
+    font-size: clamp(16px, 3.5vw, 20px);
+  }
+
+  .status-badge {
+    padding: clamp(4px, 1vw, 5px) clamp(8px, 2vw, 10px);
+    font-size: clamp(10px, 2vw, 11px);
+    border-radius: clamp(14px, 3vw, 18px);
   }
 
   .caja-info-details {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: clamp(12px, 2vw, 14px);
+  }
+
+  .info-item .label {
+    font-size: clamp(10px, 2vw, 12px);
+  }
+
+  .info-item .value {
+    font-size: clamp(16px, 3.5vw, 18px);
+  }
+
+  /* Pestañas compactas */
+  .content-tabs {
+    border-radius: clamp(10px, 2vw, 14px);
   }
 
   .tabs-header {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: clamp(2px, 0.5vw, 3px);
   }
 
   .tab-button {
-    text-align: left;
-    border-radius: 0;
+    text-align: center;
+    border-radius: clamp(6px, 1vw, 8px) clamp(6px, 1vw, 8px) 0 0;
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 16px);
+    font-size: clamp(11px, 2vw, 13px);
   }
 
   .tab-content {
-    padding: 20px;
+    padding: clamp(16px, 3vw, 20px);
   }
 
+  /* Tabla de historial compacta */
+  .historial-table-container {
+    border-radius: clamp(8px, 1.5vw, 10px);
+  }
+
+  .historial-table th,
+  .historial-table td {
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px);
+    font-size: clamp(11px, 2vw, 13px);
+  }
+
+  .historial-table th {
+    font-size: clamp(10px, 1.8vw, 11px);
+  }
+
+  .tipo-operacion {
+    padding: clamp(3px, 0.8vw, 4px) clamp(6px, 1.5vw, 8px);
+    font-size: clamp(9px, 1.8vw, 10px);
+    border-radius: clamp(14px, 3vw, 18px);
+  }
+
+  .monto {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .observaciones {
+    max-width: 150px;
+    font-size: clamp(11px, 2vw, 12px);
+  }
+
+  /* Estadísticas compactas */
   .estadisticas-grid {
     grid-template-columns: 1fr;
+    gap: clamp(12px, 2vw, 16px);
+    margin-bottom: clamp(16px, 3vw, 20px);
+  }
+
+  .estadistica-card {
+    padding: clamp(14px, 2.5vw, 18px);
+    gap: clamp(12px, 2.5vw, 16px);
+    border-radius: clamp(10px, 2vw, 14px);
+  }
+
+  .estadistica-icon {
+    width: clamp(40px, 8vw, 48px);
+    height: clamp(40px, 8vw, 48px);
+    border-radius: clamp(10px, 2vw, 14px);
+  }
+
+  .estadistica-icon svg,
+  .estadistica-icon .material-icons {
+    font-size: clamp(20px, 4vw, 24px) !important;
+    width: clamp(20px, 4vw, 24px);
+    height: clamp(20px, 4vw, 24px);
+  }
+
+  .estadistica-content h4 {
+    font-size: clamp(10px, 2vw, 11px);
+    margin-bottom: clamp(4px, 1vw, 5px);
+  }
+
+  .estadistica-value {
+    font-size: clamp(16px, 3.5vw, 20px);
+  }
+
+  /* Gráficos compactos */
+  .graficos-container {
+    grid-template-columns: 1fr;
+    gap: clamp(16px, 2.5vw, 20px);
+    margin-bottom: clamp(20px, 3vw, 24px);
+  }
+
+  .grafico-card {
+    padding: clamp(16px, 2.5vw, 20px);
+    border-radius: clamp(10px, 2vw, 14px);
+  }
+
+  .grafico-card h3 {
+    font-size: clamp(14px, 3vw, 16px);
+    margin-bottom: clamp(16px, 2.5vw, 18px);
+  }
+
+  /* Resumen detallado compacto */
+  .resumen-detallado {
+    padding: clamp(16px, 2.5vw, 20px);
+    border-radius: clamp(10px, 2vw, 14px);
+  }
+
+  .resumen-detallado h3 {
+    font-size: clamp(14px, 3vw, 16px);
+    margin-bottom: clamp(16px, 2.5vw, 18px);
+  }
+
+  .resumen-grid {
+    gap: clamp(16px, 2.5vw, 20px);
+  }
+
+  .resumen-item {
+    padding: clamp(14px, 2.5vw, 16px);
+    border-radius: clamp(8px, 1.5vw, 10px);
+  }
+
+  .resumen-label {
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  .resumen-valor {
+    font-size: clamp(20px, 4vw, 24px);
+  }
+
+  /* DataTable compacta */
+  .cajas-datatable-container {
+    border-radius: clamp(10px, 2vw, 14px);
+    margin-bottom: clamp(12px, 2vw, 16px);
+  }
+
+  .datatable-header {
+    padding: clamp(14px, 2.5vw, 18px);
+    flex-direction: column;
+    gap: clamp(12px, 2vw, 16px);
+    align-items: stretch;
+  }
+
+  .datatable-header h2 {
+    font-size: clamp(16px, 3.5vw, 18px);
+  }
+
+  .datatable-actions {
+    gap: clamp(8px, 1.5vw, 10px);
+    flex-wrap: wrap;
+  }
+
+  .cajas-datatable {
+    font-size: clamp(11px, 2vw, 13px);
+  }
+
+  .cajas-datatable th,
+  .cajas-datatable td {
+    padding: clamp(10px, 2vw, 12px) clamp(14px, 2.5vw, 16px);
+  }
+
+  .cajas-datatable th {
+    font-size: clamp(10px, 1.8vw, 11px);
+  }
+
+  .caja-nombre {
+    min-width: 160px;
+  }
+
+  .caja-info strong {
+    font-size: clamp(12px, 2.5vw, 14px);
+  }
+
+  .caja-description {
+    font-size: clamp(11px, 2vw, 12px);
+    margin-top: clamp(2px, 0.5vw, 3px);
+  }
+
+  .tipo-badge {
+    padding: clamp(3px, 0.8vw, 4px) clamp(6px, 1.5vw, 8px);
+    font-size: clamp(9px, 1.8vw, 10px);
+    border-radius: clamp(14px, 3vw, 18px);
+  }
+
+  /* Botones de acción compactos */
+  .acciones {
+    min-width: 100px;
+  }
+
+  .action-buttons {
+    gap: clamp(4px, 1vw, 6px);
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2vw, 12px);
+    font-size: clamp(11px, 2vw, 13px);
+    gap: clamp(4px, 1vw, 6px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .btn-sm {
+    padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 10px);
+    font-size: clamp(10px, 2vw, 11px);
+    border-radius: clamp(5px, 1vw, 6px);
+  }
+
+  /* Traspasos compactos */
+  .traspaso-info {
+    min-width: 130px;
+    max-width: 160px;
+  }
+  
+  .traspaso-detail {
+    padding: clamp(5px, 1vw, 6px);
+    gap: clamp(2px, 0.5vw, 3px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .traspaso-tipo .badge {
+    font-size: clamp(8px, 1.5vw, 9px);
+    padding: clamp(2px, 0.5vw, 3px) clamp(6px, 1vw, 7px);
+    border-radius: clamp(8px, 1.5vw, 10px);
+  }
+
+  .traspaso-monto {
+    font-size: clamp(11px, 2vw, 13px);
+  }
+
+  .traspaso-direccion {
+    font-size: clamp(9px, 1.8vw, 11px);
+  }
+
+  .text-muted {
+    font-size: clamp(9px, 1.5vw, 10px);
+  }
+
+  .text-primary {
+    font-size: clamp(9px, 1.5vw, 10px);
+  }
+
+  /* Estados vacíos compactos */
+  .empty-state {
+    padding: clamp(40px, 8vw, 60px) clamp(16px, 3vw, 20px);
+  }
+
+  .empty-state svg {
+    margin-bottom: clamp(14px, 3vw, 18px);
+    width: clamp(48px, 10vw, 64px);
+    height: clamp(48px, 10vw, 64px);
+  }
+
+  .empty-state h3 {
+    font-size: clamp(16px, 3.5vw, 18px);
+    margin-bottom: clamp(6px, 1vw, 8px);
+  }
+
+  .empty-state p {
+    font-size: clamp(12px, 2.5vw, 14px);
+  }
+
+  /* Estados de carga compactos */
+  .loading-container {
+    padding: clamp(40px, 8vw, 60px) clamp(16px, 3vw, 20px);
+    min-height: 300px;
+  }
+
+  .loading-spinner {
+    width: clamp(36px, 8vw, 44px);
+    height: clamp(36px, 8vw, 44px);
+    border-width: clamp(3px, 0.6vw, 4px);
+    margin-bottom: clamp(14px, 3vw, 18px);
+  }
+}
+
+@media (max-width: 480px) {
+  .listado-cajas {
+    padding: clamp(8px, 2vw, 10px);
+  }
+
+  .page-header {
+    padding: clamp(10px, 2.5vw, 12px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+    border-radius: clamp(8px, 2vw, 10px);
+  }
+
+  .page-header h1 {
+    font-size: clamp(16px, 4.5vw, 20px);
+    margin-bottom: clamp(3px, 1vw, 4px);
+  }
+
+  .page-header p {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  /* Selector ultra compacto */
+  .caja-selector {
+    padding: clamp(10px, 2.5vw, 12px);
+    gap: clamp(10px, 2vw, 12px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+    border-radius: clamp(8px, 2vw, 10px);
+  }
+
+  .selector-group label {
+    font-size: clamp(10px, 2vw, 11px);
+    margin-bottom: clamp(3px, 1vw, 4px);
+  }
+
+  .selector-group select {
+    padding: clamp(6px, 1.5vw, 8px) clamp(8px, 2vw, 10px);
+    font-size: clamp(11px, 2.5vw, 12px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  /* Filtros ultra compactos */
+  .date-filters {
+    gap: clamp(8px, 2vw, 10px);
+  }
+
+  .date-group label {
+    font-size: clamp(10px, 2vw, 11px);
+    margin-bottom: clamp(3px, 1vw, 4px);
+  }
+
+  .date-group input[type="date"] {
+    padding: clamp(6px, 1.5vw, 8px) clamp(8px, 2vw, 10px);
+    font-size: clamp(11px, 2.5vw, 12px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  /* Información ultra compacta */
+  .caja-info-card {
+    padding: clamp(10px, 2.5vw, 12px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+    border-radius: clamp(8px, 2vw, 10px);
+  }
+
+  .caja-info-header {
+    margin-bottom: clamp(10px, 2vw, 12px);
+    padding-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .caja-info-header h3 {
+    font-size: clamp(14px, 3.5vw, 18px);
+  }
+
+  .status-badge {
+    padding: clamp(3px, 1vw, 4px) clamp(6px, 1.5vw, 8px);
+    font-size: clamp(9px, 2vw, 10px);
+    border-radius: clamp(12px, 3vw, 16px);
+  }
+
+  .caja-info-details {
+    gap: clamp(10px, 2vw, 12px);
+  }
+
+  .info-item .label {
+    font-size: clamp(9px, 2vw, 10px);
+  }
+
+  .info-item .value {
+    font-size: clamp(14px, 3.5vw, 16px);
+  }
+
+  /* Pestañas ultra compactas */
+  .content-tabs {
+    border-radius: clamp(8px, 2vw, 10px);
+  }
+
+  .tabs-header {
+    padding: clamp(2px, 0.5vw, 3px);
+  }
+
+  .tab-button {
+    border-radius: clamp(5px, 1vw, 6px) clamp(5px, 1vw, 6px) 0 0;
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px);
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  .tab-content {
+    padding: clamp(12px, 3vw, 14px);
+  }
+
+  /* Tabla ultra compacta */
+  .historial-table-container {
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .historial-table th,
+  .historial-table td {
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2vw, 12px);
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  .historial-table th {
+    font-size: clamp(9px, 1.8vw, 10px);
+  }
+
+  .tipo-operacion {
+    padding: clamp(2px, 0.8vw, 3px) clamp(5px, 1.5vw, 6px);
+    font-size: clamp(8px, 1.8vw, 9px);
+    border-radius: clamp(12px, 3vw, 16px);
+  }
+
+  .monto {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  .observaciones {
+    max-width: 120px;
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  /* Estadísticas ultra compactas */
+  .estadisticas-grid {
+    gap: clamp(10px, 2vw, 12px);
+    margin-bottom: clamp(12px, 3vw, 16px);
+  }
+
+  .estadistica-card {
+    padding: clamp(10px, 2.5vw, 12px);
+    gap: clamp(10px, 2.5vw, 12px);
+    border-radius: clamp(8px, 2vw, 10px);
+  }
+
+  .estadistica-icon {
+    width: clamp(36px, 8vw, 42px);
+    height: clamp(36px, 8vw, 42px);
+    border-radius: clamp(8px, 2vw, 10px);
+  }
+
+  .estadistica-icon svg,
+  .estadistica-icon .material-icons {
+    font-size: clamp(18px, 4vw, 20px) !important;
+    width: clamp(18px, 4vw, 20px);
+    height: clamp(18px, 4vw, 20px);
+  }
+
+  .estadistica-content h4 {
+    font-size: clamp(9px, 2vw, 10px);
+    margin-bottom: clamp(3px, 1vw, 4px);
+  }
+
+  .estadistica-value {
+    font-size: clamp(14px, 3.5vw, 16px);
+  }
+
+  /* DataTable ultra compacta */
+  .cajas-datatable-container {
+    border-radius: clamp(8px, 2vw, 10px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .datatable-header {
+    padding: clamp(10px, 2.5vw, 12px);
+    gap: clamp(10px, 2vw, 12px);
+  }
+
+  .datatable-header h2 {
+    font-size: clamp(14px, 3.5vw, 16px);
+  }
+
+  .datatable-actions {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .cajas-datatable {
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  .cajas-datatable th,
+  .cajas-datatable td {
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px);
+  }
+
+  .cajas-datatable th {
+    font-size: clamp(9px, 1.8vw, 10px);
+  }
+
+  .caja-nombre {
+    min-width: 140px;
+  }
+
+  .caja-info strong {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  .caja-description {
+    font-size: clamp(10px, 2vw, 11px);
+    margin-top: clamp(2px, 0.5vw, 3px);
+  }
+
+  .tipo-badge {
+    padding: clamp(2px, 0.8vw, 3px) clamp(5px, 1.5vw, 6px);
+    font-size: clamp(8px, 1.8vw, 9px);
+    border-radius: clamp(12px, 3vw, 16px);
+  }
+
+  /* Botones ultra compactos */
+  .acciones {
+    min-width: 80px;
+  }
+
+  .action-buttons {
+    gap: clamp(3px, 1vw, 4px);
+  }
+
+  .btn {
+    padding: clamp(5px, 1.5vw, 6px) clamp(8px, 2vw, 10px);
+    font-size: clamp(10px, 2vw, 11px);
+    gap: clamp(3px, 1vw, 4px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+  }
+
+  .btn-sm {
+    padding: clamp(3px, 1vw, 4px) clamp(6px, 1.5vw, 8px);
+    font-size: clamp(9px, 2vw, 10px);
+    border-radius: clamp(4px, 1vw, 5px);
+  }
+
+  .btn svg,
+  .btn .material-icons {
+    font-size: clamp(14px, 3vw, 16px) !important;
+    width: clamp(14px, 3vw, 16px);
+    height: clamp(14px, 3vw, 16px);
+  }
+
+  /* Traspasos ultra compactos */
+  .traspaso-info {
+    min-width: 110px;
+    max-width: 140px;
+  }
+  
+  .traspaso-detail {
+    padding: clamp(4px, 1vw, 5px);
+    gap: clamp(2px, 0.5vw, 3px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+  }
+
+  .traspaso-tipo .badge {
+    font-size: clamp(7px, 1.5vw, 8px);
+    padding: clamp(2px, 0.5vw, 3px) clamp(5px, 1vw, 6px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .traspaso-monto {
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  .traspaso-direccion {
+    font-size: clamp(8px, 1.8vw, 9px);
+  }
+
+  .text-muted {
+    font-size: clamp(8px, 1.5vw, 9px);
+  }
+
+  .text-primary {
+    font-size: clamp(8px, 1.5vw, 9px);
+  }
+
+  /* Estados vacíos ultra compactos */
+  .empty-state {
+    padding: clamp(30px, 8vw, 40px) clamp(12px, 3vw, 16px);
+  }
+
+  .empty-state svg {
+    margin-bottom: clamp(10px, 3vw, 14px);
+    width: clamp(40px, 10vw, 48px);
+    height: clamp(40px, 10vw, 48px);
+  }
+
+  .empty-state h3 {
+    font-size: clamp(14px, 3.5vw, 16px);
+    margin-bottom: clamp(4px, 1vw, 6px);
+  }
+
+  .empty-state p {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  /* Estados de carga ultra compactos */
+  .loading-container {
+    padding: clamp(30px, 8vw, 40px) clamp(12px, 3vw, 16px);
+    min-height: 250px;
+  }
+
+  .loading-spinner {
+    width: clamp(32px, 8vw, 36px);
+    height: clamp(32px, 8vw, 36px);
+    border-width: clamp(3px, 0.6vw, 3px);
+    margin-bottom: clamp(10px, 3vw, 14px);
   }
 }
 
@@ -823,26 +1585,106 @@
   align-self: flex-end;
 }
 
-/* Responsive para traspasos */
-@media (max-width: 1200px) {
-  .traspaso-info {
-    min-width: 180px;
-    max-width: 220px;
+/* Controles de paginación */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(248, 250, 252, 0.5);
+  border-top: 1px solid rgba(203, 213, 225, 0.4);
+}
+
+.btn-pagina {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-pagina:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+.btn-pagina:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pagination-info {
+  color: #475569;
+  font-weight: 600;
+  font-size: 14px;
+  min-width: 200px;
+  text-align: center;
+}
+
+/* Responsive para paginación */
+@media (max-width: 768px) {
+  .pagination-container {
+    flex-wrap: wrap;
+    gap: clamp(10px, 2vw, 12px);
+    padding: clamp(14px, 2.5vw, 16px);
   }
-  
-  .traspaso-detail {
-    padding: 6px;
-    gap: 3px;
+
+  .btn-pagina {
+    padding: clamp(8px, 2vw, 10px) clamp(14px, 2.5vw, 16px);
+    font-size: clamp(12px, 2vw, 13px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .pagination-info {
+    min-width: 100%;
+    order: 3;
+    font-size: clamp(12px, 2vw, 13px);
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
+  .pagination-container {
+    flex-direction: column;
+    gap: clamp(8px, 2vw, 10px);
+    padding: clamp(10px, 2.5vw, 12px);
+  }
+
+  .btn-pagina {
+    width: 100%;
+    padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2.5vw, 14px);
+    font-size: clamp(11px, 2.5vw, 12px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .pagination-info {
+    min-width: auto;
+    order: 0;
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+}
+
+/* Responsive para traspasos */
+@media (max-width: 1200px) {
   .traspaso-info {
-    min-width: 150px;
-    max-width: 180px;
+    min-width: 160px;
+    max-width: 200px;
   }
   
-  .traspaso-direccion {
-    font-size: 10px;
+  .traspaso-detail {
+    padding: clamp(6px, 1vw, 7px);
+    gap: clamp(3px, 0.5vw, 4px);
+  }
+
+  .traspaso-monto {
+    font-size: clamp(12px, 2.5vw, 13px);
   }
 }

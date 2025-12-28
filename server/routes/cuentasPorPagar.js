@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient, Prisma } = require('@prisma/client');
+const CajaService = require('../services/cajaService');
+const { CuentaContableService } = require('../services/cuentaContableService');
 const { authenticateToken } = require('../middleware/authMiddleware');
 
 const prisma = new PrismaClient();
@@ -114,7 +116,7 @@ router.get('/', async (req, res) => {
     const cuentasActualizadas = cuentas.map(cuenta => {
       const diasVencido = calcularDiasVencidos(cuenta.fechaVencimiento);
       const estadoCalculado = determinarEstado(diasVencido, cuenta.montoPendiente);
-      
+
       return {
         ...cuenta,
         diasVencido: diasVencido,
@@ -141,12 +143,18 @@ router.get('/', async (req, res) => {
 // GET /api/contabilidad/cuentas-por-pagar/dashboard/resumen - Resumen para dashboard
 router.get('/dashboard/resumen', async (req, res) => {
   try {
+    // Calcular fechas del mes actual
+    const now = new Date();
+    const primerDiaMes = new Date(now.getFullYear(), now.getMonth(), 1);
+    const ultimoDiaMes = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
     const [
       totalPorPagar,
       totalVencidas,
       totalProximasVencer,
       cuentasPendientes,
-      cuentasVencidas
+      cuentasVencidas,
+      totalPagadoMes
     ] = await Promise.all([
       // Total por pagar
       prisma.cuentaPorPagar.aggregate({
@@ -176,6 +184,16 @@ router.get('/dashboard/resumen', async (req, res) => {
       // Cantidad de cuentas vencidas
       prisma.cuentaPorPagar.count({
         where: { estado: 'vencida' }
+      }),
+      // Total pagado en el mes actual
+      prisma.pagoCuentaPorPagar.aggregate({
+        _sum: { monto: true },
+        where: {
+          fechaPago: {
+            gte: primerDiaMes,
+            lte: ultimoDiaMes
+          }
+        }
       })
     ]);
 
@@ -184,8 +202,17 @@ router.get('/dashboard/resumen', async (req, res) => {
       totalVencidas: totalVencidas._sum.montoPendiente || 0,
       totalProximasVencer: totalProximasVencer._sum.montoPendiente || 0,
       cuentasPendientes,
-      cuentasVencidas
+      cuentasVencidas,
+      totalPagadoMes: totalPagadoMes._sum.monto || 0
     };
+
+    // Calculate total monthly quotas
+    const totalCuotasResult = await prisma.cuentaPorPagar.aggregate({
+      _sum: { cuotaMensual: true },
+      where: { estado: { in: ['pendiente', 'vencida'] } }
+    });
+
+    resumen.totalCuotasMensuales = totalCuotasResult._sum.cuotaMensual || 0;
 
     res.json(resumen);
   } catch (error) {
@@ -310,6 +337,7 @@ router.post('/', async (req, res) => {
       fechaVencimiento,
       concepto,
       montoOriginal,
+      cuotaMensual,
       moneda = 'DOP',
       observaciones
     } = req.body;
@@ -335,6 +363,7 @@ router.post('/', async (req, res) => {
         concepto,
         montoOriginal: parseFloat(montoOriginal),
         montoPendiente: parseFloat(montoOriginal),
+        cuotaMensual: cuotaMensual ? parseFloat(cuotaMensual) : null,
         moneda,
         estado,
         diasVencido,
@@ -381,6 +410,10 @@ router.put('/:id', async (req, res) => {
       const diferencia = parseFloat(updateData.montoOriginal) - cuentaActual.montoOriginal;
       updateData.montoPendiente = parseFloat(cuentaActual.montoPendiente) + diferencia;
       updateData.montoOriginal = parseFloat(updateData.montoOriginal);
+    }
+
+    if (updateData.cuotaMensual) {
+      updateData.cuotaMensual = parseFloat(updateData.cuotaMensual);
     }
 
     // Recalcular días vencidos y estado si se actualiza la fecha de vencimiento
@@ -437,71 +470,137 @@ router.delete('/:id', async (req, res) => {
 });
 
 // POST /api/contabilidad/cuentas-por-pagar/:id/pagar - Registrar pago
-router.post('/:id/pagar', async (req, res) => {
+router.post('/:id/pagar', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const { monto, fechaPago, metodoPago, numeroReferencia, observaciones, cajaId, cuentaBancariaId } = req.body;
+  const userId = req.user.userId;
+
   try {
-    const { id } = req.params;
-    const { monto, fechaPago, metodoPago, numeroReferencia, observaciones } = req.body;
-
-    if (!monto || !fechaPago || !metodoPago) {
-      return res.status(400).json({
-        message: 'Campos requeridos: monto, fechaPago, metodoPago'
+    const pago = await prisma.$transaction(async (tx) => {
+      // 1. Verificar que la cuenta existe
+      const cuenta = await tx.cuentaPorPagar.findUnique({
+        where: { id },
+        include: { proveedor: true }
       });
-    }
 
-    const cuenta = await prisma.cuentaPorPagar.findUnique({
-      where: { id }
+      if (!cuenta) {
+        throw new Error('Cuenta por pagar no encontrada');
+      }
+
+      const montoPago = new Prisma.Decimal(monto);
+      const nuevoSaldo = new Prisma.Decimal(cuenta.montoPendiente).minus(montoPago);
+
+      if (nuevoSaldo.lessThan(0)) {
+        throw new Error('El monto del pago excede el saldo pendiente');
+      }
+
+      // 2. Buscar categoría para el movimiento
+      let categoria = await tx.categoriaCuenta.findFirst({
+        where: {
+          OR: [
+            { nombre: { contains: 'Pago a Proveedores', mode: 'insensitive' } },
+            { nombre: { contains: 'Cuentas por Pagar', mode: 'insensitive' } },
+            { nombre: { contains: 'Gastos', mode: 'insensitive' } }
+          ],
+          tipo: 'gasto'
+        }
+      });
+
+      if (!categoria) {
+        categoria = await tx.categoriaCuenta.findFirst({ where: { tipo: 'gasto' } });
+      }
+
+      if (!categoria) {
+        throw new Error('No se encontró una categoría de gasto válida para registrar el movimiento.');
+      }
+
+      // 3. Crear el registro del pago
+      const nuevoPago = await tx.pagoCuentaPorPagar.create({
+        data: {
+          cuentaPorPagarId: id,
+          monto: montoPago,
+          fechaPago: new Date(fechaPago),
+          metodoPago,
+          numeroReferencia,
+          observaciones,
+          creadoPorId: userId
+        }
+      });
+
+      // 4. Actualizar la cuenta por pagar
+      const estado = nuevoSaldo.equals(0) ? 'pagada' : 'pendiente';
+      await tx.cuentaPorPagar.update({
+        where: { id },
+        data: {
+          montoPendiente: nuevoSaldo,
+          estado,
+          updatedAt: new Date()
+        }
+      });
+
+      // 5. Crear Movimiento Contable (Gasto)
+      if (metodoPago === 'caja' || metodoPago === 'banco' || metodoPago === 'papeleria') {
+        if ((metodoPago === 'caja' && cajaId) || (metodoPago === 'banco' && cuentaBancariaId)) {
+          await tx.movimientoContable.create({
+            data: {
+              descripcion: `Pago Factura Prov. ${cuenta.proveedor?.nombre || ''} - ${observaciones || 'Pago Cuentas por Pagar'}`,
+              monto: montoPago,
+              tipo: 'gasto',
+              fecha: new Date(fechaPago),
+              metodo: metodoPago,
+              cajaId: cajaId || null,
+              cuentaBancariaId: cuentaBancariaId || null,
+              categoriaId: categoria.id,
+              usuarioId: userId
+            }
+          });
+        }
+      }
+
+      return nuevoPago;
     });
 
-    if (!cuenta) {
-      return res.status(404).json({ message: 'Cuenta por pagar no encontrada' });
+    // Post-transaction updates
+    if (cajaId) {
+      await CajaService.recalculateAndUpdateSaldo(cajaId);
+    }
+    if (cuentaBancariaId) {
+      const cb = await prisma.cuentaBancaria.findUnique({ where: { id: cuentaBancariaId } });
+      if (cb && cb.cuentaContableId) {
+        await CuentaContableService.recalculateAndUpdateSaldo(cb.cuentaContableId);
+      }
     }
 
-    const montoPago = parseFloat(monto);
+    res.json(pago);
+  } catch (error) {
+    console.error('Error al registrar pago:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
-    if (montoPago > cuenta.montoPendiente) {
-      return res.status(400).json({
-        message: 'El monto del pago no puede ser mayor al monto pendiente'
-      });
-    }
+// GET /api/contabilidad/cuentas-por-pagar/:id/pagos - Obtener historial de pagos
+router.get('/:id/pagos', async (req, res) => {
+  try {
+    const { id } = req.params;
 
-    // Actualizar el monto pendiente
-    const nuevoMontoPendiente = cuenta.montoPendiente - montoPago;
-    const diasVencido = calcularDiasVencidos(cuenta.fechaVencimiento);
-    const nuevoEstado = determinarEstado(diasVencido, nuevoMontoPendiente);
-
-    const cuentaActualizada = await prisma.cuentaPorPagar.update({
-      where: { id },
-      data: {
-        montoPendiente: nuevoMontoPendiente,
-        estado: nuevoEstado,
-        diasVencido
-      },
+    const pagos = await prisma.pagoCuentaPorPagar.findMany({
+      where: { cuentaPorPagarId: id },
       include: {
-        proveedor: {
+        creadoPor: {
           select: {
             id: true,
             nombre: true,
-            razonSocial: true,
-            telefono: true,
-            email: true
+            apellido: true,
+            username: true
           }
         }
-      }
+      },
+      orderBy: { fechaPago: 'desc' }
     });
 
-    res.json({
-      message: 'Pago registrado correctamente',
-      cuenta: cuentaActualizada,
-      pago: {
-        monto: montoPago,
-        fechaPago,
-        metodoPago,
-        numeroReferencia,
-        observaciones
-      }
-    });
+    res.json(pagos);
   } catch (error) {
-    console.error('Error al registrar pago:', error);
+    console.error('Error al obtener pagos:', error);
     const errorInfo = handlePrismaError(error);
     res.status(500).json(errorInfo);
   }

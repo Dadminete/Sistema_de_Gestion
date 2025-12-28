@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { FileText, DollarSign, Clock, AlertCircle, TrendingUp, Calendar } from 'lucide-react';
+import { DollarSign, Clock, AlertCircle, TrendingUp, RefreshCw } from 'lucide-react';
 import KpiWidget from '../components/ui/KpiWidget';
 import InfoCard from '../components/ui/InfoCard';
 import DataTable from '../components/ui/DataTable';
 import FacturasChart from '../components/charts/FacturasChart';
 import facturaService from '../services/facturaService';
 import { formatearMoneda, obtenerTextoEstado } from '../utils/facturaUtils';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import '../styles/invoices-theme.css';
 import './FacturasDashboard.css';
 
@@ -44,12 +44,12 @@ const FacturasDashboard: React.FC = () => {
         facturaService.obtenerFacturas({ limit: 50 }) // Increased limit for datatable
       ]);
       setEstadisticas(stats);
-      
+
       // Ordenar facturas por último pago realizado (descendente)
       const facturasOrdenadas = (facturas.facturas || []).sort((a: any, b: any) => {
         const pagosA = a.pagos?.filter((pago: any) => pago.estado === 'confirmado') || [];
         const pagosB = b.pagos?.filter((pago: any) => pago.estado === 'confirmado') || [];
-        
+
         // Facturas sin pagos van al final
         if (pagosA.length === 0 && pagosB.length === 0) {
           // Si ambas no tienen pagos, ordenar por fecha de factura descendente
@@ -57,21 +57,21 @@ const FacturasDashboard: React.FC = () => {
         }
         if (pagosA.length === 0) return 1;  // a va después
         if (pagosB.length === 0) return -1; // b va después
-        
+
         const getUltimaFechaPago = (pagos: any[]) => {
           return pagos.reduce((ultimaFecha, pago) => {
             const fechaPago = new Date(pago.fechaPago || pago.fechaCreacion || pago.createdAt || pago.fecha);
             return fechaPago > ultimaFecha ? fechaPago : ultimaFecha;
           }, new Date(0));
         };
-        
+
         const fechaUltimaA = getUltimaFechaPago(pagosA);
         const fechaUltimaB = getUltimaFechaPago(pagosB);
-        
+
         // Ordenar descendente: más reciente primero
         return fechaUltimaB.getTime() - fechaUltimaA.getTime();
       });
-      
+
       setUltimasFacturas(facturasOrdenadas);
     } catch (error) {
       console.error('Error al cargar datos:', error);
@@ -145,13 +145,13 @@ const FacturasDashboard: React.FC = () => {
           if (pagosConfirmados.length === 0) {
             return <span className="text-slate-500 text-sm text-center block">Sin pagos</span>;
           }
-          
+
           // Obtener la fecha más reciente de todos los pagos
-          const fechaUltimoPago = pagosConfirmados.reduce((ultimaFecha, pago) => {
+          const fechaUltimoPago = pagosConfirmados.reduce((ultimaFecha: Date, pago: any) => {
             const fechaPago = new Date(pago.fechaPago || pago.fechaCreacion || pago.createdAt || pago.fecha);
             return fechaPago > ultimaFecha ? fechaPago : ultimaFecha;
           }, new Date(0));
-          
+
           return <span className="text-emerald-400 text-sm text-center block">{fechaUltimoPago.toLocaleDateString('es-DO')}</span>;
         },
         sortingFn: (rowA, rowB) => {
@@ -159,13 +159,13 @@ const FacturasDashboard: React.FC = () => {
           const facturaB = rowB.original;
           const pagosA = facturaA.pagos?.filter((pago: any) => pago.estado === 'confirmado') || [];
           const pagosB = facturaB.pagos?.filter((pago: any) => pago.estado === 'confirmado') || [];
-          
+
           // Si ninguna tiene pagos, mantener orden original
           if (pagosA.length === 0 && pagosB.length === 0) return 0;
           // Las facturas sin pagos van al final
           if (pagosA.length === 0) return 1;
           if (pagosB.length === 0) return -1;
-          
+
           // Obtener fecha del último pago de cada factura
           const getUltimaFechaPago = (pagos: any[]) => {
             return pagos.reduce((ultimaFecha, pago) => {
@@ -173,10 +173,10 @@ const FacturasDashboard: React.FC = () => {
               return fechaPago > ultimaFecha ? fechaPago : ultimaFecha;
             }, new Date(0));
           };
-          
+
           const fechaUltimaA = getUltimaFechaPago(pagosA);
           const fechaUltimaB = getUltimaFechaPago(pagosB);
-          
+
           // Orden descendente: más reciente primero
           return fechaUltimaB.getTime() - fechaUltimaA.getTime();
         }
@@ -241,7 +241,7 @@ const FacturasDashboard: React.FC = () => {
           </div>
           <div className="header-actions">
             <button title="Refresh" onClick={() => cargarDatos()}>
-              <span className="material-icons">refresh</span>
+              <RefreshCw size={18} strokeWidth={2.5} />
             </button>
           </div>
         </div>

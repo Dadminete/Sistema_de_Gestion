@@ -11,36 +11,65 @@
   display: flex;
   flex-direction: column;
   transition: margin-left 0.3s ease;
-  margin-left: var(--layout-structure-sidebar-width, 250px); /* Default for larger screens */
+  margin-left: var(--layout-structure-sidebar-width, 250px);
   outline: none !important;
   border: none !important;
+  min-width: 0;
 }
 
+/* Cuando el sidebar está colapsado, el contenido ocupa todo el ancho */
 .layout-container.sidebar-collapsed .main-container {
-  margin-left: var(--layout-structure-sidebar-width-collapsed, 60px); /* Collapsed for larger screens */
-}
-
-@media (max-width: 768px) {
-  .main-container {
-    margin-left: 0; /* No margin on small screens */
-  }
-
-  .layout-container.sidebar-collapsed .main-container {
-    margin-left: 0; /* No margin on small screens even if sidebar is "collapsed" (hidden) */
-  }
+  margin-left: 0;
 }
 
 .content {
-  padding: 20px; /* Default padding */
+  padding: clamp(10px, 2vw, 20px);
   margin-top: var(--layout-structure-header-height, 64px);
   background-color: var(--colors-background-default);
   flex-grow: 1;
   outline: none !important;
   border: none !important;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
-@media (max-width: 768px) {
+/* Tablet & Below */
+@media (max-width: 1024px) {
   .content {
-    padding: 10px; /* Reduced padding on small screens */
+    padding: clamp(12px, 2vw, 16px);
   }
 }
+
+/* Mobile & Small Tablets */
+@media (max-width: 768px) {
+  .main-container {
+    margin-left: 0;
+  }
+
+  .layout-container.sidebar-collapsed .main-container {
+    margin-left: 0;
+  }
+
+  .content {
+    padding: clamp(8px, 2vw, 12px);
+    margin-top: var(--layout-structure-header-height, 56px);
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .content {
+    padding: 8px;
+  }
+}
+
+/* Landscape Mobile */
+@media (max-width: 900px) and (max-height: 500px) {
+  .content {
+    padding: 8px 12px;
+    margin-top: var(--layout-structure-header-height, 48px);
+  }
+}
+
+

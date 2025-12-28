@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { CajaService } = require('./cajaService'); // Import CajaService
 const { CuentaContableService } = require('./cuentaContableService'); // Import CuentaContableService
+const CuentasPorPagarService = require('./cuentasPorPagarService'); // Import CuentasPorPagarService
 
 /**
  * Helper function to update saldoActual of a cuenta contable based on its associated movements
@@ -112,7 +113,7 @@ const movimientoContableService = {
   },
 
   async createMovimiento(movimientoData) {
-    const { tipo, monto, categoriaId, metodo, cajaId, bankId, cuentaBancariaId, descripcion, usuarioId, fecha } = movimientoData;
+    const { tipo, monto, categoriaId, metodo, cajaId, bankId, cuentaBancariaId, descripcion, usuarioId, fecha, cuentaPorPagarId } = movimientoData;
 
     // Resolver automáticamente la caja cuando el método es 'caja' o 'papeleria'
     let resolvedCajaId = cajaId;
@@ -170,6 +171,22 @@ const movimientoContableService = {
         caja: true,
       },
     });
+
+    // Si hay una cuenta por pagar asociada, registrar el pago
+    if (cuentaPorPagarId && tipo === 'gasto') {
+      try {
+        await CuentasPorPagarService.registrarPago(cuentaPorPagarId, {
+          monto: parseFloat(monto),
+          fechaPago: fecha || new Date(),
+          metodoPago: metodo,
+          observaciones: `Pago registrado desde movimiento contable: ${descripcion || 'S/D'}`
+        });
+      } catch (error) {
+        console.error('[CreateMovimiento] Error al registrar pago en cuenta por pagar:', error);
+        // No lanzamos el error para no revertir la creación del movimiento, 
+        // pero idealmente debería ser atómico.
+      }
+    }
 
     // Si el movimiento está asociado a una caja, recalcular su saldo.
     if (createdMovimiento.cajaId) {

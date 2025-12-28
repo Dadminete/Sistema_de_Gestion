@@ -1106,23 +1106,938 @@
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
-  .users-page {
-    padding: 1rem;
+@media (max-width: 1024px) {
+  .filters-container {
+    padding: clamp(1.25rem, 2vw, 1.5rem);
+    margin-bottom: clamp(1rem, 2vw, 1.25rem);
+    border-radius: clamp(14px, 2.5vw, 18px);
   }
-  
-  .page-header {
-    flex-direction: column;
-    align-items: stretch;
+
+  .filters-row {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: clamp(0.875rem, 1.5vw, 1rem);
   }
-  
-  .header-right {
-    justify-content: center;
+
+  .filters-date-group {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: clamp(0.875rem, 1.5vw, 1rem);
+    margin-top: clamp(0.75rem, 1.5vw, 0.875rem);
+    padding-top: clamp(0.75rem, 1.5vw, 0.875rem);
   }
-  
+
   .modal form {
     grid-template-columns: 1fr;
   }
+
+  .avatar-section {
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 2vw, 1.25rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .users-page {
+    padding: clamp(12px, 2vw, 16px);
+  }
+  
+  /* Header compacto */
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: clamp(12px, 2vw, 16px);
+    padding: clamp(12px, 2vw, 16px);
+    margin-bottom: clamp(12px, 2vw, 16px);
+  }
+  
+  .header-left {
+    min-width: auto;
+  }
+
+  .breadcrumb h4 {
+    font-size: clamp(20px, 4vw, 24px);
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .breadcrumb h4::before {
+    font-size: clamp(18px, 3.5vw, 22px);
+  }
+  
+  .header-right {
+    justify-content: flex-start;
+    gap: clamp(10px, 2vw, 12px);
+    flex-wrap: wrap;
+  }
+
+  .header-right .button.primary {
+    padding: clamp(10px, 2vw, 12px) clamp(18px, 3vw, 22px);
+    font-size: clamp(13px, 2.5vw, 14px);
+    border-radius: clamp(8px, 1.5vw, 10px);
+    box-shadow: 0 3px 10px rgba(74, 105, 187, 0.25);
+  }
+
+  .header-right .button.primary .material-icons {
+    font-size: clamp(16px, 3.5vw, 18px);
+    margin-right: clamp(3px, 0.5vw, 4px);
+  }
+
+  /* Filters container compacto */
+  .filters-container {
+    padding: clamp(12px, 2.5vw, 16px);
+    margin-bottom: clamp(12px, 2vw, 16px);
+    border-radius: clamp(12px, 2.5vw, 16px);
+  }
+
+  .filters-container::before {
+    height: clamp(2px, 0.5vw, 3px);
+  }
+
+  .filters-row {
+    grid-template-columns: 1fr;
+    gap: clamp(10px, 2vw, 14px);
+  }
+
+  .filters-actions {
+    gap: clamp(8px, 1.5vw, 10px);
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters-actions .btn {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .filters-date-group {
+    grid-template-columns: 1fr;
+    gap: clamp(10px, 2vw, 14px);
+    margin-top: clamp(10px, 2vw, 12px);
+    padding-top: clamp(10px, 2vw, 12px);
+  }
+
+  .filters-date-group .filter-group:last-child {
+    flex-direction: column;
+    gap: clamp(8px, 1.5vw, 10px);
+  }
+
+  .filters-date-group .btn {
+    width: 100%;
+    min-width: auto;
+    padding: clamp(8px, 1.5vw, 10px) clamp(12px, 2vw, 14px);
+  }
+
+  .filter-group {
+    gap: clamp(6px, 1vw, 8px);
+  }
+
+  .filter-group label {
+    font-size: clamp(11px, 2vw, 12px);
+    gap: clamp(5px, 1vw, 6px);
+    margin-bottom: clamp(3px, 0.5vw, 4px);
+  }
+
+  .filter-group label::before {
+    font-size: clamp(11px, 2vw, 12px);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .filters-container input[type="text"],
+  .filters-container input[type="date"],
+  .filters-container select {
+    padding: clamp(8px, 2vw, 10px) clamp(12px, 2.5vw, 14px);
+    font-size: clamp(13px, 2.5vw, 14px);
+    border-radius: clamp(8px, 1.5vw, 10px);
+    height: clamp(36px, 7vw, 40px);
+  }
+
+  .search-group input {
+    background-size: clamp(16px, 3.5vw, 18px);
+    background-position: right clamp(10px, 2vw, 12px) center;
+    padding-right: clamp(40px, 8vw, 48px);
+  }
+
+  /* Badges compactos */
+  .role-badge,
+  .permiso-badge,
+  .action-badge,
+  .table-badge {
+    padding: clamp(3px, 0.8vw, 4px) clamp(8px, 1.5vw, 10px);
+    font-size: clamp(10px, 2vw, 11px);
+    border-radius: clamp(8px, 1.5vw, 10px);
+    margin: clamp(1px, 0.3vw, 2px);
+  }
+
+  .status-badge {
+    padding: clamp(3px, 0.8vw, 4px) clamp(10px, 2vw, 12px);
+    font-size: clamp(10px, 2vw, 11px);
+    border-radius: clamp(8px, 1.5vw, 10px);
+  }
+
+  .roles-badges,
+  .permisos-badges {
+    gap: clamp(3px, 0.8vw, 4px);
+  }
+
+  .roles-cell {
+    gap: clamp(3px, 0.8vw, 4px);
+  }
+
+  .no-roles {
+    font-size: clamp(11px, 2vw, 12px);
+  }
+
+  /* Multi-select compacto */
+  .roles-selector,
+  .permisos-selector {
+    max-height: 140px;
+    padding: clamp(6px, 1.5vw, 8px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .role-item,
+  .permiso-item {
+    padding: clamp(6px, 1.5vw, 8px) 0;
+  }
+
+  .role-item .checkbox-custom {
+    margin-right: clamp(6px, 1.5vw, 8px);
+  }
+
+  .permiso-item .checkbox-custom {
+    margin-right: clamp(10px, 2vw, 12px);
+    margin-top: clamp(2px, 0.5vw, 3px);
+  }
+
+  .permiso-info {
+    gap: clamp(2px, 0.5vw, 3px);
+  }
+
+  .permiso-name {
+    font-size: clamp(13px, 2.5vw, 14px);
+  }
+
+  .permiso-desc {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .text-muted {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  /* Header stats compacto */
+  .header-stats {
+    gap: clamp(8px, 1.5vw, 10px);
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    padding: clamp(6px, 1.5vw, 8px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    min-width: clamp(70px, 15vw, 80px);
+  }
+
+  .stat-label {
+    font-size: clamp(10px, 2vw, 11px);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .stat-value {
+    font-size: clamp(18px, 4vw, 22px);
+  }
+
+  /* Permission usage compacto */
+  .permission-usage {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .usage-icon {
+    font-size: clamp(16px, 3.5vw, 18px);
+    width: clamp(20px, 4.5vw, 24px);
+    height: clamp(20px, 4.5vw, 24px);
+  }
+
+  .usage-count {
+    font-size: clamp(10px, 2vw, 11px);
+    padding: clamp(2px, 0.5vw, 3px) clamp(5px, 1vw, 6px);
+    border-radius: clamp(8px, 1.5vw, 10px);
+    min-width: clamp(18px, 4vw, 20px);
+  }
+
+  /* Modal form compacto */
+  .modal-body form {
+    grid-template-columns: 1fr;
+    gap: clamp(10px, 2vw, 14px);
+  }
+
+  .form-group {
+    gap: clamp(3px, 0.8vw, 4px);
+  }
+
+  .form-group label {
+    font-size: clamp(13px, 2.5vw, 14px);
+    margin-bottom: clamp(3px, 0.5vw, 4px);
+  }
+
+  .form-group textarea {
+    min-height: 70px;
+  }
+
+  /* Checkbox compacto */
+  .checkbox-label {
+    gap: clamp(6px, 1.5vw, 8px);
+    font-size: clamp(13px, 2.5vw, 14px);
+  }
+
+  .checkmark {
+    width: clamp(18px, 4vw, 20px);
+    height: clamp(18px, 4vw, 20px);
+    border-width: clamp(1.5px, 0.4vw, 2px);
+    border-radius: clamp(5px, 1vw, 6px);
+  }
+
+  .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    font-size: clamp(10px, 2.5vw, 12px);
+  }
+
+  /* Avatar section compacto */
+  .avatar-section {
+    grid-template-columns: 1fr;
+    gap: clamp(12px, 2.5vw, 16px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+    padding: clamp(10px, 2vw, 12px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .avatar-upload-btn {
+    gap: clamp(6px, 1.5vw, 8px);
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    font-size: clamp(13px, 2.5vw, 14px);
+  }
+
+  .avatar-preview {
+    width: clamp(100px, 20vw, 120px);
+    height: clamp(100px, 20vw, 120px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    border-width: clamp(1.5px, 0.4vw, 2px);
+    margin: 0 auto;
+  }
+
+  .avatar-placeholder {
+    font-size: clamp(12px, 2.5vw, 13px);
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .avatar-placeholder .material-icons {
+    font-size: clamp(28px, 6vw, 32px);
+  }
+
+  /* Avatar in table compacto */
+  .avatar-table-img,
+  .avatar-table-placeholder {
+    width: clamp(28px, 6vw, 32px);
+    height: clamp(28px, 6vw, 32px);
+    border-width: clamp(1.5px, 0.4vw, 2px);
+  }
+
+  .avatar-table-placeholder .material-icons {
+    font-size: clamp(14px, 3vw, 16px);
+  }
+
+  /* Action buttons compactos */
+  .action-buttons {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .action-btn {
+    width: clamp(28px, 6vw, 32px);
+    height: clamp(28px, 6vw, 32px);
+    border-radius: clamp(5px, 1vw, 6px);
+  }
+
+  .action-btn .material-icons {
+    font-size: clamp(14px, 3vw, 16px);
+  }
+
+  /* Form actions compacto */
+  .form-actions {
+    gap: clamp(8px, 1.5vw, 10px);
+    margin-top: clamp(14px, 3vw, 18px);
+    padding-top: clamp(10px, 2vw, 12px);
+    flex-wrap: wrap;
+  }
+
+  .form-actions .button {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  /* Avatar input group compacto */
+  .avatar-input-group {
+    flex-direction: column;
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .avatar-btn {
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px);
+    gap: clamp(6px, 1.5vw, 8px);
+    font-size: clamp(13px, 2.5vw, 14px);
+  }
+
+  /* Pagination compacto */
+  .pagination-container {
+    flex-direction: column;
+    gap: clamp(10px, 2vw, 12px);
+    padding: clamp(10px, 2vw, 12px) 0;
+    margin-top: clamp(10px, 2vw, 12px);
+    align-items: stretch;
+  }
+
+  .pagination-info {
+    font-size: clamp(12px, 2.5vw, 13px);
+    text-align: center;
+  }
+
+  .pagination-buttons {
+    gap: clamp(6px, 1.5vw, 8px);
+    justify-content: center;
+  }
+
+  .pagination-buttons .btn {
+    padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2.5vw, 14px);
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  /* Entry details compacto */
+  .entry-details {
+    max-height: 60vh;
+  }
+
+  .detail-section {
+    margin-bottom: clamp(12px, 2.5vw, 16px);
+    padding-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .detail-section h3 {
+    margin-bottom: clamp(10px, 2vw, 12px);
+    font-size: clamp(16px, 3.5vw, 18px);
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: clamp(8px, 1.5vw, 10px);
+  }
+
+  .detail-item {
+    gap: clamp(3px, 0.8vw, 4px);
+  }
+
+  .detail-item label {
+    font-size: clamp(11px, 2vw, 12px);
+  }
+
+  .detail-item span {
+    font-size: clamp(13px, 2.5vw, 14px);
+  }
+
+  .json-display,
+  .error-message,
+  .user-agent {
+    padding: clamp(10px, 2vw, 12px);
+    font-size: clamp(11px, 2vw, 12px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  /* Button styles compacto */
+  .btn {
+    gap: clamp(5px, 1vw, 6px);
+    padding: clamp(8px, 1.5vw, 10px) clamp(14px, 2.5vw, 18px);
+    border-radius: clamp(8px, 1.5vw, 10px);
+    font-size: clamp(12px, 2.5vw, 13px);
+    height: clamp(36px, 7vw, 40px);
+  }
+
+  .btn svg {
+    width: clamp(14px, 3vw, 16px);
+    height: clamp(14px, 3vw, 16px);
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    border-radius: clamp(8px, 1.5vw, 10px);
+  }
+
+  .btn-secondary::after {
+    border-radius: clamp(8px, 1.5vw, 10px);
+  }
+
+  /* User info compacto */
+  .user-info {
+    gap: clamp(2px, 0.5vw, 3px);
+  }
+
+  .user-name {
+    font-size: clamp(13px, 2.5vw, 14px);
+  }
+
+  .user-username,
+  .duration-text,
+  .ip-text {
+    font-size: clamp(11px, 2vw, 12px);
+  }
+
+  /* Table actions compacto */
+  .table-actions {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  /* Compact inputs */
+  .compact-input {
+    padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2vw, 12px) !important;
+    font-size: clamp(12px, 2.5vw, 13px) !important;
+    height: clamp(34px, 7vw, 38px) !important;
+  }
+
+  /* Role selector compacto */
+  .role-selector {
+    min-height: 90px;
+  }
+
+  .role-selector option {
+    padding: clamp(6px, 1.5vw, 8px);
+    margin: clamp(2px, 0.5vw, 3px) 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .users-page {
+    padding: clamp(8px, 2vw, 10px);
+  }
+
+  /* Header ultra compacto */
+  .page-header {
+    gap: clamp(10px, 2vw, 12px);
+    padding: clamp(10px, 2vw, 12px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+
+  .breadcrumb h4 {
+    font-size: clamp(18px, 4.5vw, 22px);
+    gap: clamp(5px, 1.5vw, 6px);
+  }
+
+  .breadcrumb h4::before {
+    font-size: clamp(16px, 3.5vw, 20px);
+  }
+
+  .header-right {
+    gap: clamp(8px, 2vw, 10px);
+  }
+
+  .header-right .button.primary {
+    padding: clamp(8px, 2vw, 10px) clamp(14px, 3vw, 18px);
+    font-size: clamp(12px, 2.5vw, 13px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .header-right .button.primary .material-icons {
+    font-size: clamp(14px, 3.5vw, 16px);
+    margin-right: clamp(2px, 0.5vw, 3px);
+  }
+
+  /* Filters ultra compacto */
+  .filters-container {
+    padding: clamp(10px, 2.5vw, 12px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+    border-radius: clamp(10px, 2.5vw, 14px);
+  }
+
+  .filters-row {
+    gap: clamp(8px, 2vw, 10px);
+  }
+
+  .filters-actions {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .filters-date-group {
+    gap: clamp(8px, 2vw, 10px);
+    margin-top: clamp(8px, 2vw, 10px);
+    padding-top: clamp(8px, 2vw, 10px);
+  }
+
+  .filters-date-group .filter-group:last-child {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .filters-date-group .btn {
+    padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2vw, 12px);
+  }
+
+  .filter-group {
+    gap: clamp(4px, 1vw, 6px);
+  }
+
+  .filter-group label {
+    font-size: clamp(10px, 2vw, 11px);
+    gap: clamp(4px, 1vw, 5px);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .filters-container input[type="text"],
+  .filters-container input[type="date"],
+  .filters-container select {
+    padding: clamp(6px, 2vw, 8px) clamp(10px, 2.5vw, 12px);
+    font-size: clamp(12px, 2.5vw, 13px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    height: clamp(32px, 7vw, 36px);
+  }
+
+  .search-group input {
+    background-size: clamp(14px, 3.5vw, 16px);
+    background-position: right clamp(8px, 2vw, 10px) center;
+    padding-right: clamp(36px, 8vw, 42px);
+  }
+
+  /* Badges ultra compactos */
+  .role-badge,
+  .permiso-badge,
+  .action-badge,
+  .table-badge {
+    padding: clamp(2px, 0.8vw, 3px) clamp(6px, 1.5vw, 8px);
+    font-size: clamp(9px, 2vw, 10px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    margin: clamp(1px, 0.3vw, 2px);
+  }
+
+  .status-badge {
+    padding: clamp(2px, 0.8vw, 3px) clamp(8px, 2vw, 10px);
+    font-size: clamp(9px, 2vw, 10px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .roles-badges,
+  .permisos-badges,
+  .roles-cell {
+    gap: clamp(2px, 0.8vw, 3px);
+  }
+
+  .no-roles {
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  /* Multi-select ultra compacto */
+  .roles-selector,
+  .permisos-selector {
+    max-height: 120px;
+    padding: clamp(5px, 1.5vw, 6px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+  }
+
+  .role-item,
+  .permiso-item {
+    padding: clamp(5px, 1.5vw, 6px) 0;
+  }
+
+  .role-item .checkbox-custom {
+    margin-right: clamp(5px, 1.5vw, 6px);
+  }
+
+  .permiso-item .checkbox-custom {
+    margin-right: clamp(8px, 2vw, 10px);
+    margin-top: clamp(1px, 0.5vw, 2px);
+  }
+
+  .permiso-info {
+    gap: clamp(1px, 0.5vw, 2px);
+  }
+
+  .permiso-name {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .permiso-desc {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  .text-muted {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  /* Header stats ultra compacto */
+  .header-stats {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .stat-item {
+    padding: clamp(5px, 1.5vw, 6px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+    min-width: clamp(60px, 15vw, 70px);
+  }
+
+  .stat-label {
+    font-size: clamp(9px, 2vw, 10px);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .stat-value {
+    font-size: clamp(16px, 4vw, 20px);
+  }
+
+  /* Permission usage ultra compacto */
+  .permission-usage {
+    gap: clamp(5px, 1.5vw, 6px);
+  }
+
+  .usage-icon {
+    font-size: clamp(14px, 3.5vw, 16px);
+    width: clamp(18px, 4.5vw, 20px);
+    height: clamp(18px, 4.5vw, 20px);
+  }
+
+  .usage-count {
+    font-size: clamp(9px, 2vw, 10px);
+    padding: clamp(1px, 0.5vw, 2px) clamp(4px, 1vw, 5px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    min-width: clamp(16px, 4vw, 18px);
+  }
+
+  /* Form ultra compacto */
+  .modal-body form {
+    gap: clamp(8px, 2vw, 10px);
+  }
+
+  .form-group {
+    gap: clamp(2px, 0.8vw, 3px);
+  }
+
+  .form-group label {
+    font-size: clamp(12px, 2.5vw, 13px);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .form-group textarea {
+    min-height: 60px;
+  }
+
+  /* Checkbox ultra compacto */
+  .checkbox-label {
+    gap: clamp(5px, 1.5vw, 6px);
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .checkmark {
+    width: clamp(16px, 4vw, 18px);
+    height: clamp(16px, 4vw, 18px);
+    border-width: clamp(1.5px, 0.4vw, 2px);
+    border-radius: clamp(4px, 1vw, 5px);
+  }
+
+  .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    font-size: clamp(9px, 2.5vw, 10px);
+  }
+
+  /* Avatar section ultra compacto */
+  .avatar-section {
+    gap: clamp(10px, 2.5vw, 12px);
+    margin-bottom: clamp(8px, 2vw, 10px);
+    padding: clamp(8px, 2vw, 10px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+  }
+
+  .avatar-upload-btn {
+    gap: clamp(5px, 1.5vw, 6px);
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .avatar-preview {
+    width: clamp(80px, 20vw, 100px);
+    height: clamp(80px, 20vw, 100px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+    border-width: clamp(1.5px, 0.4vw, 2px);
+  }
+
+  .avatar-placeholder {
+    font-size: clamp(11px, 2.5vw, 12px);
+    gap: clamp(5px, 1.5vw, 6px);
+  }
+
+  .avatar-placeholder .material-icons {
+    font-size: clamp(24px, 6vw, 28px);
+  }
+
+  /* Avatar in table ultra compacto */
+  .avatar-table-img,
+  .avatar-table-placeholder {
+    width: clamp(24px, 6vw, 28px);
+    height: clamp(24px, 6vw, 28px);
+    border-width: clamp(1px, 0.4vw, 1.5px);
+  }
+
+  .avatar-table-placeholder .material-icons {
+    font-size: clamp(12px, 3vw, 14px);
+  }
+
+  /* Action buttons ultra compactos */
+  .action-buttons {
+    gap: clamp(4px, 1.5vw, 6px);
+  }
+
+  .action-btn {
+    width: clamp(26px, 6vw, 30px);
+    height: clamp(26px, 6vw, 30px);
+    border-radius: clamp(4px, 1vw, 5px);
+  }
+
+  .action-btn .material-icons {
+    font-size: clamp(12px, 3vw, 14px);
+  }
+
+  /* Form actions ultra compacto */
+  .form-actions {
+    gap: clamp(6px, 1.5vw, 8px);
+    margin-top: clamp(12px, 3vw, 14px);
+    padding-top: clamp(8px, 2vw, 10px);
+  }
+
+  .form-actions .button {
+    min-width: 100px;
+  }
+
+  .avatar-btn {
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px);
+    gap: clamp(5px, 1.5vw, 6px);
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  /* Pagination ultra compacto */
+  .pagination-container {
+    gap: clamp(8px, 2vw, 10px);
+    padding: clamp(8px, 2vw, 10px) 0;
+    margin-top: clamp(8px, 2vw, 10px);
+  }
+
+  .pagination-info {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  .pagination-buttons {
+    gap: clamp(4px, 1.5vw, 6px);
+  }
+
+  .pagination-buttons .btn {
+    padding: clamp(5px, 1.5vw, 6px) clamp(10px, 2.5vw, 12px);
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  /* Entry details ultra compacto */
+  .entry-details {
+    max-height: 50vh;
+  }
+
+  .detail-section {
+    margin-bottom: clamp(10px, 2.5vw, 12px);
+    padding-bottom: clamp(8px, 2vw, 10px);
+  }
+
+  .detail-section h3 {
+    margin-bottom: clamp(8px, 2vw, 10px);
+    font-size: clamp(14px, 3.5vw, 16px);
+  }
+
+  .detail-grid {
+    gap: clamp(6px, 1.5vw, 8px);
+  }
+
+  .detail-item {
+    gap: clamp(2px, 0.8vw, 3px);
+  }
+
+  .detail-item label {
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  .detail-item span {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .json-display,
+  .error-message,
+  .user-agent {
+    padding: clamp(8px, 2vw, 10px);
+    font-size: clamp(10px, 2vw, 11px);
+    border-radius: clamp(5px, 1.5vw, 6px);
+  }
+
+  /* Button styles ultra compacto */
+  .btn {
+    gap: clamp(4px, 1vw, 5px);
+    padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2.5vw, 14px);
+    border-radius: clamp(6px, 1.5vw, 8px);
+    font-size: clamp(11px, 2.5vw, 12px);
+    height: clamp(32px, 7vw, 36px);
+  }
+
+  .btn svg {
+    width: clamp(12px, 3vw, 14px);
+    height: clamp(12px, 3vw, 14px);
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .btn-secondary::after {
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  /* User info ultra compacto */
+  .user-info {
+    gap: clamp(1px, 0.5vw, 2px);
+  }
+
+  .user-name {
+    font-size: clamp(12px, 2.5vw, 13px);
+  }
+
+  .user-username,
+  .duration-text,
+  .ip-text {
+    font-size: clamp(10px, 2vw, 11px);
+  }
+
+  /* Table actions ultra compacto */
+  .table-actions {
+    gap: clamp(4px, 1.5vw, 6px);
+  }
+
+  /* Compact inputs ultra compacto */
+  .compact-input {
+    padding: clamp(5px, 1.5vw, 6px) clamp(8px, 2vw, 10px) !important;
+    font-size: clamp(11px, 2.5vw, 12px) !important;
+    height: clamp(30px, 7vw, 34px) !important;
+  }
+
+  /* Role selector ultra compacto */
+  .role-selector {
+    min-height: 80px;
+  }
+
+  .role-selector option {
+    padding: clamp(5px, 1.5vw, 6px);
+    margin: clamp(1px, 0.5vw, 2px) 0;
+  }
+}
+
+/* Existing media queries for compatibility */
+@media (max-width: 768px) {
   
   .actions {
     justify-content: center;
@@ -1130,24 +2045,6 @@
   
   .avatar-input-group {
     flex-direction: column;
-  }
-}
-
-@media (max-width: 480px) {
-  .breadcrumb h4 {
-    font-size: 1.25rem;
-  }
-  
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 1rem;
-    font-size: 1rem;
-  }
-  
-  .actions .button.iconOnly {
-    width: 40px;
-    height: 40px;
   }
 }
 

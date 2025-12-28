@@ -8,9 +8,11 @@ import Swal from 'sweetalert2';
 import './IngresosGastos.css';
 import { getAllCuentaContables } from '../services/cuentaContableService';
 import { formatearMontoConSigno } from '../utils/montoUtils';
+import CuentasPorPagarService, { type CuentaPorPagar } from '../services/cuentasPorPagarService';
 import {
   Receipt, Plus, Search, Edit2, Trash2,
-  TrendingUp, TrendingDown, Calendar, DollarSign
+  TrendingUp, TrendingDown, Calendar, DollarSign,
+  FileText
 } from 'lucide-react';
 
 interface CategoriaCuenta {
@@ -51,6 +53,7 @@ interface MovimientoContable {
   cajaId?: string | null; // Field for caja ID
   bankId?: string | null; // New field for bank
   cuentaBancariaId?: string | null; // New field for bank account
+  cuentaPorPagarId?: string | null; // New field for linked debt
   descripcion?: string | null;
   fecha: string;
   usuarioId?: string; // Add usuarioId field
@@ -88,7 +91,12 @@ const IngresosGastos: React.FC = () => {
   const [editFormData, setEditFormData] = useState<Partial<MovimientoContable>>({});
   const [isBackdateModalOpen, setIsBackdateModalOpen] = useState(false);
   const [backdate, setBackdate] = useState(new Date());
-  
+
+  // Estados para Cuentas por Pagar
+  const [cuentasPorPagar, setCuentasPorPagar] = useState<CuentaPorPagar[]>([]);
+  const [selectedCuentaPorPagarId, setSelectedCuentaPorPagarId] = useState<string>('');
+  const [isLoadingCuentas, setIsLoadingCuentas] = useState(false);
+
   // Estados para mostrar balances actuales
   const [saldoCajaActual, setSaldoCajaActual] = useState<number>(0);
   const [saldoPapeleriaActual, setSaldoPapeleriaActual] = useState<number>(0);
@@ -241,11 +249,11 @@ const IngresosGastos: React.FC = () => {
       const data = await response.json();
       const cajasActivas = data.filter((caja: CajaItem) => caja.tipo !== 'banco'); // Excluir cajas de tipo banco
       setCajasDisponibles(cajasActivas);
-      
+
       // Establecer caja por defecto
       if (cajasActivas.length > 0) {
         // Buscar Caja Principal primero, si no existe usar la primera
-        const cajaPrincipal = cajasActivas.find((caja: CajaItem) => 
+        const cajaPrincipal = cajasActivas.find((caja: CajaItem) =>
           caja.nombre.toLowerCase().includes('principal') || caja.tipo === 'general'
         );
         setSelectedCajaId(cajaPrincipal ? cajaPrincipal.id : cajasActivas[0].id);
@@ -310,6 +318,19 @@ const IngresosGastos: React.FC = () => {
     }
   };
 
+  const fetchCuentasPorPagarPendientes = async () => {
+    if (!isAuthenticated) return;
+    setIsLoadingCuentas(true);
+    try {
+      const data = await CuentasPorPagarService.getCuentasPorEstado('pendiente');
+      setCuentasPorPagar(data);
+    } catch (error) {
+      console.error('Error fetching pending accounts payable:', error);
+    } finally {
+      setIsLoadingCuentas(false);
+    }
+  };
+
   const fetchCajaBalances = async () => {
     try {
       // Fetch both caja and papeleria balances
@@ -356,6 +377,7 @@ const IngresosGastos: React.FC = () => {
     fetchMovimientos();
     fetchBanks();
     fetchCajasDisponibles();
+    fetchCuentasPorPagarPendientes();
     // Cargar balances iniciales
     updateBalanceForMethod(metodo);
   }, []);
@@ -473,6 +495,7 @@ const IngresosGastos: React.FC = () => {
       cajaId: metodo === 'caja' ? selectedCajaId : null,
       bankId: metodo === 'banco' ? selectedBankId : null,
       cuentaBancariaId: metodo === 'banco' ? selectedCuentaBancariaId : null,
+      cuentaPorPagarId: tipo === 'gasto' && selectedCuentaPorPagarId ? selectedCuentaPorPagarId : null,
       descripcion: descripcion === '' ? null : descripcion,
       usuarioId: user?.id,
     };
@@ -505,7 +528,13 @@ const IngresosGastos: React.FC = () => {
         setDescripcion('');
         setSelectedBankId(banks.length > 0 ? banks[0].id : null); // Reset bank selection
         setSelectedCuentaBancariaId(null); // Reset bank account selection
+        setSelectedCuentaPorPagarId(''); // Reset debt selection
         setIsBackdateModalOpen(false); // Close the backdate modal
+
+        // Refrescar cuentas por pagar si era un gasto que liquidó una deuda
+        if (tipo === 'gasto' && selectedCuentaPorPagarId) {
+          fetchCuentasPorPagarPendientes();
+        }
 
         // Balances are updated on the backend when a movimiento is created
         // No need to fetch cuentas contables here as they're not displayed in this component
@@ -531,10 +560,10 @@ const IngresosGastos: React.FC = () => {
     setEditingMovimiento(movimiento);
     setEditFormData(movimiento);
     setIsEditModalOpen(true);
-    
+
     // Cargar balances al abrir el modal de edición
     fetchCajaBalances();
-    
+
     if (movimiento.metodo === 'banco' && movimiento.bankId) {
       fetchCuentasBancarias(movimiento.bankId);
     }
@@ -766,7 +795,7 @@ const IngresosGastos: React.FC = () => {
             fetchCajaBalances();
             // Establecer caja por defecto si no hay ninguna seleccionada
             if (!selectedCajaId && cajasDisponibles.length > 0) {
-              const cajaDefault = cajasDisponibles.find(c => 
+              const cajaDefault = cajasDisponibles.find(c =>
                 c.nombre.toLowerCase().includes('principal') || c.tipo === 'general'
               ) || cajasDisponibles[0];
               setSelectedCajaId(cajaDefault.id);
@@ -853,7 +882,7 @@ const IngresosGastos: React.FC = () => {
                 <option value="banco">Banco</option>
                 <option value="papeleria">Papelería</option>
               </select>
-              
+
               {/* Mostrar saldo actual para caja y papelería */}
               {(metodo === 'caja' || metodo === 'papeleria') && (
                 <div className="balance-info" style={{
@@ -910,6 +939,47 @@ const IngresosGastos: React.FC = () => {
                   ))}
                 </select>
               </div>
+            </div>
+          )}
+
+          {tipo === 'gasto' && (
+            <div className="form-group full-width" style={{ marginTop: '15px' }}>
+              <label htmlFor="cuentaPorPagarId" style={{ display: 'flex', alignItems: 'center' }}>
+                <FileText size={16} style={{ marginRight: '8px', color: 'var(--colors-primary-main)' }} />
+                Liquidar Deuda (Cuenta por Pagar)
+              </label>
+              <select
+                id="cuentaPorPagarId"
+                name="cuentaPorPagarId"
+                className="form-control"
+                value={selectedCuentaPorPagarId}
+                onChange={(e) => {
+                  const id = e.target.value;
+                  setSelectedCuentaPorPagarId(id);
+                  if (id) {
+                    const deuda = cuentasPorPagar.find(d => d.id === id);
+                    if (deuda) {
+                      if (!monto || monto === '' || monto === '0') {
+                        setMonto(deuda.montoPendiente.toString());
+                      }
+                      if (!descripcion || descripcion === '') {
+                        setDescripcion(`Pago de deuda: ${deuda.concepto}`);
+                      }
+                    }
+                  }
+                }}
+                disabled={isLoadingCuentas}
+                style={{ borderColor: selectedCuentaPorPagarId ? 'var(--colors-primary-main)' : '' }}
+              >
+                <option value="">-- No vincular a ninguna deuda --</option>
+                {cuentasPorPagar.map(deuda => (
+                  <option key={deuda.id} value={deuda.id}>
+                    {deuda.proveedor?.nombre || 'PROV'} | {deuda.concepto} (Pte: RD$ {Number(deuda.montoPendiente).toFixed(2)})
+                  </option>
+                ))}
+              </select>
+              {isLoadingCuentas && <small>Cargando deudas...</small>}
+              {!isLoadingCuentas && cuentasPorPagar.length === 0 && <small style={{ color: '#94a3b8' }}>No hay deudas pendientes registradas.</small>}
             </div>
           )}
 
@@ -1043,7 +1113,7 @@ const IngresosGastos: React.FC = () => {
                   <option value="banco">Banco</option>
                   <option value="papeleria">Papelería</option>
                 </select>
-                
+
                 {/* Mostrar saldo actual para caja y papelería */}
                 {(editFormData.metodo === 'caja' || editFormData.metodo === 'papeleria') && (
                   <div className="balance-info" style={{
@@ -1202,7 +1272,7 @@ const IngresosGastos: React.FC = () => {
                     const cajaId = e.target.value;
                     setSelectedCajaId(cajaId);
                     setMetodo('caja'); // Forzar método caja para movimientos históricos
-                    
+
                     // Actualizar balance para la caja seleccionada
                     if (cajaId) {
                       setLoadingBalance(true);
@@ -1225,7 +1295,7 @@ const IngresosGastos: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                
+
                 {/* Mostrar saldo actual de la caja seleccionada */}
                 {selectedCajaId && (
                   <div className="balance-info" style={{
@@ -1280,6 +1350,44 @@ const IngresosGastos: React.FC = () => {
                     ))}
                   </select>
                 </div>
+              </div>
+            )}
+
+            {tipo === 'gasto' && (
+              <div className="form-group form-group-full" style={{ marginTop: '10px' }}>
+                <label htmlFor="backdate-cuentaPorPagarId" style={{ display: 'flex', alignItems: 'center' }}>
+                  <FileText size={14} style={{ marginRight: '8px' }} />
+                  Liquidar Deuda (Cuenta por Pagar)
+                </label>
+                <select
+                  id="backdate-cuentaPorPagarId"
+                  name="cuentaPorPagarId"
+                  value={selectedCuentaPorPagarId}
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    setSelectedCuentaPorPagarId(id);
+                    if (id) {
+                      const deuda = cuentasPorPagar.find(d => d.id === id);
+                      if (deuda) {
+                        if (!monto || monto === '' || monto === '0') {
+                          setMonto(deuda.montoPendiente.toString());
+                        }
+                        if (!descripcion || descripcion === '') {
+                          setDescripcion(`Pago de deuda: ${deuda.concepto}`);
+                        }
+                      }
+                    }
+                  }}
+                  disabled={isLoadingCuentas}
+                  className="form-control"
+                >
+                  <option value="">-- No vincular a ninguna deuda --</option>
+                  {cuentasPorPagar.map(deuda => (
+                    <option key={deuda.id} value={deuda.id}>
+                      {deuda.proveedor?.nombre || 'PROV'} | {deuda.concepto} (RD$ {Number(deuda.montoPendiente).toFixed(2)})
+                    </option>
+                  ))}
+                </select>
               </div>
             )}
 

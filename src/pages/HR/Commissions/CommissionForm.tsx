@@ -235,7 +235,7 @@ const CommissionForm = ({ commission, onClose, onSuccess }: CommissionFormProps)
                             <div className="calculation-results">
                                 <div className="result-item">
                                     <span>Porcentaje:</span>
-                                    <strong>{formData.porcentajeAplicado.toFixed(2)}%</strong>
+                                    <strong>{Number(formData.porcentajeAplicado).toFixed(2)}%</strong>
                                 </div>
                                 <div className="result-item result-highlight">
                                     <span>Comisión:</span>

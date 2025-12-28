@@ -1,0 +1,27 @@
+﻿--- AUDIT REPORT (CURRENT MONTH) ---
+Excluded Banks IDs: e02c023b-31c3-4f4d-b620-7ed53b703698
+Excluded Banks Names: Ban Fondesa
+
+--- PAYMENTS (PAGOS CLIENTES - BANCO) ---
+BanReservas: Included: 4200 | Excluded: 0
+Banco Popular : Included: 8100 | Excluded: 0
+
+--- MOVIMIENTOS CONTABLES (INGRESOS BANCO) ---
+BanReservas: Included: 19333.49 | Deduplicated: 0 | Excluded: 0
+Banco BHD León: Included: 102.95 | Deduplicated: 0 | Excluded: 0
+QIK: Included: 5951.18 | Deduplicated: 0 | Excluded: 0
+Banco Popular : Included: 8100 | Deduplicated: 0 | Excluded: 0
+Ban Fondesa: Included: 0 | Deduplicated: 0 | Excluded: 201182.57
+
+--- MOVIMIENTOS CONTABLES (GASTOS BANCO) ---
+BanReservas: Included: 16423.59 | Excluded: 0
+QIK: Included: 5766.26 | Excluded: 0
+Banco Popular : Included: 6302.9 | Excluded: 0
+
+--- CAJA PRINCIPAL ---
+Ingresos Caja: RD$71071
+Gastos Caja: RD$57151
+
+--- FINAL CALCULATION ---
+Total Ingreso Real Mes: RD$116858.62
+Total Gastos Mes: RD$85643.75

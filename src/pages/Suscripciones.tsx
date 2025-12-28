@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Pencil, User, Wifi, Router, Calendar, AlertCircle, PlayCircle, CheckCircle2, DollarSign, PauseCircle, XCircle, X } from 'lucide-react';
 import { AuthService } from '../services/authService';
 import DataTable from '../components/ui/DataTable';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -16,6 +17,8 @@ interface Suscripcion {
         nombre?: string;
         apellidos?: string;
         codigoCliente?: string;
+        estadoCliente?: string;
+        estado?: string;
     };
     servicio?: {
         id?: string;
@@ -32,14 +35,14 @@ const formatearMonto = (monto: number): string =>
 
 // Normalize API base URL
 const getApiBaseUrl = () => {
-  const envUrl = import.meta.env.VITE_API_BASE_URL;
-  if (envUrl && envUrl.trim()) {
-    return envUrl.replace(/\/$/, '');
-  }
-  const hostname = window.location.hostname;
-  const port = window.location.port ? `:${window.location.port}` : '';
-  const protocol = window.location.protocol.replace(':', '');
-  return `${protocol}://${hostname}${port}/api`;
+    const envUrl = import.meta.env.VITE_API_BASE_URL;
+    if (envUrl && envUrl.trim()) {
+        return envUrl.replace(/\/$/, '');
+    }
+    const hostname = window.location.hostname;
+    const port = window.location.port ? `:${window.location.port}` : '';
+    const protocol = window.location.protocol.replace(':', '');
+    return `${protocol}://${hostname}${port}/api`;
 };
 
 const Suscripciones: React.FC = () => {
@@ -63,15 +66,15 @@ const Suscripciones: React.FC = () => {
             });
             if (!resp.ok) throw new Error('Error al cargar suscripciones');
             const data = await resp.json();
-            
+
             // Filter suscripciones to only include those from active clients
             const filteredData = (data || []).filter((sus: Suscripcion) => {
                 const clienteEstado = (sus.cliente?.estadoCliente || sus.cliente?.estado || '').toLowerCase();
                 // Only include suscripciones where cliente is 'activo'
                 return clienteEstado === 'activo';
             });
-            
-            const sorted = filteredData.sort((a: Suscripcion, b: Suscripcion) => {
+
+            const sorted = filteredData.sort((a: any, b: any) => {
                 const nombreA = `${a.cliente?.nombre || ''} ${a.cliente?.apellidos || ''}`.trim().toLowerCase();
                 const nombreB = `${b.cliente?.nombre || ''} ${b.cliente?.apellidos || ''}`.trim().toLowerCase();
                 return nombreA.localeCompare(nombreB);
@@ -128,7 +131,7 @@ const Suscripciones: React.FC = () => {
         try {
             setProcessingIds(new Set(selectedIds));
             const token = AuthService.getToken();
-            
+
             let successCount = 0;
             let errorCount = 0;
 
@@ -240,7 +243,7 @@ const Suscripciones: React.FC = () => {
     const columns: ColumnDef<Suscripcion>[] = [
         {
             id: 'select',
-            header: ({ table }) => (
+            header: () => (
                 <input
                     ref={indeterminateRef}
                     type="checkbox"
@@ -267,7 +270,7 @@ const Suscripciones: React.FC = () => {
             accessorFn: (row) => `${row.cliente?.nombre || ''} ${row.cliente?.apellidos || ''}`,
             cell: ({ row }) => (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: processingIds.has(row.original.id) ? 0.6 : 1 }}>
-                    <span className="material-icons" style={{ color: 'var(--colors-primary-main)', fontSize: '1.1rem' }}>person</span>
+                    <User size={18} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
                     <div>
                         <div style={{ fontWeight: '500' }}>{row.original.cliente?.nombre || 'N/A'} {row.original.cliente?.apellidos || 'N/A'}</div>
                         <small style={{ color: 'var(--colors-text-secondary)', fontSize: '0.8rem' }}>{row.original.cliente?.codigoCliente || 'N/A'}</small>
@@ -281,7 +284,7 @@ const Suscripciones: React.FC = () => {
             accessorFn: (row) => row.servicio?.nombre || '',
             cell: ({ row }) => (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: processingIds.has(row.original.id) ? 0.6 : 1 }}>
-                    <span className="material-icons" style={{ color: 'var(--colors-text-secondary)', fontSize: '1rem' }}>wifi</span>
+                    <Wifi size={16} strokeWidth={2.5} style={{ color: 'var(--colors-text-secondary)' }} />
                     {row.original.servicio ? (
                         <span style={{ fontWeight: '500' }}>{row.original.servicio.nombre}</span>
                     ) : (
@@ -296,7 +299,7 @@ const Suscripciones: React.FC = () => {
             accessorFn: (row) => row.plan?.nombre || '',
             cell: ({ row }) => (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: processingIds.has(row.original.id) ? 0.6 : 1 }}>
-                    <span className="material-icons" style={{ color: 'var(--colors-text-secondary)', fontSize: '1rem' }}>router</span>
+                    <Router size={16} strokeWidth={2.5} style={{ color: 'var(--colors-text-secondary)' }} />
                     {row.original.plan ? (
                         <span style={{ fontWeight: '500' }}>{row.original.plan.nombre}</span>
                     ) : (
@@ -346,7 +349,7 @@ const Suscripciones: React.FC = () => {
             header: 'Fecha Inicio',
             cell: ({ row }) => (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: processingIds.has(row.original.id) ? 0.6 : 1 }}>
-                    <span className="material-icons" style={{ color: 'var(--colors-text-secondary)', fontSize: '1rem' }}>calendar_today</span>
+                    <Calendar size={16} strokeWidth={2.5} style={{ color: 'var(--colors-text-secondary)' }} />
                     <span>{new Date(row.original.fechaInicio).toLocaleDateString('es-ES')}</span>
                 </div>
             ),
@@ -377,12 +380,13 @@ const Suscripciones: React.FC = () => {
             header: 'Acciones',
             cell: ({ row }) => (
                 <button
+                    className="action-btn edit-btn"
                     onClick={() => handleCambiarEstado(row.original)}
                     disabled={processingIds.has(row.original.id)}
-                    style={{ background: 'transparent', border: 'none', cursor: processingIds.has(row.original.id) ? 'not-allowed' : 'pointer', opacity: processingIds.has(row.original.id) ? 0.5 : 1 }}
                     title="Cambiar Estado"
+                    style={{ opacity: processingIds.has(row.original.id) ? 0.5 : 1 }}
                 >
-                    <span className="material-icons" style={{ fontSize: '1.2rem', color: 'var(--colors-primary-main)' }}>edit</span>
+                    <Pencil size={18} strokeWidth={2.5} />
                 </button>
             ),
         },
@@ -399,7 +403,7 @@ const Suscripciones: React.FC = () => {
 
             {error && (
                 <div className="error-message" style={{ backgroundColor: 'var(--colors-error-main)', color: 'white', padding: '1rem', borderRadius: '8px', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span className="material-icons">error</span>{error}
+                    <AlertCircle size={20} strokeWidth={2.5} />{error}
                 </div>
             )}
 
@@ -407,7 +411,7 @@ const Suscripciones: React.FC = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
                 <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-                        <span className="material-icons" style={{ fontSize: '2rem' }}>subscriptions</span>
+                        <PlayCircle size={32} strokeWidth={2} />
                         <div>
                             <div style={{ fontSize: '0.875rem', opacity: 0.9 }}>Total Suscripciones</div>
                             <div style={{ fontSize: '2rem', fontWeight: 700 }}>{suscripciones.length}</div>
@@ -416,7 +420,7 @@ const Suscripciones: React.FC = () => {
                 </div>
                 <div style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-                        <span className="material-icons" style={{ fontSize: '2rem' }}>check_circle</span>
+                        <CheckCircle2 size={32} strokeWidth={2} />
                         <div>
                             <div style={{ fontSize: '0.875rem', opacity: 0.9 }}>Activas</div>
                             <div style={{ fontSize: '2rem', fontWeight: 700 }}>{suscripcionesActivas.length}</div>
@@ -425,7 +429,7 @@ const Suscripciones: React.FC = () => {
                 </div>
                 <div style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', color: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-                        <span className="material-icons" style={{ fontSize: '2rem' }}>attach_money</span>
+                        <DollarSign size={32} strokeWidth={2} />
                         <div>
                             <div style={{ fontSize: '0.875rem', opacity: 0.9 }}>Ingreso Mensual</div>
                             <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>{formatearMonto(totalMensual)}</div>
@@ -482,7 +486,7 @@ const Suscripciones: React.FC = () => {
                                     (e.target as HTMLButtonElement).style.transform = 'scale(1)';
                                 }}
                             >
-                                <span className="material-icons" style={{ fontSize: '1.1rem' }}>check_circle</span>
+                                <CheckCircle2 size={18} strokeWidth={2.5} />
                                 Activar
                             </button>
                             <button
@@ -512,7 +516,7 @@ const Suscripciones: React.FC = () => {
                                     (e.target as HTMLButtonElement).style.transform = 'scale(1)';
                                 }}
                             >
-                                <span className="material-icons" style={{ fontSize: '1.1rem' }}>pause_circle</span>
+                                <PauseCircle size={18} strokeWidth={2.5} />
                                 Suspender
                             </button>
                             <button
@@ -542,7 +546,7 @@ const Suscripciones: React.FC = () => {
                                     (e.target as HTMLButtonElement).style.transform = 'scale(1)';
                                 }}
                             >
-                                <span className="material-icons" style={{ fontSize: '1.1rem' }}>cancel</span>
+                                <XCircle size={18} strokeWidth={2.5} />
                                 Cancelar
                             </button>
                             <button
@@ -563,7 +567,7 @@ const Suscripciones: React.FC = () => {
                                     opacity: processingIds.size > 0 ? 0.6 : 1,
                                 }}
                             >
-                                <span className="material-icons" style={{ fontSize: '1.1rem' }}>close</span>
+                                <X size={18} strokeWidth={2.5} />
                                 Limpiar
                             </button>
                         </div>

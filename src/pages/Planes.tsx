@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Pencil, Trash2, Plus, AlertCircle, RefreshCw } from 'lucide-react';
 import { planService } from '../services/planService';
 import { getCategorias, type Categoria } from '../services/categoriaService';
-import type { PlanWithCategory } from '../types/database';
 import Button from '../components/ui/Button';
 import DataTable from '../components/ui/DataTable';
 import Modal from '../components/ui/Modal';
@@ -16,7 +16,7 @@ interface Plan {
   categoriaId: string;
   precio: number;
   moneda: string;
-  subidaKbps: number | null;
+  subidaMbps: number | null;
   bajadaMbps: number | null;
   detalles?: Record<string, any>;
   activo: boolean;
@@ -32,7 +32,7 @@ interface CreatePlanData {
   categoriaId: string;
   precio: number;
   moneda?: string;
-  subidaKbps?: number | null;
+  subidaMbps?: number | null;
   bajadaMbps?: number | null;
   detalles?: Record<string, any>;
   activo?: boolean;
@@ -47,7 +47,7 @@ const initialPlanState = {
   moneda: 'DOP',
   subidaMbps: 0,
   bajadaMbps: 0,
-  detalles: null,
+  detalles: undefined as Record<string, any> | undefined,
   activo: true,
   orden: 0,
 };
@@ -73,7 +73,7 @@ const Planes: React.FC = () => {
       const response = await planService.getPlanes();
       // Ordenar alfabéticamente por nombre
       const planesData = response.data || response;
-      const sortedPlanes = planesData.sort((a, b) => {
+      const sortedPlanes = (planesData as Plan[]).sort((a: Plan, b: Plan) => {
         const nameA = (a.nombre || '').toLowerCase();
         const nameB = (b.nombre || '').toLowerCase();
         return nameA.localeCompare(nameB, 'es');
@@ -109,7 +109,7 @@ const Planes: React.FC = () => {
       categoriaId: plan.categoriaId,
       precio: plan.precio,
       moneda: plan.moneda,
-      subidaKbps: plan.subidaKbps,
+      subidaMbps: plan.subidaMbps,
       bajadaMbps: plan.bajadaMbps,
       detalles: plan.detalles,
       activo: plan.activo,
@@ -157,7 +157,7 @@ const Planes: React.FC = () => {
           categoriaId: newPlan.categoriaId,
           precio: newPlan.precio,
           moneda: newPlan.moneda,
-          subidaKbps: newPlan.subidaKbps || 0,
+          subidaMbps: newPlan.subidaMbps || 0,
           bajadaMbps: newPlan.bajadaMbps || 0,
           activo: newPlan.activo,
           orden: newPlan.orden,
@@ -169,7 +169,7 @@ const Planes: React.FC = () => {
           categoriaId: newPlan.categoriaId,
           precio: newPlan.precio,
           moneda: newPlan.moneda,
-          subidaKbps: newPlan.subidaKbps || 0,
+          subidaMbps: newPlan.subidaMbps || 0,
           bajadaMbps: newPlan.bajadaMbps || 0,
           activo: newPlan.activo,
           orden: newPlan.orden,
@@ -237,11 +237,11 @@ const Planes: React.FC = () => {
       ),
     },
     {
-      accessorKey: 'subidaKbps',
+      accessorKey: 'subidaMbps',
       header: 'Subida',
       cell: ({ row }) => (
         <div className="text-sm">
-          {formatBandwidth(row.original.subidaKbps)}
+          {formatBandwidth(row.original.subidaMbps)}
         </div>
       ),
     },
@@ -268,19 +268,19 @@ const Planes: React.FC = () => {
       header: 'Acciones',
       cell: ({ row }) => (
         <div className="table-actions">
-          <button 
+          <button
             className="action-btn edit-btn"
             onClick={() => handleEdit(row.original)}
             title="Editar"
           >
-            <span className="material-icons" style={{ fontSize: '16px' }}>edit</span>
+            <Pencil size={16} strokeWidth={2.5} />
           </button>
-          <button 
+          <button
             className="action-btn delete-btn"
             onClick={() => handleDelete(row.original.id)}
             title="Eliminar"
           >
-            <span className="material-icons" style={{ fontSize: '16px' }}>delete</span>
+            <Trash2 size={16} strokeWidth={2.5} />
           </button>
         </div>
       ),
@@ -296,12 +296,12 @@ const Planes: React.FC = () => {
           <p>Administra los planes de servicios de tu empresa.</p>
         </div>
         <div className="header-right">
-          <Button 
-            className="primary" 
+          <Button
+            className="primary"
             onClick={handleCreate}
             disabled={loading}
           >
-            <span className="material-icons">add</span>
+            <Plus size={20} strokeWidth={2.5} />
             Nuevo Plan
           </Button>
         </div>
@@ -318,7 +318,7 @@ const Planes: React.FC = () => {
           alignItems: 'center',
           gap: '0.5rem'
         }}>
-          <span className="material-icons">error</span>
+          <AlertCircle size={20} strokeWidth={2.5} />
           {error}
         </div>
       )}
@@ -329,7 +329,7 @@ const Planes: React.FC = () => {
           padding: '2rem',
           color: 'var(--colors-text-secondary)'
         }}>
-          <span className="material-icons" style={{ fontSize: '2rem', animation: 'spin 1s linear infinite' }}>refresh</span>
+          <RefreshCw size={32} strokeWidth={2.5} className="rotating" />
           <p>Cargando...</p>
         </div>
       )}
@@ -345,16 +345,16 @@ const Planes: React.FC = () => {
           <form onSubmit={handleSave}>
             <div className="form-group">
               <label>Nombre del Plan</label>
-              <input 
-                type="text" 
-                value={newPlan.nombre} 
-                onChange={(e) => setNewPlan({ ...newPlan, nombre: e.target.value })} 
+              <input
+                type="text"
+                value={newPlan.nombre}
+                onChange={(e) => setNewPlan({ ...newPlan, nombre: e.target.value })}
                 className="compact-input"
                 required
                 placeholder="Ej: Plan Básico"
               />
             </div>
-            
+
             <div className="form-group">
               <label>Categoría</label>
               <select
@@ -371,25 +371,25 @@ const Planes: React.FC = () => {
                 ))}
               </select>
             </div>
-            
+
             <div className="form-group">
               <label>Descripción</label>
-              <textarea 
-                value={newPlan.descripcion} 
-                onChange={(e) => setNewPlan({ ...newPlan, descripcion: e.target.value })} 
+              <textarea
+                value={newPlan.descripcion}
+                onChange={(e) => setNewPlan({ ...newPlan, descripcion: e.target.value })}
                 className="compact-input"
                 rows={3}
                 placeholder="Describe el plan en detalle"
               />
             </div>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label>Precio</label>
-                <input 
-                  type="number" 
-                  value={newPlan.precio} 
-                  onChange={(e) => setNewPlan({ ...newPlan, precio: parseFloat(e.target.value) || 0 })} 
+                <input
+                  type="number"
+                  value={newPlan.precio}
+                  onChange={(e) => setNewPlan({ ...newPlan, precio: parseFloat(e.target.value) || 0 })}
                   className="compact-input"
                   min="0"
                   step="0.01"
@@ -397,7 +397,7 @@ const Planes: React.FC = () => {
                   placeholder="0.00"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Moneda</label>
                 <select
@@ -412,59 +412,59 @@ const Planes: React.FC = () => {
                 </select>
               </div>
             </div>
-            
+
             <div className="form-row">
               <div className="form-group">
-                <label>Subida (kbps)</label>
-                <input 
-                  type="number" 
-                  value={newPlan.subidaKbps || ''} 
-                  onChange={(e) => setNewPlan({ ...newPlan, subidaKbps: e.target.value ? parseInt(e.target.value) : null })} 
+                <label>Subida (Mbps)</label>
+                <input
+                  type="number"
+                  value={newPlan.subidaMbps || ''}
+                  onChange={(e) => setNewPlan({ ...newPlan, subidaMbps: e.target.value ? parseInt(e.target.value) : null })}
                   className="compact-input"
                   min="0"
-                  placeholder="1024"
+                  placeholder="10"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Bajada (Mbps)</label>
-                <input 
-                  type="number" 
-                  value={newPlan.bajadaMbps || ''} 
-                  onChange={(e) => setNewPlan({ ...newPlan, bajadaMbps: e.target.value ? parseInt(e.target.value) : null })} 
+                <input
+                  type="number"
+                  value={newPlan.bajadaMbps || ''}
+                  onChange={(e) => setNewPlan({ ...newPlan, bajadaMbps: e.target.value ? parseInt(e.target.value) : null })}
                   className="compact-input"
                   min="0"
                   placeholder="10"
                 />
               </div>
             </div>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label>Orden</label>
-                <input 
-                  type="number" 
-                  value={newPlan.orden} 
-                  onChange={(e) => setNewPlan({ ...newPlan, orden: parseInt(e.target.value) || 0 })} 
+                <input
+                  type="number"
+                  value={newPlan.orden}
+                  onChange={(e) => setNewPlan({ ...newPlan, orden: parseInt(e.target.value) || 0 })}
                   className="compact-input"
                   min="0"
                   placeholder="0"
                 />
               </div>
             </div>
-            
+
             <div className="form-group checkbox-group">
               <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  checked={newPlan.activo} 
+                <input
+                  type="checkbox"
+                  checked={newPlan.activo}
                   onChange={(e) => setNewPlan({ ...newPlan, activo: e.target.checked })}
                 />
                 <span className="checkmark"></span>
                 Activo
               </label>
             </div>
-            
+
             <div className="form-actions">
               <Button onClick={() => setShowModal(false)} disabled={loading}>
                 Cancelar

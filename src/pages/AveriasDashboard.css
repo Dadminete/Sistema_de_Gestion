@@ -23,6 +23,8 @@ body.dark {
   --glass-bg: rgba(45, 55, 72, 0.8);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  --av-text: #ffffff;
+  --av-subtext: #9ca3af; 
 }
 
 /* Keyframe Animations */
@@ -294,13 +296,13 @@ body.dark .av-card {
 .av-card-eyebrow {
   font-size: 10px;
   letter-spacing: 0.12em;
-  color: #ffffff;
+  color: var(--av-subtext);
   text-transform: uppercase;
   font-weight: 600;
 }
 
 .av-card-menu {
-  color: #ffffff;
+  color: var(--av-subtext);
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -311,7 +313,7 @@ body.dark .av-card {
 }
 
 .av-card-title {
-  color: #ffffff;
+  color: var(--av-text);
   font-weight: 600;
   font-size: 0.95rem;
   margin-bottom: 10px;
@@ -326,7 +328,7 @@ body.dark .av-card {
 }
 
 .av-card-value {
-  color: #ffffff;
+  color: var(--av-text);
   font-size: 32px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -400,7 +402,7 @@ body.dark .av-card {
 }
 
 .av-card-sub {
-  color: #ffffff;
+  color: var(--av-subtext);
   font-size: 0.8rem;
   margin-top: 8px;
   font-weight: 500;
@@ -458,6 +460,7 @@ body.dark .av-card {
 @media (max-width: 1024px) {
   .av-charts {
     grid-template-columns: 1fr;
+    gap: clamp(12px, 2vw, 20px);
   }
 }
 
@@ -493,7 +496,7 @@ body.dark .av-card {
 }
 
 .av-chart-title {
-  color: #ffffff;
+  color: var(--av-text);
   font-weight: 700;
   font-size: 1.1rem;
   margin-bottom: 16px;
@@ -515,6 +518,7 @@ body.dark .av-card {
 @media (max-width: 1024px) {
   .av-charts-row {
     grid-template-columns: 1fr;
+    gap: clamp(12px, 2vw, 20px);
   }
 }
 
@@ -548,7 +552,7 @@ body.dark .av-card {
   text-align: left;
   padding: 12px 14px;
   border-bottom: 2px solid var(--av-border);
-  color: #ffffff;
+  color: var(--av-text);
   font-weight: 700;
   position: sticky;
   top: 0;
@@ -561,7 +565,7 @@ body.dark .av-card {
 .av-table td {
   padding: 12px 14px;
   border-bottom: 1px solid var(--av-border);
-  color: #ffffff;
+  color: var(--av-text);
   font-weight: 500;
 }
 
@@ -581,25 +585,261 @@ body.dark .av-card {
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .av-page {
-    padding: 16px;
+    padding: clamp(12px, 2vw, 16px);
   }
 
   .av-toolbar {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
+    gap: clamp(8px, 1.5vw, 12px);
+    padding: clamp(12px, 2vw, 16px);
+  }
+
+  .av-toolbar-title {
+    font-size: clamp(0.95rem, 3.5vw, 1.25rem);
+    margin-bottom: clamp(8px, 1.5vw, 10px);
   }
 
   .av-toolbar-actions {
     justify-content: center;
+    gap: clamp(6px, 1.5vw, 10px);
+    flex-wrap: wrap;
+  }
+
+  .av-btn {
+    padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 16px);
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
+  }
+
+  .av-range {
+    gap: clamp(6px, 1.5vw, 10px);
+    flex-wrap: wrap;
+  }
+
+  .av-range input {
+    padding: clamp(6px, 1.5vw, 8px) clamp(8px, 1.5vw, 12px);
+    font-size: clamp(0.75rem, 1.8vw, 0.875rem);
+  }
+
+  .av-grid-cards {
+    gap: clamp(10px, 2vw, 16px);
+    margin-bottom: clamp(16px, 3vw, 20px);
+  }
+
+  .av-card {
+    padding: clamp(14px, 3vw, 20px);
+    border-radius: 16px;
+  }
+
+  .av-card-head {
+    margin-bottom: clamp(8px, 1.5vw, 12px);
+  }
+
+  .av-card-eyebrow {
+    font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+  }
+
+  .av-card-title {
+    font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+    margin-bottom: clamp(6px, 1.5vw, 10px);
   }
 
   .av-card-value {
-    font-size: 28px;
+    font-size: clamp(24px, 6vw, 28px);
+  }
+
+  .av-card-row {
+    gap: clamp(8px, 1.5vw, 12px);
+    margin-bottom: clamp(4px, 1vw, 8px);
+  }
+
+  .av-card-sub {
+    font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+    margin-top: clamp(4px, 1vw, 8px);
   }
 
   .av-card-icon {
-    width: 40px;
-    height: 40px;
+    width: clamp(36px, 8vw, 40px);
+    height: clamp(36px, 8vw, 40px);
+  }
+
+  .av-card-icon span {
+    font-size: clamp(18px, 4vw, 24px);
+  }
+
+  .av-card-bar {
+    margin-top: clamp(10px, 1.5vw, 16px);
+    height: 6px;
+  }
+
+  .av-card-trend {
+    padding: clamp(5px, 1vw, 6px) clamp(8px, 1.5vw, 10px);
+    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+  }
+
+  .av-charts {
+    gap: clamp(12px, 2vw, 16px);
+  }
+
+  .av-chart-card {
+    padding: clamp(14px, 3vw, 20px);
+  }
+
+  .av-chart-title {
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+    margin-bottom: clamp(10px, 1.5vw, 16px);
+  }
+
+  .av-chart-body {
+    height: clamp(240px, 50vh, 320px);
+  }
+
+  .av-charts-row {
+    gap: clamp(12px, 2vw, 16px);
+    margin-top: clamp(12px, 2vw, 20px);
+  }
+
+  .av-table {
+    font-size: clamp(0.8rem, 1.8vw, 0.875rem);
+  }
+
+  .av-table th,
+  .av-table td {
+    padding: clamp(8px, 1.5vw, 12px) clamp(8px, 1.5vw, 14px);
+    font-size: clamp(0.65rem, 1.2vw, 0.75rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .av-page {
+    padding: clamp(8px, 1.2vw, 10px);
+  }
+
+  .av-toolbar {
+    padding: clamp(8px, 1.2vw, 10px);
+    gap: clamp(6px, 1vw, 8px);
+  }
+
+  .av-toolbar-title {
+    font-size: clamp(0.85rem, 3vw, 0.95rem);
+    margin-bottom: clamp(6px, 1vw, 8px);
+  }
+
+  .av-toolbar-actions {
+    flex-direction: column;
+    gap: clamp(4px, 0.8vw, 6px);
+  }
+
+  .av-btn {
+    padding: clamp(5px, 1vw, 6px) clamp(8px, 2vw, 10px);
+    font-size: clamp(0.65rem, 1.5vw, 0.75rem);
+  }
+
+  .av-range {
+    flex-direction: column;
+    gap: clamp(4px, 0.8vw, 6px);
+  }
+
+  .av-range input {
+    width: 100%;
+    padding: clamp(5px, 1vw, 6px) clamp(6px, 1vw, 8px);
+    font-size: clamp(0.65rem, 1.5vw, 0.75rem);
+  }
+
+  .av-grid-cards {
+    gap: clamp(8px, 1.2vw, 10px);
+    margin-bottom: clamp(12px, 1.5vw, 16px);
+  }
+
+  .av-card {
+    padding: clamp(10px, 2vw, 14px);
+    border-radius: 12px;
+  }
+
+  .av-card-head {
+    margin-bottom: clamp(6px, 1vw, 8px);
+  }
+
+  .av-card-eyebrow {
+    font-size: clamp(0.6rem, 1.2vw, 0.7rem);
+  }
+
+  .av-card-title {
+    font-size: clamp(0.7rem, 2vw, 0.8rem);
+    margin-bottom: clamp(4px, 0.8vw, 6px);
+  }
+
+  .av-card-value {
+    font-size: clamp(18px, 4.5vw, 22px);
+    line-height: 1.1;
+  }
+
+  .av-card-row {
+    gap: clamp(6px, 1vw, 8px);
+    margin-bottom: clamp(2px, 0.5vw, 4px);
+  }
+
+  .av-card-sub {
+    font-size: clamp(0.6rem, 1.2vw, 0.7rem);
+    margin-top: clamp(2px, 0.5vw, 4px);
+  }
+
+  .av-card-icon {
+    width: clamp(28px, 6vw, 32px);
+    height: clamp(28px, 6vw, 32px);
+  }
+
+  .av-card-icon span {
+    font-size: clamp(14px, 3vw, 18px);
+  }
+
+  .av-card-bar {
+    margin-top: clamp(6px, 1vw, 10px);
+    height: 4px;
+  }
+
+  .av-card-trend {
+    padding: clamp(4px, 0.8vw, 5px) clamp(6px, 1vw, 8px);
+    font-size: clamp(0.6rem, 1.2vw, 0.7rem);
+  }
+
+  .av-card-menu {
+    display: none;
+  }
+
+  .av-charts {
+    gap: clamp(10px, 1.5vw, 12px);
+  }
+
+  .av-chart-card {
+    padding: clamp(10px, 2vw, 14px);
+  }
+
+  .av-chart-title {
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+    margin-bottom: clamp(8px, 1.2vw, 10px);
+  }
+
+  .av-chart-body {
+    height: clamp(180px, 40vh, 220px);
+  }
+
+  .av-charts-row {
+    gap: clamp(10px, 1.5vw, 12px);
+    margin-top: clamp(10px, 1.5vw, 12px);
+  }
+
+  .av-table {
+    font-size: clamp(0.7rem, 1.2vw, 0.75rem);
+  }
+
+  .av-table th,
+  .av-table td {
+    padding: clamp(6px, 1vw, 8px) clamp(4px, 0.8vw, 6px);
+    font-size: clamp(0.6rem, 1vw, 0.65rem);
+  }
+
+  .av-table th {
+    font-size: clamp(0.55rem, 0.9vw, 0.6rem);
   }
 }

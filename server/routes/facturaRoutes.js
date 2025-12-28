@@ -120,6 +120,18 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// Actualizar pago de factura
+router.put('/pagos/:pagoId', async (req, res) => {
+    try {
+        const { pagoId } = req.params;
+        await facturaService.actualizarPagoFactura(pagoId, req.body);
+        res.json({ ok: true });
+    } catch (error) {
+        console.error('Error al actualizar pago:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Pagar factura
 router.post('/:id/pagar', async (req, res) => {
     try {
@@ -132,6 +144,19 @@ router.post('/:id/pagar', async (req, res) => {
         res.json(pago);
     } catch (error) {
         console.error('Error al pagar factura:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Revertir pago
+router.post('/pagos/:pagoId/revertir', async (req, res) => {
+    try {
+        const { pagoId } = req.params;
+        const usuarioId = req.user.id;
+        const resultado = await facturaService.revertirPago(pagoId, usuarioId);
+        res.json(resultado);
+    } catch (error) {
+        console.error('Error al revertir pago:', error);
         res.status(500).json({ error: error.message });
     }
 });

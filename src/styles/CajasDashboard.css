@@ -695,17 +695,30 @@
 
 @media (max-width: 768px) {
   .cajas-dashboard {
-    padding: var(--spacing-md);
+    padding: clamp(10px, 2vw, 16px);
   }
 
   .dashboard-header-enhanced {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: clamp(14px, 3vw, 20px);
   }
 
   .header-content {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--spacing-md);
+    gap: clamp(10px, 2vw, 14px);
+  }
+
+  .header-text h1 {
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+    gap: clamp(6px, 1.5vw, 10px);
+  }
+
+  .header-icon {
+    font-size: clamp(1.75rem, 4.5vw, 2rem);
+  }
+
+  .header-text p {
+    font-size: clamp(0.85rem, 2.5vw, 0.95rem);
   }
 
   .header-actions {
@@ -715,134 +728,428 @@
   .btn-refresh {
     width: 100%;
     justify-content: center;
+    padding: clamp(10px, 2vw, 12px) clamp(16px, 3vw, 20px);
+    font-size: clamp(0.85rem, 2vw, 0.9rem);
+    gap: clamp(6px, 1.5vw, 8px);
   }
 
   .period-selector {
     width: 100%;
     flex-wrap: wrap;
+    padding: clamp(10px, 2vw, 12px);
+    gap: clamp(8px, 2vw, 10px);
   }
 
   .period-btn {
     flex: 1;
-    min-width: 120px;
+    min-width: clamp(100px, 25vw, 120px);
+    padding: clamp(10px, 2vw, 12px) clamp(14px, 3vw, 16px);
+    font-size: clamp(0.8rem, 2vw, 0.85rem);
+    gap: clamp(4px, 1vw, 6px);
   }
 
   .stats-cards-container {
     grid-template-columns: 1fr;
-    gap: var(--spacing-md);
+    gap: clamp(12px, 2vw, 16px);
+  }
+
+  .card {
+    border-radius: clamp(12px, 2.5vw, 14px);
+  }
+
+  .card-content {
+    padding: clamp(14px, 3vw, 18px) clamp(14px, 3vw, 18px) clamp(10px, 2vw, 12px);
   }
 
   .card-top {
-    flex-direction: column;
+    flex-direction: row;
+    gap: clamp(10px, 2vw, 14px);
+    margin-bottom: clamp(12px, 2.5vw, 16px);
   }
 
-  .card-icon-box {
-    width: 48px;
-    height: 48px;
-    font-size: 1.3rem;
+  .card-info h3 {
+    font-size: clamp(0.75rem, 2vw, 0.8rem);
+    margin-bottom: clamp(6px, 1.5vw, 8px);
   }
 
   .card-value {
-    font-size: 1.5rem;
+    font-size: clamp(1.4rem, 4vw, 1.6rem);
   }
 
-  .header-text h1 {
-    font-size: 1.25rem;
+  .card-value-status {
+    font-size: clamp(1.4rem, 4vw, 1.6rem);
   }
 
-  .header-text h1 svg {
-    font-size: 1.75rem;
+  .card-icon-box {
+    width: clamp(48px, 10vw, 56px);
+    height: clamp(48px, 10vw, 56px);
+    font-size: clamp(1.3rem, 3.5vw, 1.5rem);
+    border-radius: clamp(10px, 2vw, 12px);
+  }
+
+  .card-details {
+    gap: clamp(6px, 1.5vw, 8px);
+    padding-top: clamp(10px, 2vw, 12px);
+  }
+
+  .detail-item {
+    font-size: clamp(0.8rem, 2vw, 0.85rem);
+  }
+
+  .charts-section {
+    gap: clamp(12px, 2vw, 16px);
+    margin-bottom: clamp(18px, 3vw, 24px);
+  }
+
+  .chart-card {
+    border-radius: clamp(12px, 2.5vw, 14px);
+  }
+
+  .chart-header {
+    padding: clamp(14px, 3vw, 18px) clamp(14px, 3vw, 18px) 0;
+    margin-bottom: clamp(12px, 2.5vw, 16px);
   }
 
   .chart-header h2 {
-    font-size: 1rem;
+    font-size: clamp(1rem, 2.5vw, 1.1rem);
+    gap: clamp(6px, 1.5vw, 8px);
+    padding-bottom: clamp(12px, 2.5vw, 16px);
+  }
+
+  .chart-placeholder {
+    min-height: clamp(280px, 50vw, 320px);
+    padding: clamp(16px, 3vw, 20px);
+  }
+
+  .placeholder-icon {
+    font-size: clamp(2.25rem, 6vw, 2.75rem);
+  }
+
+  .placeholder-content p {
+    font-size: clamp(0.9rem, 2.5vw, 0.95rem);
+  }
+
+  .placeholder-content span {
+    font-size: clamp(0.75rem, 2vw, 0.8rem);
+  }
+
+  .datatable-card {
+    border-radius: clamp(12px, 2.5vw, 14px);
+    margin-bottom: clamp(18px, 3vw, 24px);
+  }
+
+  .datatable-header {
+    padding: clamp(14px, 3vw, 18px) clamp(14px, 3vw, 18px) clamp(10px, 2vw, 12px);
   }
 
   .datatable-header h2 {
-    font-size: 1rem;
+    font-size: clamp(1rem, 2.5vw, 1.1rem);
+    margin-bottom: clamp(3px, 0.8vw, 4px);
   }
 
-  .data-table th,
-  .data-table td {
-    padding: var(--spacing-sm) var(--spacing-md);
-    font-size: 0.85rem;
+  .datatable-subtitle {
+    font-size: clamp(0.75rem, 2vw, 0.8rem);
   }
 
   .data-table th {
-    font-size: 0.7rem;
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px);
+    font-size: clamp(0.7rem, 1.8vw, 0.75rem);
+  }
+
+  .data-table td {
+    padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px);
+    font-size: clamp(0.8rem, 2vw, 0.85rem);
+  }
+
+  .badge {
+    padding: clamp(5px, 1.2vw, 6px) clamp(10px, 2vw, 12px);
+    font-size: clamp(0.7rem, 1.8vw, 0.75rem);
+    gap: clamp(4px, 1vw, 5px);
   }
 
   .btn-view {
-    width: 28px;
-    height: 28px;
-    font-size: 0.8rem;
+    width: clamp(28px, 5vw, 32px);
+    height: clamp(28px, 5vw, 32px);
+    font-size: clamp(0.8rem, 2vw, 0.85rem);
+    border-radius: clamp(6px, 1.5vw, 8px);
+  }
+
+  .loading-spinner {
+    width: clamp(40px, 8vw, 45px);
+    height: clamp(40px, 8vw, 45px);
+  }
+
+  .loading-container p {
+    font-size: clamp(1rem, 2.5vw, 1.05rem);
+  }
+
+  .loading-subtitle {
+    font-size: clamp(0.8rem, 2vw, 0.85rem);
   }
 }
 
 @media (max-width: 480px) {
   .cajas-dashboard {
-    padding: var(--spacing-md);
+    padding: clamp(8px, 2vw, 10px);
+  }
+
+  .dashboard-header-enhanced {
+    margin-bottom: clamp(10px, 2.5vw, 14px);
+  }
+
+  .header-content {
+    gap: clamp(8px, 2vw, 10px);
   }
 
   .header-text h1 {
-    font-size: 1.1rem;
-    gap: 0.4rem;
+    font-size: clamp(1rem, 4.5vw, 1.15rem);
+    gap: clamp(4px, 1vw, 6px);
+    font-weight: 600;
   }
 
   .header-icon {
-    font-size: 1.5rem;
+    font-size: clamp(1.4rem, 4vw, 1.6rem);
   }
 
   .header-text p {
-    font-size: 0.85rem;
+    font-size: clamp(0.75rem, 2.5vw, 0.8rem);
+    line-height: 1.3;
+  }
+
+  .btn-refresh {
+    padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px);
+    font-size: clamp(0.75rem, 2vw, 0.8rem);
+    gap: clamp(4px, 1vw, 6px);
+  }
+
+  .btn-refresh .material-icons {
+    font-size: clamp(16px, 4vw, 18px);
   }
 
   .period-selector {
-    gap: var(--spacing-sm);
+    padding: clamp(8px, 2vw, 10px);
+    gap: clamp(6px, 1.5vw, 8px);
+    border-radius: clamp(10px, 2vw, 12px);
   }
 
   .period-btn {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px);
+    font-size: clamp(0.7rem, 2vw, 0.75rem);
+    gap: clamp(3px, 0.8vw, 4px);
+    border-radius: clamp(8px, 2vw, 10px);
+    min-width: clamp(85px, 23vw, 100px);
+  }
+
+  .period-btn .material-icons {
+    font-size: clamp(14px, 3.5vw, 16px);
   }
 
   .stats-cards-container {
-    gap: var(--spacing-sm);
+    gap: clamp(8px, 2vw, 10px);
+  }
+
+  .card {
+    border-radius: clamp(10px, 2vw, 12px);
   }
 
   .card-content {
-    padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm);
+    padding: clamp(10px, 2.5vw, 12px) clamp(10px, 2.5vw, 12px) clamp(8px, 2vw, 10px);
+  }
+
+  .card-top {
+    gap: clamp(8px, 2vw, 10px);
+    margin-bottom: clamp(10px, 2.5vw, 12px);
+  }
+
+  .card-info h3 {
+    font-size: clamp(0.65rem, 1.8vw, 0.7rem);
+    margin-bottom: clamp(4px, 1vw, 6px);
+    letter-spacing: 0.03em;
   }
 
   .card-value {
-    font-size: 1.25rem;
+    font-size: clamp(1.2rem, 4vw, 1.35rem);
+  }
+
+  .card-value-status {
+    font-size: clamp(1.2rem, 4vw, 1.35rem);
+  }
+
+  .card-icon-box {
+    width: clamp(42px, 9vw, 48px);
+    height: clamp(42px, 9vw, 48px);
+    font-size: clamp(1.15rem, 3.2vw, 1.3rem);
+    border-radius: clamp(8px, 1.8vw, 10px);
+  }
+
+  .card-details {
+    gap: clamp(5px, 1.2vw, 6px);
+    padding-top: clamp(8px, 2vw, 10px);
   }
 
   .detail-item {
-    font-size: 0.8rem;
+    font-size: clamp(0.7rem, 2vw, 0.75rem);
+  }
+
+  .charts-section {
+    gap: clamp(8px, 2vw, 10px);
+    margin-bottom: clamp(14px, 3vw, 18px);
+  }
+
+  .chart-card {
+    border-radius: clamp(10px, 2vw, 12px);
+  }
+
+  .chart-header {
+    padding: clamp(10px, 2.5vw, 12px) clamp(10px, 2.5vw, 12px) 0;
+    margin-bottom: clamp(10px, 2.5vw, 12px);
+  }
+
+  .chart-header h2 {
+    font-size: clamp(0.9rem, 2.5vw, 0.95rem);
+    gap: clamp(4px, 1vw, 6px);
+    padding-bottom: clamp(10px, 2.5vw, 12px);
+  }
+
+  .chart-header h2 .material-icons {
+    font-size: clamp(16px, 4vw, 18px);
   }
 
   .chart-placeholder {
-    min-height: 250px;
-    padding: var(--spacing-lg);
+    min-height: clamp(220px, 45vw, 260px);
+    padding: clamp(12px, 3vw, 16px);
   }
 
   .placeholder-icon {
-    font-size: 2rem;
+    font-size: clamp(1.8rem, 5.5vw, 2.2rem);
+  }
+
+  .placeholder-content p {
+    font-size: clamp(0.8rem, 2.5vw, 0.85rem);
+  }
+
+  .placeholder-content span {
+    font-size: clamp(0.65rem, 1.8vw, 0.7rem);
+  }
+
+  .datatable-card {
+    border-radius: clamp(10px, 2vw, 12px);
+    margin-bottom: clamp(14px, 3vw, 18px);
+  }
+
+  .datatable-header {
+    padding: clamp(10px, 2.5vw, 12px) clamp(10px, 2.5vw, 12px) clamp(8px, 2vw, 10px);
+  }
+
+  .datatable-header h2 {
+    font-size: clamp(0.9rem, 2.5vw, 0.95rem);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .datatable-subtitle {
+    font-size: clamp(0.65rem, 1.8vw, 0.7rem);
+  }
+
+  .datatable-container {
+    margin: 0 clamp(-10px, -2.5vw, -12px);
   }
 
   .data-table {
-    font-size: 0.8rem;
+    font-size: clamp(0.7rem, 2vw, 0.75rem);
   }
 
-  .data-table th,
+  .data-table th {
+    padding: clamp(8px, 2vw, 10px) clamp(4px, 1vw, 6px);
+    font-size: clamp(0.6rem, 1.8vw, 0.65rem);
+    letter-spacing: 0.02em;
+  }
+
   .data-table td {
-    padding: var(--spacing-sm) var(--spacing-xs);
+    padding: clamp(8px, 2vw, 10px) clamp(4px, 1vw, 6px);
+    font-size: clamp(0.7rem, 2vw, 0.75rem);
   }
 
   .badge {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.7rem;
+    padding: clamp(3px, 0.8vw, 4px) clamp(6px, 1.5vw, 8px);
+    font-size: clamp(0.6rem, 1.8vw, 0.65rem);
+    gap: clamp(3px, 0.8vw, 4px);
+    border-radius: 999px;
+  }
+
+  .badge .material-icons {
+    font-size: clamp(10px, 2.5vw, 12px);
+  }
+
+  .btn-view {
+    width: clamp(26px, 5.5vw, 28px);
+    height: clamp(26px, 5.5vw, 28px);
+    font-size: clamp(0.75rem, 2vw, 0.8rem);
+    border-radius: clamp(5px, 1.2vw, 6px);
+  }
+
+  .btn-view .material-icons {
+    font-size: clamp(14px, 3.5vw, 16px);
+  }
+
+  .loading-container {
+    min-height: 50vh;
+    gap: clamp(0.6rem, 2vw, 0.8rem);
+  }
+
+  .loading-spinner {
+    width: clamp(35px, 8vw, 40px);
+    height: clamp(35px, 8vw, 40px);
+    border-width: clamp(2px, 0.5vw, 3px);
+  }
+
+  .loading-container p {
+    font-size: clamp(0.9rem, 2.5vw, 0.95rem);
+  }
+
+  .loading-subtitle {
+    font-size: clamp(0.7rem, 2vw, 0.75rem);
+  }
+
+  .error-container {
+    min-height: 50vh;
+    gap: clamp(0.6rem, 2vw, 0.8rem);
+    padding: clamp(14px, 3vw, 18px);
+  }
+
+  .error-icon {
+    font-size: clamp(2.2rem, 6vw, 2.6rem);
+    margin-bottom: clamp(0.3rem, 1vw, 0.4rem);
+  }
+
+  .error-container span {
+    font-size: clamp(0.8rem, 2.5vw, 0.85rem);
+  }
+
+  .btn-retry {
+    padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px);
+    font-size: clamp(0.75rem, 2vw, 0.8rem);
+    gap: clamp(4px, 1vw, 6px);
+    margin-top: clamp(0.3rem, 1vw, 0.4rem);
+  }
+
+  .btn-retry .material-icons {
+    font-size: clamp(14px, 3.5vw, 16px);
+  }
+
+  .empty-row {
+    height: clamp(160px, 35vw, 180px);
+  }
+
+  .empty-state {
+    gap: clamp(0.3rem, 1vw, 0.4rem);
+  }
+
+  .empty-state .material-icons {
+    font-size: clamp(1.8rem, 5vw, 2.2rem);
+  }
+
+  .empty-state p {
+    font-size: clamp(0.8rem, 2.5vw, 0.85rem);
   }
 }
 

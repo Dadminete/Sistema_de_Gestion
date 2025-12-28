@@ -4,7 +4,7 @@ import PapeleriaSalesChart from '@/components/charts/PapeleriaSalesChart';
 import TopProductsCard from '@/components/ui/TopProductsCard';
 import LatestSalesCard from '@/components/ui/LatestSalesCard';
 import LowStockCard from '@/components/ui/LowStockCard';
-import { ShoppingCart, Package, Warehouse, TrendingUp } from 'lucide-react';
+import { ShoppingCart, Package, Warehouse, TrendingUp, RefreshCw } from 'lucide-react';
 import KpiWidget from '@/components/ui/KpiWidget';
 import InfoCard from '@/components/ui/InfoCard';
 import '../styles/DashboardPapeleria.css';
@@ -71,7 +71,7 @@ const DashboardPapeleria: React.FC = () => {
           </div>
           <div className="header-actions">
             <button title="Refresh" onClick={() => window.location.reload()}>
-              <span className="material-icons">refresh</span>
+              <RefreshCw size={18} strokeWidth={2.5} />
             </button>
           </div>
         </div>

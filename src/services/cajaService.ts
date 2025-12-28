@@ -207,6 +207,8 @@ export interface EstadisticasCaja {
   totalGastos: number;
   balancePeriodo: number;
   saldoActual: number;
+  balanceNeto: number;
+  promedioDiario: number;
 }
 
 export const getEstadisticasCaja = async (
@@ -323,6 +325,30 @@ export interface RecentTransaction {
   metodo: string;
 }
 
+export interface SavingsAnalysis {
+  proyectado: {
+    ingreso: number;
+    recaudacion15: number;
+    recaudacionOtros: number;
+    gastos: Record<string, number>;
+    totalGastos: number;
+    ahorro: number;
+    margenAhorro: string;
+  };
+  realMes: {
+    ingreso: number;
+    gastos: number;
+    ahorro: number;
+    margenAhorro: string;
+  };
+  recomendaciones: Array<{
+    tipo: 'negocio' | 'ahorro' | 'personal';
+    titulo: string;
+    mensaje: string;
+    prioridad: 'baja' | 'media' | 'alta';
+  }>;
+}
+
 export interface DashboardData {
   stats: DashboardStats;
   chartData: ChartDataPoint[];
@@ -373,6 +399,16 @@ export const getRecentTransactions = async (limit: number = 10): Promise<any[]> 
     return response;
   } catch (error) {
     console.error('Error obteniendo transacciones recientes:', error);
+    throw error;
+  }
+};
+
+export const getSavingsAnalysis = async (): Promise<SavingsAnalysis> => {
+  try {
+    const response = await apiClient.get('/cajas/dashboard/savings-analysis');
+    return response;
+  } catch (error) {
+    console.error('Error obteniendo el análisis de ahorro:', error);
     throw error;
   }
 };

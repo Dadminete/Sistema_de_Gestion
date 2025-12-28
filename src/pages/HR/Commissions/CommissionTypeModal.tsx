@@ -39,13 +39,38 @@ const CommissionTypeModal = ({ onClose }: CommissionTypeModalProps) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Validation
+        const nombreTrimmed = formData.nombreTipo?.trim() || '';
+        if (!nombreTrimmed) {
+            alert('Por favor, ingrese el nombre del tipo de comisión');
+            return;
+        }
+
+        if (formData.tipoCalculo === 'porcentaje') {
+            const porcentaje = Number(formData.porcentajeBase);
+            if (!formData.porcentajeBase || isNaN(porcentaje) || porcentaje <= 0) {
+                alert('Por favor, ingrese un porcentaje válido mayor a 0');
+                return;
+            }
+        }
+
+        if (formData.tipoCalculo === 'fijo') {
+            const monto = Number(formData.montoFijo);
+            if (!formData.montoFijo || isNaN(monto) || monto <= 0) {
+                alert('Por favor, ingrese un monto válido mayor a 0');
+                return;
+            }
+        }
+
         const data: any = {
-            nombreTipo: formData.nombreTipo,
-            descripcion: formData.descripcion || null,
+            nombreTipo: nombreTrimmed,
+            descripcion: formData.descripcion?.trim() || null,
             porcentajeBase: formData.tipoCalculo === 'porcentaje' ? Number(formData.porcentajeBase) : null,
             montoFijo: formData.tipoCalculo === 'fijo' ? Number(formData.montoFijo) : null,
             activo: true
         };
+
+        console.log('Enviando datos de comisión:', data);
 
         try {
             if (editing) {

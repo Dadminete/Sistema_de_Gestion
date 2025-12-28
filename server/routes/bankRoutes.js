@@ -8,7 +8,24 @@ const { authenticateToken } = require('../middleware/authMiddleware');
 // TEMPORAL: Deshabilitado para testing
 // router.use(authenticateToken);
 
+// Debug: Log all requests hitting bankRoutes
+router.use((req, res, next) => {
+  console.log(`[bankRoutes] ${req.method} ${req.originalUrl} -> ${req.path}`);
+  next();
+});
+
 // Rutas para Bancos (Instituciones Financieras)
+
+// GET /api/banks/stats/monthly - Obtener estadísticas mensuales
+router.get('/stats/monthly', async (req, res) => {
+  try {
+    const stats = await bankService.getMonthlyStats();
+    res.json(stats);
+  } catch (error) {
+    console.error('Error al obtener estadísticas mensuales:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
 
 // GET /api/banks - Obtener todos los bancos
 router.get('/', async (req, res) => {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Eye, Pencil, Ban, User, Phone, MapPin, Wallet, PlayCircle, FileText, Cpu, StickyNote, Mail, Globe, Home, Landmark, CreditCard, Router, Wifi, RefreshCw, AlertCircle, IdCard, Clock } from 'lucide-react';
 import { clientService } from '../services/clientService';
 import { useRealTimeUpdates } from '../hooks/useRealTimeUpdates';
 import type { ClienteWithRelations } from '../types/database';
@@ -26,7 +27,6 @@ const ClientesListado: React.FC = () => {
   const [editingClient, setEditingClient] = useState<ClienteWithRelations | null>(null);
   const [selectedClientDetails, setSelectedClientDetails] = useState<ClientDetails | null>(null);
   const [activeTab, setActiveTab] = useState('personal');
-  const [loadingFacturas, setLoadingFacturas] = useState(false);
   const [formInitialData, setFormInitialData] = useState<Partial<ClientFormData> | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +38,7 @@ const ClientesListado: React.FC = () => {
         setError(null);
         const response = await clientService.getClients({ status: 'activo' });
         // Ordenar alfabéticamente por nombre y apellidos
-        const sortedClients = response.data.sort((a, b) => {
+        const sortedClients = response.data.sort((a: any, b: any) => {
           const nameA = `${a.nombre || ''} ${a.apellidos || ''}`.toLowerCase().trim();
           const nameB = `${b.nombre || ''} ${b.apellidos || ''}`.toLowerCase().trim();
           return nameA.localeCompare(nameB, 'es');
@@ -103,14 +103,14 @@ const ClientesListado: React.FC = () => {
 
         console.log('=== MAPEO COMPLETADO ===');
         console.log('Clientes con suscripciones:', susMap.size);
-        susMap.forEach((sus, clienteId) => {
+        susMap.forEach((sus: any[], clienteId: string) => {
           const totalCliente = sus.reduce((sum: number, s: any) => sum + Number(s.precioMensual), 0);
           const clientName = sus[0]?.cliente?.nombre;
           if (clientName === 'Alberto' || clientName?.toLowerCase().includes('alberto')) {
             console.log(`🔍 ALBERTO TOTAL:`, {
               clientId: clienteId,
               totalSuscripciones: sus.length,
-              detalles: sus.map(s => ({
+              detalles: sus.map((s: any) => ({
                 id: s.id,
                 numeroContrato: s.numeroContrato,
                 precioMensual: Number(s.precioMensual),
@@ -141,7 +141,7 @@ const ClientesListado: React.FC = () => {
     try {
       const response = await clientService.getClients({ status: 'activo' });
       // Ordenar alfabéticamente por nombre y apellidos
-      const sortedClients = response.data.sort((a, b) => {
+      const sortedClients = response.data.sort((a: any, b: any) => {
         const nameA = `${a.nombre || ''} ${a.apellidos || ''}`.toLowerCase().trim();
         const nameB = `${b.nombre || ''} ${b.apellidos || ''}`.toLowerCase().trim();
         return nameA.localeCompare(nameB, 'es');
@@ -206,7 +206,7 @@ const ClientesListado: React.FC = () => {
   // However, passing a stable callback is still better.
   // For this step, I will just define the handler.
 
-  useRealTimeUpdates(handleRealTimeUpdate, ['cliente', 'suscripcion']);
+  useRealTimeUpdates(handleRealTimeUpdate, undefined, undefined, undefined, undefined, ['cliente', 'suscripcion']);
 
   const handleCreate = () => {
     setEditingClient(null);
@@ -217,7 +217,6 @@ const ClientesListado: React.FC = () => {
   const handleViewDetails = async (client: ClienteWithRelations) => {
     try {
       setLoading(true);
-      setLoadingFacturas(true);
       setError(null);
 
       // Get dynamic API base URL
@@ -274,7 +273,6 @@ const ClientesListado: React.FC = () => {
       setError(err instanceof Error ? err.message : 'Error al cargar detalles del cliente');
     } finally {
       setLoading(false);
-      setLoadingFacturas(false);
     }
   };
 
@@ -324,7 +322,7 @@ const ClientesListado: React.FC = () => {
         `<div style="display: flex; flex-direction: column; gap: 1.5rem; padding: 0.5rem; text-align: left;">
           <div style="display: flex; flex-direction: column; gap: 0.5rem;">
             <label for="swal-status" style="font-weight: 600; color: var(--colors-text-primary); font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
-              <span class="material-icons" style="font-size: 1.2rem; color: var(--colors-primary-main);">info</span>
+              <Info size={20} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
               Nuevo Estado:
             </label>
             <select id="swal-status" class="swal2-select" style="
@@ -346,7 +344,7 @@ const ClientesListado: React.FC = () => {
           
           <div style="display: flex; flex-direction: column; gap: 0.5rem;">
             <label for="swal-reason" style="font-weight: 600; color: var(--colors-text-primary); font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
-              <span class="material-icons" style="font-size: 1.2rem; color: var(--colors-primary-main);">edit_note</span>
+              <FileEdit size={20} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
               Motivo del cambio:
             </label>
             <textarea id="swal-reason" class="swal2-textarea" placeholder="Escriba aquí el motivo del cambio de estado (mínimo 10 caracteres)..." style="
@@ -505,7 +503,7 @@ ${clientToUpdate.notas || ''}`;
           />
         ) : (
           <div style={{ width: '50px', height: '50px', borderRadius: '8px', backgroundColor: 'var(--colors-background-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--colors-border)' }}>
-            <span className="material-icons" style={{ fontSize: '1.5rem', color: 'var(--colors-text-secondary)' }}>person</span>
+            <User size={24} strokeWidth={2.5} style={{ color: 'var(--colors-text-secondary)' }} />
           </div>
         )
       ),
@@ -567,13 +565,13 @@ ${clientToUpdate.notas || ''}`;
       cell: ({ row }) => (
         <div className="table-actions">
           <button className="action-btn view-btn" onClick={() => handleViewDetails(row.original)} title="Ver Detalles">
-            <span className="material-icons">visibility</span>
+            <Eye size={18} strokeWidth={2.5} />
           </button>
           <button className="action-btn edit-btn" onClick={() => handleEdit(row.original)} title="Editar">
-            <span className="material-icons">edit</span>
+            <Pencil size={18} strokeWidth={2.5} />
           </button>
           <button className="action-btn delete-btn" onClick={() => handleDelete(row.original.id)} title="Suspender Cliente">
-            <span className="material-icons">block</span>
+            <Ban size={18} strokeWidth={2.5} />
           </button>
         </div>
       ),
@@ -603,7 +601,7 @@ ${clientToUpdate.notas || ''}`;
           alignItems: 'center',
           gap: '0.5rem'
         }}>
-          <span className="material-icons">error</span>
+          <AlertCircle size={20} strokeWidth={2.5} />
           {error}
         </div>
       )}
@@ -614,7 +612,7 @@ ${clientToUpdate.notas || ''}`;
           padding: '2rem',
           color: 'var(--colors-text-secondary)'
         }}>
-          <span className="material-icons" style={{ fontSize: '2rem', animation: 'spin 1s linear infinite' }}>refresh</span>
+          <RefreshCw size={32} strokeWidth={2.5} className="rotating" />
           <p>Cargando...</p>
         </div>
       )}
@@ -682,7 +680,7 @@ ${clientToUpdate.notas || ''}`;
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                   }}
                 >
-                  <span className="material-icons" style={{ fontSize: '4rem', color: 'var(--colors-text-secondary)' }}>person</span>
+                  <User size={64} strokeWidth={2} style={{ color: 'var(--colors-text-secondary)' }} />
                 </div>
               )}
             </div>
@@ -721,14 +719,14 @@ ${clientToUpdate.notas || ''}`;
           <div style={{ borderBottom: '1px solid var(--colors-border)', marginBottom: '1.5rem', overflowX: 'auto' }}>
             <div style={{ display: 'flex', gap: '0.5rem', minWidth: 'min-content' }}>
               {[
-                { id: 'personal', label: 'Información Personal', icon: 'person' },
-                { id: 'contacto', label: 'Contacto', icon: 'contact_phone' },
-                { id: 'direccion', label: 'Dirección', icon: 'location_on' },
-                { id: 'financiero', label: 'Financiero', icon: 'account_balance_wallet' },
-                { id: 'servicios', label: 'Servicios', icon: 'subscriptions' },
-                { id: 'facturas', label: 'Facturas', icon: 'receipt' },
-                { id: 'equipos', label: 'Equipos', icon: 'devices' },
-                { id: 'notas', label: 'Notas', icon: 'notes' }
+                { id: 'personal', label: 'Información Personal', icon: <User size={16} strokeWidth={2.5} /> },
+                { id: 'contacto', label: 'Contacto', icon: <Phone size={16} strokeWidth={2.5} /> },
+                { id: 'direccion', label: 'Dirección', icon: <MapPin size={16} strokeWidth={2.5} /> },
+                { id: 'financiero', label: 'Financiero', icon: <Wallet size={16} strokeWidth={2.5} /> },
+                { id: 'servicios', label: 'Servicios', icon: <PlayCircle size={16} strokeWidth={2.5} /> },
+                { id: 'facturas', label: 'Facturas', icon: <FileText size={16} strokeWidth={2.5} /> },
+                { id: 'equipos', label: 'Equipos', icon: <Cpu size={16} strokeWidth={2.5} /> },
+                { id: 'notas', label: 'Notas', icon: <StickyNote size={16} strokeWidth={2.5} /> }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -749,7 +747,7 @@ ${clientToUpdate.notas || ''}`;
                     fontSize: '0.9rem'
                   }}
                 >
-                  <span className="material-icons" style={{ fontSize: '1rem' }}>{tab.icon}</span>
+                  {tab.icon}
                   {tab.label}
                 </button>
               ))}
@@ -761,13 +759,13 @@ ${clientToUpdate.notas || ''}`;
             {activeTab === 'personal' && (
               <div>
                 <h3 style={{ color: 'var(--colors-primary-main)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span className="material-icons">person</span>
+                  <User size={20} strokeWidth={2.5} />
                   Información Personal
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '1.5rem' }}>
                   <div style={{ padding: '1.5rem', backgroundColor: 'var(--colors-background-secondary)', borderRadius: '12px', border: '1px solid var(--colors-border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                      <span className="material-icons" style={{ color: 'var(--colors-primary-main)' }}>badge</span>
+                      <IdCard size={20} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
                       <h4 style={{ margin: 0, color: 'var(--colors-text-primary)' }}>Identificación</h4>
                     </div>
                     <div style={{ display: 'grid', gap: '0.75rem' }}>
@@ -780,7 +778,7 @@ ${clientToUpdate.notas || ''}`;
 
                   <div style={{ padding: '1.5rem', backgroundColor: 'var(--colors-background-secondary)', borderRadius: '12px', border: '1px solid var(--colors-border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                      <span className="material-icons" style={{ color: 'var(--colors-primary-main)' }}>info</span>
+                      <AlertCircle size={20} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
                       <h4 style={{ margin: 0, color: 'var(--colors-text-primary)' }}>Detalles Personales</h4>
                     </div>
                     <div style={{ display: 'grid', gap: '0.75rem' }}>
@@ -797,13 +795,13 @@ ${clientToUpdate.notas || ''}`;
             {activeTab === 'contacto' && (
               <div>
                 <h3 style={{ color: 'var(--colors-primary-main)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span className="material-icons">contact_phone</span>
+                  <Phone size={20} strokeWidth={2.5} />
                   Información de Contacto
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div style={{ padding: '1rem', backgroundColor: 'var(--colors-background-secondary)', borderRadius: '8px', border: '1px solid var(--colors-border)' }}>
                     <h4 style={{ margin: '0 0 0.8rem 0', color: 'var(--colors-primary-main)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span className="material-icons" style={{ fontSize: '1.1rem' }}>phone</span>
+                      <Phone size={18} strokeWidth={2.5} />
                       Teléfonos
                     </h4>
                     <div style={{ fontSize: '0.9rem', lineHeight: '1.6' }}>
@@ -815,7 +813,7 @@ ${clientToUpdate.notas || ''}`;
 
                   <div style={{ padding: '1rem', backgroundColor: 'var(--colors-background-secondary)', borderRadius: '8px', border: '1px solid var(--colors-border)' }}>
                     <h4 style={{ margin: '0 0 0.8rem 0', color: 'var(--colors-primary-main)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span className="material-icons" style={{ fontSize: '1.1rem' }}>email</span>
+                      <Mail size={18} strokeWidth={2.5} />
                       Email
                     </h4>
                     <div style={{ fontSize: '0.9rem', lineHeight: '1.6', wordBreak: 'break-word' }}>
@@ -825,7 +823,7 @@ ${clientToUpdate.notas || ''}`;
 
                   <div style={{ padding: '1rem', backgroundColor: 'var(--colors-background-secondary)', borderRadius: '8px', border: '1px solid var(--colors-border)' }}>
                     <h4 style={{ margin: '0 0 0.8rem 0', color: 'var(--colors-primary-main)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span className="material-icons" style={{ fontSize: '1.1rem' }}>person</span>
+                      <User size={18} strokeWidth={2.5} />
                       Contacto Principal
                     </h4>
                     <div style={{ fontSize: '0.9rem', lineHeight: '1.6' }}>
@@ -835,7 +833,7 @@ ${clientToUpdate.notas || ''}`;
 
                   <div style={{ padding: '1rem', backgroundColor: 'var(--colors-background-secondary)', borderRadius: '8px', border: '1px solid var(--colors-border)' }}>
                     <h4 style={{ margin: '0 0 0.8rem 0', color: 'var(--colors-primary-main)', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span className="material-icons" style={{ fontSize: '1.1rem' }}>warning</span>
+                      <AlertCircle size={18} strokeWidth={2.5} />
                       Emergencia
                     </h4>
                     <div style={{ fontSize: '0.9rem', lineHeight: '1.6' }}>
@@ -850,13 +848,13 @@ ${clientToUpdate.notas || ''}`;
             {activeTab === 'direccion' && (
               <div>
                 <h3 style={{ color: 'var(--colors-primary-main)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span className="material-icons">location_on</span>
+                  <MapPin size={20} strokeWidth={2.5} />
                   Dirección y Ubicación
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
                   <div style={{ padding: '1.5rem', backgroundColor: 'var(--colors-background-secondary)', borderRadius: '12px', border: '1px solid var(--colors-border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                      <span className="material-icons" style={{ color: 'var(--colors-primary-main)' }}>home</span>
+                      <Home size={20} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
                       <h4 style={{ margin: 0, color: 'var(--colors-text-primary)' }}>Dirección Completa</h4>
                     </div>
                     <div style={{ display: 'grid', gap: '0.75rem' }}>
@@ -868,7 +866,7 @@ ${clientToUpdate.notas || ''}`;
 
                   <div style={{ padding: '1.5rem', backgroundColor: 'var(--colors-background-secondary)', borderRadius: '12px', border: '1px solid var(--colors-border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                      <span className="material-icons" style={{ color: 'var(--colors-primary-main)' }}>location_city</span>
+                      <Globe size={20} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
                       <h4 style={{ margin: 0, color: 'var(--colors-text-primary)' }}>Ubicación Geográfica</h4>
                     </div>
                     <div style={{ display: 'grid', gap: '0.75rem' }}>
@@ -887,13 +885,13 @@ ${clientToUpdate.notas || ''}`;
             {activeTab === 'financiero' && (
               <div>
                 <h3 style={{ color: 'var(--colors-primary-main)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span className="material-icons">account_balance_wallet</span>
+                  <Wallet size={20} strokeWidth={2.5} />
                   Información Financiera
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
                   <div style={{ padding: '1.5rem', backgroundColor: 'var(--colors-success-light)', borderRadius: '12px', border: '1px solid var(--colors-success-main)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                      <span className="material-icons" style={{ color: 'var(--colors-success-dark)' }}>credit_card</span>
+                      <CreditCard size={20} strokeWidth={2.5} style={{ color: 'var(--colors-success-dark)' }} />
                       <h4 style={{ margin: 0, color: 'var(--colors-success-dark)' }}>Límite de Crédito</h4>
                     </div>
                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--colors-success-dark)' }}>
@@ -903,7 +901,7 @@ ${clientToUpdate.notas || ''}`;
 
                   <div style={{ padding: '1.5rem', backgroundColor: 'var(--colors-primary-light)', borderRadius: '12px', border: '1px solid var(--colors-primary-main)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                      <span className="material-icons" style={{ color: 'var(--colors-primary-dark)' }}>account_balance</span>
+                      <Landmark size={20} strokeWidth={2.5} style={{ color: 'var(--colors-primary-dark)' }} />
                       <h4 style={{ margin: 0, color: 'var(--colors-primary-dark)' }}>Crédito Disponible</h4>
                     </div>
                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--colors-primary-dark)' }}>
@@ -913,7 +911,7 @@ ${clientToUpdate.notas || ''}`;
 
                   <div style={{ padding: '1.5rem', backgroundColor: 'var(--colors-background-secondary)', borderRadius: '12px', border: '1px solid var(--colors-border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                      <span className="material-icons" style={{ color: 'var(--colors-text-secondary)' }}>schedule</span>
+                      <Clock size={20} strokeWidth={2.5} style={{ color: 'var(--colors-text-secondary)' }} />
                       <h4 style={{ margin: 0, color: 'var(--colors-text-primary)' }}>Condiciones</h4>
                     </div>
                     <div style={{ display: 'grid', gap: '0.75rem' }}>
@@ -928,7 +926,7 @@ ${clientToUpdate.notas || ''}`;
             {activeTab === 'servicios' && (
               <div>
                 <h3 style={{ color: 'var(--colors-primary-main)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span className="material-icons">subscriptions</span>
+                  <PlayCircle size={20} strokeWidth={2.5} />
                   Servicios Activos ({selectedClientDetails.suscripciones.length})
                 </h3>
                 {selectedClientDetails.suscripciones.length > 0 ? (
@@ -952,7 +950,7 @@ ${clientToUpdate.notas || ''}`;
                             </td>
                             <td style={{ padding: '1rem' }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span className="material-icons" style={{ fontSize: '1.1rem', color: 'var(--colors-primary-main)' }}>wifi</span>
+                                <Wifi size={18} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
                                 {suscripcion.servicio?.nombre || 'N/A'}
                               </div>
                             </td>
@@ -977,7 +975,7 @@ ${clientToUpdate.notas || ''}`;
                   </div>
                 ) : (
                   <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--colors-text-secondary)', border: '2px dashed var(--colors-border)', borderRadius: '12px', backgroundColor: 'var(--colors-background-secondary)' }}>
-                    <span className="material-icons" style={{ fontSize: '4rem', marginBottom: '1rem', display: 'block', color: 'var(--colors-text-secondary)' }}>subscriptions</span>
+                    <PlayCircle size={64} strokeWidth={2} style={{ marginBottom: '1rem', display: 'block', color: 'var(--colors-text-secondary)', margin: '0 auto' }} />
                     <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--colors-text-primary)' }}>No hay servicios activos</h4>
                     <p>Este cliente no tiene suscripciones activas actualmente.</p>
                   </div>
@@ -988,7 +986,7 @@ ${clientToUpdate.notas || ''}`;
             {activeTab === 'equipos' && (
               <div>
                 <h3 style={{ color: 'var(--colors-primary-main)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span className="material-icons">devices</span>
+                  <Cpu size={20} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
                   Equipos Asignados ({selectedClientDetails.equipos.length})
                 </h3>
                 {selectedClientDetails.equipos.length > 0 ? (
@@ -1010,9 +1008,13 @@ ${clientToUpdate.notas || ''}`;
                           <tr key={equipo.id} style={{ borderBottom: '1px solid var(--colors-border)', backgroundColor: 'var(--colors-background-paper)' }}>
                             <td style={{ padding: '1rem' }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span className="material-icons" style={{ fontSize: '1.1rem', color: 'var(--colors-primary-main)' }}>
-                                  {equipo.tipoEquipo === 'router' ? 'router' : equipo.tipoEquipo === 'modem' ? 'settings_input_antenna' : 'device_hub'}
-                                </span>
+                                {equipo.tipoEquipo === 'router' ? (
+                                  <Router size={18} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
+                                ) : equipo.tipoEquipo === 'modem' ? (
+                                  <Wifi size={18} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
+                                ) : (
+                                  <Cpu size={18} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
+                                )}
                                 {equipo.tipoEquipo}
                               </div>
                             </td>
@@ -1037,7 +1039,7 @@ ${clientToUpdate.notas || ''}`;
                   </div>
                 ) : (
                   <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--colors-text-secondary)', border: '2px dashed var(--colors-border)', borderRadius: '12px', backgroundColor: 'var(--colors-background-secondary)' }}>
-                    <span className="material-icons" style={{ fontSize: '4rem', marginBottom: '1rem', display: 'block', color: 'var(--colors-text-secondary)' }}>devices</span>
+                    <Cpu size={48} strokeWidth={2} style={{ marginBottom: '1rem', color: 'var(--colors-text-secondary)' }} />
                     <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--colors-text-primary)' }}>No hay equipos asignados</h4>
                     <p>Este cliente no tiene equipos asignados actualmente.</p>
                   </div>
@@ -1048,13 +1050,13 @@ ${clientToUpdate.notas || ''}`;
             {activeTab === 'notas' && (
               <div>
                 <h3 style={{ color: 'var(--colors-primary-main)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span className="material-icons">notes</span>
+                  <StickyNote size={20} strokeWidth={2.5} />
                   Notas y Observaciones
                 </h3>
                 {selectedClientDetails.cliente.notas ? (
                   <div style={{ padding: '2rem', backgroundColor: 'var(--colors-background-secondary)', borderRadius: '12px', border: '1px solid var(--colors-border)', whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                      <span className="material-icons" style={{ color: 'var(--colors-primary-main)', marginTop: '0.25rem' }}>description</span>
+                      <FileText size={20} strokeWidth={2} style={{ color: 'var(--colors-primary-main)', marginTop: '0.25rem' }} />
                       <div style={{ flex: 1 }}>
                         <h4 style={{ margin: '0 0 1rem 0', color: 'var(--colors-text-primary)' }}>Observaciones del Cliente</h4>
                         <div style={{ color: 'var(--colors-text-secondary)', fontSize: '1rem' }}>
@@ -1065,7 +1067,7 @@ ${clientToUpdate.notas || ''}`;
                   </div>
                 ) : (
                   <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--colors-text-secondary)', border: '2px dashed var(--colors-border)', borderRadius: '12px', backgroundColor: 'var(--colors-background-secondary)' }}>
-                    <span className="material-icons" style={{ fontSize: '4rem', marginBottom: '1rem', display: 'block', color: 'var(--colors-text-secondary)' }}>note_alt</span>
+                    <StickyNote size={48} strokeWidth={2} style={{ marginBottom: '1rem', color: 'var(--colors-text-secondary)' }} />
                     <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--colors-text-primary)' }}>Sin notas</h4>
                     <p>Este cliente no tiene notas o observaciones registradas.</p>
                   </div>
@@ -1076,7 +1078,7 @@ ${clientToUpdate.notas || ''}`;
             {activeTab === 'facturas' && (
               <div>
                 <h3 style={{ color: 'var(--colors-primary-main)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span className="material-icons">receipt</span>
+                  <FileText size={20} strokeWidth={2.5} />
                   Facturas ({selectedClientDetails.facturas.length})
                 </h3>
                 {selectedClientDetails.facturas.length > 0 ? (
@@ -1155,7 +1157,7 @@ ${clientToUpdate.notas || ''}`;
                   </div>
                 ) : (
                   <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--colors-text-secondary)', border: '2px dashed var(--colors-border)', borderRadius: '12px', backgroundColor: 'var(--colors-background-secondary)' }}>
-                    <span className="material-icons" style={{ fontSize: '4rem', marginBottom: '1rem', display: 'block', color: 'var(--colors-text-secondary)' }}>receipt</span>
+                    <FileText size={48} strokeWidth={2} style={{ marginBottom: '1rem', color: 'var(--colors-text-secondary)' }} />
                     <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--colors-text-primary)' }}>Sin facturas</h4>
                     <p>Este cliente no tiene facturas registradas.</p>
                   </div>

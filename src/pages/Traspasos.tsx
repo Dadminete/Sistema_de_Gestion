@@ -8,15 +8,17 @@ import './Traspasos.css';
 import traspasoService, { type Traspaso, type CreateTraspasoData } from '../services/traspasoService';
 import { formatearMontoConSigno } from '../utils/montoUtils';
 import {
-    ArrowRightLeft, Plus, Search, TrendingUp, Building2, Wallet, Eye
+    ArrowRightLeft, Plus, Search, TrendingUp, Building2, Wallet, Edit, Trash2
 } from 'lucide-react';
 
 const Traspasos: React.FC = () => {
-    const { user } = useAuth();
+    const { } = useAuth();
     const [traspasos, setTraspasos] = useState<Traspaso[]>([]);
     const [filterText, setFilterText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [selectedTraspaso, setSelectedTraspaso] = useState<Traspaso | null>(null);
 
     // Form state
     const [tipoOrigen, setTipoOrigen] = useState<'caja' | 'banco'>('caja');
@@ -47,16 +49,39 @@ const Traspasos: React.FC = () => {
         }
     };
 
+    // Normaliza los ids para evitar comparaciones fallidas (number vs string)
+    const normalizeCajas = (lista: any[]) =>
+        lista.map(item => ({ ...item, id: String(item.id) }));
+
+    const normalizeBancos = (lista: any[]) =>
+        lista.map(item => ({
+            ...item,
+            id: String(item.id),
+            cuentaContable: item.cuentaContable
+                ? {
+                    ...item.cuentaContable,
+                    saldoActual: Number(item.cuentaContable.saldoActual || 0),
+                }
+                : undefined,
+        }));
+
+    const formatSaldo = (valor: number | string | undefined) =>
+        `RD$${parseFloat(valor as any || 0).toFixed(2)}`;
+
     const fetchCajasYBancos = async () => {
         try {
-            const [cajasData, bancosData] = await Promise.all([
+            const [cajasDataRaw, bancosDataRaw] = await Promise.all([
                 traspasoService.getCajasActivas(),
                 traspasoService.getCuentasBancariasActivas(),
             ]);
+
+            const cajasData = normalizeCajas(cajasDataRaw);
+            const bancosData = normalizeBancos(bancosDataRaw);
+
             setCajas(cajasData);
             setCuentasBancarias(bancosData);
 
-            // Set default values
+            // Set default values con ids como string para mantener coincidencia
             if (cajasData.length > 0) {
                 setCajaOrigenId(cajasData[0].id);
                 setCajaDestinoId(cajasData.length > 1 ? cajasData[1].id : cajasData[0].id);
@@ -111,14 +136,19 @@ const Traspasos: React.FC = () => {
         };
 
         try {
-            await traspasoService.createTraspaso(traspasoData);
-            Swal.fire('Éxito', 'Traspaso creado exitosamente.', 'success');
+            if (isEditMode && selectedTraspaso) {
+                await traspasoService.updateTraspaso(selectedTraspaso.id, traspasoData);
+                Swal.fire('Éxito', 'Traspaso actualizado exitosamente.', 'success');
+            } else {
+                await traspasoService.createTraspaso(traspasoData);
+                Swal.fire('Éxito', 'Traspaso creado exitosamente.', 'success');
+            }
             setIsModalOpen(false);
             resetForm();
             fetchTraspasos();
             fetchCajasYBancos(); // Refresh to update balances
         } catch (error: any) {
-            console.error('Error creating traspaso:', error);
+            console.error('Error saving traspaso:', error);
             Swal.fire('Error', error.message, 'error');
         } finally {
             setIsLoading(false);
@@ -130,32 +160,97 @@ const Traspasos: React.FC = () => {
         setConceptoTraspaso('');
         setTipoOrigen('caja');
         setTipoDestino('caja');
+        setIsEditMode(false);
+        setSelectedTraspaso(null);
         if (cajas.length > 0) {
-            setCajaOrigenId(cajas[0].id);
-            setCajaDestinoId(cajas.length > 1 ? cajas[1].id : cajas[0].id);
+            setCajaOrigenId(String(cajas[0].id));
+            setCajaDestinoId(cajas.length > 1 ? String(cajas[1].id) : String(cajas[0].id));
         }
         if (cuentasBancarias.length > 0) {
-            setBancoOrigenId(cuentasBancarias[0].id);
-            setBancoDestinoId(cuentasBancarias.length > 1 ? cuentasBancarias[1].id : cuentasBancarias[0].id);
+            setBancoOrigenId(String(cuentasBancarias[0].id));
+            setBancoDestinoId(
+                cuentasBancarias.length > 1
+                    ? String(cuentasBancarias[1].id)
+                    : String(cuentasBancarias[0].id)
+            );
         }
+    };
+
+    const handleDelete = async (id: string) => {
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer. Se revertirán los saldos de las cuentas afectadas.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                setIsLoading(true);
+                await traspasoService.deleteTraspaso(id);
+                Swal.fire(
+                    'Eliminado!',
+                    'El traspaso ha sido eliminado.',
+                    'success'
+                );
+                fetchTraspasos();
+                fetchCajasYBancos();
+            } catch (error: any) {
+                console.error('Error deleting traspaso:', error);
+                Swal.fire('Error', error.message, 'error');
+            } finally {
+                setIsLoading(false);
+            }
+        }
+    };
+
+    const openEditModal = (traspaso: Traspaso) => {
+        setSelectedTraspaso(traspaso);
+        setIsEditMode(true);
+        setMonto(traspaso.monto.toString());
+        setConceptoTraspaso(traspaso.conceptoTraspaso);
+
+        // Set origen
+        if (traspaso.cajaOrigen) {
+            setTipoOrigen('caja');
+            setCajaOrigenId(String(traspaso.cajaOrigenId));
+        } else if (traspaso.cuentaBancariaOrigen) {
+            setTipoOrigen('banco');
+            setBancoOrigenId(String(traspaso.bancoOrigenId));
+        }
+
+        // Set destino
+        if (traspaso.cajaDestino) {
+            setTipoDestino('caja');
+            setCajaDestinoId(String(traspaso.cajaDestinoId));
+        } else if (traspaso.cuentaBancariaDestino) {
+            setTipoDestino('banco');
+            setBancoDestinoId(String(traspaso.bancoDestinoId));
+        }
+
+        setIsModalOpen(true);
     };
 
     const getSaldoOrigen = () => {
         if (tipoOrigen === 'caja') {
-            const caja = cajas.find(c => c.id === cajaOrigenId);
+            const caja = cajas.find(c => String(c.id) === String(cajaOrigenId));
             return caja?.saldoActual || 0;
         } else {
-            const banco = cuentasBancarias.find(b => b.id === bancoOrigenId);
+            const banco = cuentasBancarias.find(b => String(b.id) === String(bancoOrigenId));
             return banco?.cuentaContable?.saldoActual || 0;
         }
     };
 
     const getSaldoDestino = () => {
         if (tipoDestino === 'caja') {
-            const caja = cajas.find(c => c.id === cajaDestinoId);
+            const caja = cajas.find(c => String(c.id) === String(cajaDestinoId));
             return caja?.saldoActual || 0;
         } else {
-            const banco = cuentasBancarias.find(b => b.id === bancoDestinoId);
+            const banco = cuentasBancarias.find(b => String(b.id) === String(bancoDestinoId));
             return banco?.cuentaContable?.saldoActual || 0;
         }
     };
@@ -279,6 +374,29 @@ const Traspasos: React.FC = () => {
                 </span>
             ),
         },
+        {
+            id: 'acciones',
+            header: 'Acciones',
+            cell: ({ row }) => (
+                <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                        onClick={() => openEditModal(row.original)}
+                        className="btn-icon btn-edit"
+                        title="Editar"
+                    >
+                        <Edit size={16} />
+                    </button>
+                    <button
+                        onClick={() => handleDelete(row.original.id)}
+                        className="btn-icon btn-delete"
+                        title="Eliminar"
+                        style={{ color: '#dc2626' }}
+                    >
+                        <Trash2 size={16} />
+                    </button>
+                </div>
+            ),
+        },
     ], []);
 
     return (
@@ -328,7 +446,7 @@ const Traspasos: React.FC = () => {
                     setIsModalOpen(false);
                     resetForm();
                 }}
-                title="Nuevo Traspaso"
+                title={isEditMode ? 'Editar Traspaso' : 'Nuevo Traspaso'}
                 size="lg"
             >
                 <form onSubmit={handleSubmit} className="traspaso-form">
@@ -364,7 +482,7 @@ const Traspasos: React.FC = () => {
                                         required
                                     >
                                         {cajas.map(caja => (
-                                            <option key={caja.id} value={caja.id}>
+                                            <option key={caja.id} value={String(caja.id)}>
                                                 {caja.nombre} - Saldo: RD${parseFloat(caja.saldoActual).toFixed(2)}
                                             </option>
                                         ))}
@@ -383,8 +501,8 @@ const Traspasos: React.FC = () => {
                                         required
                                     >
                                         {cuentasBancarias.map(banco => (
-                                            <option key={banco.id} value={banco.id}>
-                                                {banco.bank.nombre} - {banco.numeroCuenta} - Saldo: RD${parseFloat(banco.cuentaContable.saldoActual).toFixed(2)}
+                                            <option key={banco.id} value={String(banco.id)}>
+                                                {banco.bank.nombre} - {banco.numeroCuenta} - Saldo: {formatSaldo(banco.cuentaContable?.saldoActual)}
                                             </option>
                                         ))}
                                     </select>
@@ -440,7 +558,7 @@ const Traspasos: React.FC = () => {
                                         required
                                     >
                                         {cajas.map(caja => (
-                                            <option key={caja.id} value={caja.id}>
+                                            <option key={caja.id} value={String(caja.id)}>
                                                 {caja.nombre} - Saldo: RD${parseFloat(caja.saldoActual).toFixed(2)}
                                             </option>
                                         ))}
@@ -459,8 +577,8 @@ const Traspasos: React.FC = () => {
                                         required
                                     >
                                         {cuentasBancarias.map(banco => (
-                                            <option key={banco.id} value={banco.id}>
-                                                {banco.bank.nombre} - {banco.numeroCuenta} - Saldo: RD${parseFloat(banco.cuentaContable.saldoActual).toFixed(2)}
+                                            <option key={banco.id} value={String(banco.id)}>
+                                                {banco.bank.nombre} - {banco.numeroCuenta} - Saldo: {formatSaldo(banco.cuentaContable?.saldoActual)}
                                             </option>
                                         ))}
                                     </select>
@@ -503,7 +621,7 @@ const Traspasos: React.FC = () => {
                             className="btn btn-primary"
                             disabled={isLoading}
                         >
-                            {isLoading ? 'Creando...' : 'Crear Traspaso'}
+                            {isLoading ? (isEditMode ? 'Actualizando...' : 'Creando...') : (isEditMode ? 'Actualizar Traspaso' : 'Crear Traspaso')}
                         </button>
                     </div>
                 </form>

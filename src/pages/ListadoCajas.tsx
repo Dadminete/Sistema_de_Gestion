@@ -7,6 +7,23 @@ import {
   TrendingUp, TrendingDown, DollarSign, Calendar, Search,
   ArrowUpRight, ArrowDownRight, Filter, Download
 } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  AreaChart,
+  Area
+} from 'recharts';
 import '../styles/ListadoCajas.css';
 
 interface CajaWithHistorial extends Caja {
@@ -21,6 +38,8 @@ const ListadoCajas: React.FC = () => {
   const [fechaInicio, setFechaInicio] = useState<string>('');
   const [fechaFin, setFechaFin] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'historial' | 'estadisticas'>('historial');
+  const [historialPagina, setHistorialPagina] = useState<number>(0);
+  const historialPorPagina = 6;
 
   useEffect(() => {
     fetchCajasData();
@@ -90,6 +109,7 @@ const ListadoCajas: React.FC = () => {
   const fetchHistorialCaja = async (cajaId: string) => {
     try {
       const historial = await getHistorialCaja(cajaId);
+      setHistorialPagina(0); // Reset a primera página
       setCajas(prev => prev.map(caja =>
         caja.id === cajaId ? { ...caja, historial } : caja
       ));
@@ -766,6 +786,12 @@ const ListadoCajas: React.FC = () => {
                     );
                   }
 
+                  // Calcular paginación
+                  const indiceInicio = historialPagina * historialPorPagina;
+                  const indiceFin = indiceInicio + historialPorPagina;
+                  const historialPaginado = historial.slice(indiceInicio, indiceFin);
+                  const totalPaginas = Math.ceil(historial.length / historialPorPagina);
+
                   return (
                     <div className="historial-table-container">
                       <table className="historial-table">
@@ -784,7 +810,7 @@ const ListadoCajas: React.FC = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {historial.map((registro) => (
+                          {historialPaginado.map((registro) => (
                             <tr key={registro.id}>
                               <td>{formatDate(registro.fecha)}</td>
                               <td>
@@ -858,6 +884,29 @@ const ListadoCajas: React.FC = () => {
                           ))}
                         </tbody>
                       </table>
+
+                      {/* Controles de paginación */}
+                      {totalPaginas > 1 && (
+                        <div className="pagination-container">
+                          <button
+                            className="btn-pagina"
+                            onClick={() => setHistorialPagina(Math.max(0, historialPagina - 1))}
+                            disabled={historialPagina === 0}
+                          >
+                            ← Anterior
+                          </button>
+                          <span className="pagination-info">
+                            Página {historialPagina + 1} de {totalPaginas} ({historial.length} registros)
+                          </span>
+                          <button
+                            className="btn-pagina"
+                            onClick={() => setHistorialPagina(Math.min(totalPaginas - 1, historialPagina + 1))}
+                            disabled={historialPagina === totalPaginas - 1}
+                          >
+                            Siguiente →
+                          </button>
+                        </div>
+                      )}
                     </div>
                   );
                 })()}
@@ -870,6 +919,7 @@ const ListadoCajas: React.FC = () => {
                 {(() => {
                   const caja = cajas.find(c => c.id === selectedCaja);
                   const estadisticas = caja?.estadisticas;
+                  const historial = caja?.historial || [];
 
                   if (!estadisticas) {
                     return (
@@ -881,8 +931,41 @@ const ListadoCajas: React.FC = () => {
                     );
                   }
 
+                  // Preparar datos para gráficos
+                  const datosComparativa = [
+                    {
+                      nombre: 'Ingresos',
+                      monto: estadisticas.totalIngresos
+                    },
+                    {
+                      nombre: 'Gastos',
+                      monto: estadisticas.totalGastos
+                    }
+                  ];
+
+                  const coloresComparativa = ['#22c55e', '#ef4444'];
+
+                  // Datos para gráfico de tipos de operación
+                  const tiposOperacion = historial.reduce((acc: any, reg) => {
+                    const tipo = reg.tipo || 'Otros';
+                    const existente = acc.find((item: any) => item.nombre === tipo);
+                    if (existente) {
+                      existente.cantidad += 1;
+                    } else {
+                      acc.push({ nombre: tipo, cantidad: 1 });
+                    }
+                    return acc;
+                  }, []);
+
+                  const coloresTipos = {
+                    'apertura': '#3b82f6',
+                    'cierre': '#22c55e',
+                    'traspaso': '#ef4444'
+                  };
+
                   return (
                     <div className="estadisticas-container">
+                      {/* Tarjetas de resumen */}
                       <div className="estadisticas-grid">
                         <div className="estadistica-card">
                           <div className="estadistica-icon ingreso">
@@ -933,7 +1016,91 @@ const ListadoCajas: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Aquí se podrían agregar gráficos más detallados si se desea */}
+                      {/* Gráficos */}
+                      <div className="graficos-container">
+                        {/* Gráfico de barras: Ingresos vs Gastos */}
+                        <div className="grafico-card">
+                          <h3>Comparativa: Ingresos vs Gastos</h3>
+                          <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={datosComparativa} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+                              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                              <XAxis dataKey="nombre" stroke="#475569" />
+                              <YAxis stroke="#475569" />
+                              <Tooltip 
+                                formatter={(value) => formatCurrency(value as number)}
+                                contentStyle={{ 
+                                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                  border: '1px solid #e2e8f0',
+                                  borderRadius: '8px'
+                                }}
+                              />
+                              <Bar dataKey="monto" fill="#3b82f6" radius={[8, 8, 0, 0]}>
+                                {datosComparativa.map((entry, index) => (
+                                  <Cell key={`cell-${index}`} fill={coloresComparativa[index]} />
+                                ))}
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+
+                        {/* Gráfico de pastel: Distribución de operaciones */}
+                        {tiposOperacion.length > 0 && (
+                          <div className="grafico-card">
+                            <h3>Distribución de Operaciones</h3>
+                            <ResponsiveContainer width="100%" height={300}>
+                              <PieChart>
+                                <Pie
+                                  data={tiposOperacion}
+                                  dataKey="cantidad"
+                                  nameKey="nombre"
+                                  cx="50%"
+                                  cy="50%"
+                                  outerRadius={100}
+                                  label={({ nombre, cantidad }) => `${nombre}: ${cantidad}`}
+                                >
+                                  {tiposOperacion.map((entry: any, index: number) => (
+                                    <Cell 
+                                      key={`cell-${index}`} 
+                                      fill={coloresTipos[entry.nombre as keyof typeof coloresTipos] || '#8b5cf6'}
+                                    />
+                                  ))}
+                                </Pie>
+                                <Tooltip 
+                                  formatter={(value) => `${value} operaciones`}
+                                  contentStyle={{ 
+                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                    border: '1px solid #e2e8f0',
+                                    borderRadius: '8px'
+                                  }}
+                                />
+                              </PieChart>
+                            </ResponsiveContainer>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Resumen detallado */}
+                      <div className="resumen-detallado">
+                        <h3>Resumen Detallado</h3>
+                        <div className="resumen-grid">
+                          <div className="resumen-item">
+                            <span className="resumen-label">Total de Operaciones</span>
+                            <span className="resumen-valor">{historial.length}</span>
+                          </div>
+                          <div className="resumen-item">
+                            <span className="resumen-label">Aperturas</span>
+                            <span className="resumen-valor">{historial.filter(h => h.tipo === 'apertura').length}</span>
+                          </div>
+                          <div className="resumen-item">
+                            <span className="resumen-label">Cierres</span>
+                            <span className="resumen-valor">{historial.filter(h => h.tipo === 'cierre').length}</span>
+                          </div>
+                          <div className="resumen-item">
+                            <span className="resumen-label">Traspasos</span>
+                            <span className="resumen-valor">{historial.filter(h => h.tipo === 'traspaso').length}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   );
                 })()}

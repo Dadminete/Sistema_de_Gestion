@@ -37,9 +37,9 @@
 /* Smooth transitions for dashboard elements */
 .dashboard-kpis {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
   transition: opacity 0.3s ease-in-out;
 }
 
@@ -78,6 +78,8 @@
   display: flex;
   align-items: center;
   animation: slideDown 0.3s ease-out;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 @keyframes slideDown {
@@ -109,19 +111,159 @@
   }
 }
 
+/* Recent clients card responsive styling */
+.recent-clients-card .download-item {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  flex-wrap: wrap;
+}
+
+.recent-clients-card .download-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.recent-clients-card .badge {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Budget analysis responsive */
+.budget-analysis {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+}
+
+.budget-analysis .collection-breakdown,
+.budget-analysis .budget-details {
+  overflow-x: auto;
+}
+
+/* Reports progress bar */
+.reports-progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+
+.reports-progress-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
 /* Responsive optimizations */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .dashboard-kpis {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .dashboard-kpis {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 
   .dashboard-header {
     flex-direction: column;
-    gap: 15px;
+    gap: 1rem;
   }
 
   .header-right {
     width: 100%;
     justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-kpis {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.875rem;
+  }
+
+  .error-banner {
+    font-size: 0.85rem;
+    padding: 0.75rem;
+  }
+
+  .recent-clients-card .download-info {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .error-banner {
+    font-size: 0.8rem;
+  }
+
+  .recent-clients-card .download-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .recent-clients-card .badge {
+    align-self: flex-start;
+  }
+
+  .budget-analysis {
+    font-size: 0.55rem;
+  }
+
+  .budget-analysis h5,
+  .budget-analysis h6 {
+    font-size: 0.48rem;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1;
+  }
+
+  .budget-analysis .collection-breakdown {
+    margin-bottom: 0.2rem !important;
+    padding: 0.15rem !important;
+    gap: 0;
+  }
+
+  .budget-analysis .budget-details {
+    gap: 0 !important;
+  }
+
+  .budget-analysis small {
+    font-size: 0.4rem !important;
+    line-height: 1;
+  }
+
+  .reports-progress-bar-container {
+    height: 2px;
+    margin: 0.08rem 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-kpis {
+    gap: 0.75rem;
+  }
+
+  .loading-spinner {
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .header-actions button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .recent-clients-card .download-item {
+    padding: 0.75rem !important;
   }
 }

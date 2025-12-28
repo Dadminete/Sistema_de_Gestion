@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DataTable from '../components/ui/DataTable';
+import { Pencil, Trash2, Lock, ClipboardList } from 'lucide-react';
 import Modal from '../components/ui/Modal';
 import { PermisoService } from '../services/permisoService';
 import type { Permiso, CreatePermisoData, UpdatePermisoData } from '../services/permisoService';
@@ -69,7 +70,7 @@ const Permisos: React.FC = () => {
       Swal.fire('Error', 'No se puede eliminar un permiso del sistema', 'error');
       return;
     }
-    
+
     const result = await Swal.fire({
       title: '¿Estás seguro?',
       text: `¿Quieres eliminar el permiso "${permiso.nombrePermiso}"?`,
@@ -153,18 +154,21 @@ const Permisos: React.FC = () => {
         const rolesCount = permiso.rolesPermisos?.filter(rp => rp.activo && rp.rol.activo).length || 0;
         const isInUse = rolesCount > 0;
         const isSecurity = isSecurityPermission(permiso.nombrePermiso);
-        
+
         return (
           <div className="permission-usage">
-            <span 
-              className={`usage-icon ${
-                isInUse 
-                  ? (isSecurity ? 'security-active' : 'normal-active')
-                  : (isSecurity ? 'security-inactive' : 'normal-inactive')
-              }`}
+            <span
+              className={`usage-icon ${isInUse
+                ? (isSecurity ? 'security-active' : 'normal-active')
+                : (isSecurity ? 'security-inactive' : 'normal-inactive')
+                }`}
               title={`${isInUse ? 'En uso' : 'Sin uso'} - ${isSecurity ? 'Permiso de seguridad' : 'Permiso normal'}`}
             >
-              {isSecurity ? '🔒' : '📋'}
+              {isSecurity ? (
+                <Lock size={16} strokeWidth={2.5} style={{ color: 'var(--colors-warning-dark)' }} />
+              ) : (
+                <ClipboardList size={16} strokeWidth={2.5} style={{ color: 'var(--colors-primary-main)' }} />
+              )}
             </span>
             <span className="usage-count">{rolesCount}</span>
           </div>
@@ -199,7 +203,7 @@ const Permisos: React.FC = () => {
             className="action-btn edit-btn"
             title="Editar"
           >
-            <span className="material-icons">edit</span>
+            <Pencil size={18} strokeWidth={2.5} />
           </button>
           <button
             onClick={() => handleDelete(row.original)}
@@ -207,7 +211,7 @@ const Permisos: React.FC = () => {
             title="Eliminar"
             disabled={row.original.esSistema}
           >
-            <span className="material-icons">delete</span>
+            <Trash2 size={18} strokeWidth={2.5} />
           </button>
         </div>
       ),
@@ -222,7 +226,7 @@ const Permisos: React.FC = () => {
       <div className="dashboard-header">
         <div className="header-left">
           <div className="breadcrumb">
-          <h1>Gestión de Permisos</h1></div>
+            <h1>Gestión de Permisos</h1></div>
           <p>Administra los permisos del sistema y su asignación.</p>
         </div>
         <div className="header-right">

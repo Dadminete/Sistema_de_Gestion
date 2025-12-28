@@ -47,6 +47,127 @@ const CajaService = {
     }
   },
 
+  async getFinancialSummary() {
+    try {
+      // Obtener transacciones de la última semana y el último mes
+      const today = new Date();
+      const lastWeek = new Date(today);
+      lastWeek.setDate(today.getDate() - 7);
+      const lastMonth = new Date(today);
+      lastMonth.setMonth(today.getMonth() - 1);
+
+      const [
+        totalCajas,
+        cajasActivas,
+        totalSaldoCajasAgg,
+        ingresosSemanaAgg,
+        gastosSemanaAgg,
+        ingresosMesAgg,
+        gastosMesAgg,
+        topIncomeSources,
+        topExpenseCategories
+      ] = await Promise.all([
+        prisma.caja.count(),
+        prisma.caja.count({ where: { activa: true } }),
+        prisma.caja.aggregate({ _sum: { saldoActual: true } }),
+        prisma.movimientoContable.aggregate({
+          _sum: { monto: true },
+          where: { tipo: 'ingreso', fecha: { gte: lastWeek } }
+        }),
+        prisma.movimientoContable.aggregate({
+          _sum: { monto: true },
+          where: { tipo: 'gasto', fecha: { gte: lastWeek } }
+        }),
+        prisma.movimientoContable.aggregate({
+          _sum: { monto: true },
+          where: { tipo: 'ingreso', fecha: { gte: lastMonth } }
+        }),
+        prisma.movimientoContable.aggregate({
+          _sum: { monto: true },
+          where: { tipo: 'gasto', fecha: { gte: lastMonth } }
+        }),
+        prisma.movimientoContable.groupBy({
+          by: ['descripcion'],
+          _sum: { monto: true },
+          where: { tipo: 'ingreso', fecha: { gte: lastMonth } },
+          orderBy: { _sum: { monto: 'desc' } },
+          take: 3
+        }),
+        prisma.movimientoContable.groupBy({
+          by: ['descripcion'],
+          _sum: { monto: true },
+          where: { tipo: 'gasto', fecha: { gte: lastMonth } },
+          orderBy: { _sum: { monto: 'desc' } },
+          take: 3
+        })
+      ]);
+
+      const totalSaldoCajas = totalSaldoCajasAgg._sum.saldoActual ? parseFloat(totalSaldoCajasAgg._sum.saldoActual.toString()) : 0;
+      const ingresosSemana = parseFloat(ingresosSemanaAgg._sum.monto || 0);
+      const gastosSemana = parseFloat(gastosSemanaAgg._sum.monto || 0);
+      const ingresosMes = parseFloat(ingresosMesAgg._sum.monto || 0);
+      const gastosMes = parseFloat(gastosMesAgg._sum.monto || 0);
+
+      return {
+        general: {
+          totalCajas,
+          cajasActivas,
+          totalSaldoCajas,
+        },
+        resumenSemanal: {
+          ingresos: ingresosSemana,
+          gastos: gastosSemana,
+          balance: ingresosSemana - gastosSemana,
+        },
+        resumenMensual: {
+          ingresos: ingresosMes,
+          gastos: gastosMes,
+          balance: ingresosMes - gastosMes,
+        },
+        topFuentesIngreso: topIncomeSources.map(item => ({
+          descripcion: item.descripcion,
+          monto: parseFloat(item._sum.monto || 0)
+        })),
+        topCategoriasGasto: topExpenseCategories.map(item => ({
+          descripcion: item.descripcion,
+          monto: parseFloat(item._sum.monto || 0)
+        })),
+        // Aquí se podrían añadir más análisis como tendencias, proyecciones, etc.
+      };
+    } catch (error) {
+      console.error('Error en getFinancialSummary:', error);
+      throw new Error('Error al obtener el resumen financiero: ' + error.message);
+    }
+  },
+
+  async getTopIncomeSources(startDate, endDate) {
+    try {
+      const topSources = await prisma.movimientoContable.groupBy({
+        by: ['descripcion'], // Assuming 'descripcion' can categorize income sources
+        _sum: {
+          monto: true,
+        },
+        where: {
+          tipo: 'ingreso',
+          fecha: {
+            gte: startDate ? new Date(startDate) : undefined,
+            lte: endDate ? new Date(endDate) : undefined,
+          },
+        },
+        orderBy: {
+          _sum: {
+            monto: 'desc',
+          },
+        },
+        take: 5, // Get top 5
+      });
+      return topSources;
+    } catch (error) {
+      console.error('Error en getTopIncomeSources:', error);
+      throw new Error('Error al obtener las principales fuentes de ingreso: ' + error.message);
+    }
+  },
+
   async getById(id) {
     return prisma.caja.findUnique({
       where: { id },
@@ -155,7 +276,7 @@ const CajaService = {
     // Usar la misma lógica que getUltimaApertura para consistencia
     if (ultimaApertura) {
       console.log(`[CajaService] Última apertura encontrada: ${ultimaApertura.fechaApertura}`);
-      
+
       const ultimoCierre = await prisma.cierreCaja.findFirst({
         where: { cajaId, fechaCierre: { gt: ultimaApertura.fechaApertura } },
         orderBy: { fechaCierre: 'desc' },
@@ -163,7 +284,7 @@ const CajaService = {
 
       const estaAbierta = !ultimoCierre;
       console.log(`[CajaService] Estado de caja ${caja.nombre}: ${estaAbierta ? 'ABIERTA' : 'CERRADA'}`);
-      
+
       if (estaAbierta) {
         throw new Error(`La caja "${caja.nombre}" ya está abierta desde ${ultimaApertura.fechaApertura.toLocaleString('es-ES')}`);
       }
@@ -187,14 +308,14 @@ const CajaService = {
 
     // NO actualizar saldoInicial - este es histórico y no debe cambiar
     // Solo verificamos que el monto de apertura coincida con el saldo actual esperado
-    
+
     // Opcional: Verificar que el monto de apertura sea razonable
     const saldoActualCalculado = await this.calcularSaldoActual(cajaId);
     console.log(`[Apertura] Caja: ${caja.nombre}`);
     console.log(`[Apertura] Saldo actual calculado: ${saldoActualCalculado}`);
     console.log(`[Apertura] Monto de apertura: ${montoInicial}`);
     console.log(`[CajaService] ✅ Apertura exitosa para caja ${caja.nombre}`);
-    
+
     // No modificar saldos - la apertura es solo informativa
 
     return apertura;
@@ -269,7 +390,7 @@ const CajaService = {
 
   async getHistorial(cajaId) {
     console.log(`🔍 [getHistorial] Consultando historial para caja: ${cajaId}`);
-    
+
     const aperturas = await prisma.aperturaCaja.findMany({
       where: { cajaId },
       include: { usuario: { select: { nombre: true, apellido: true } } },
@@ -294,19 +415,19 @@ const CajaService = {
         autorizadoPor: { select: { nombre: true, apellido: true } },
         cajaOrigen: { select: { nombre: true } },
         cajaDestino: { select: { nombre: true } },
-        cuentaBancariaOrigen: { 
-          select: { 
+        cuentaBancariaOrigen: {
+          select: {
             numeroCuenta: true,
             nombreOficialCuenta: true,
             bank: { select: { nombre: true } }
-          } 
+          }
         },
-        cuentaBancariaDestino: { 
-          select: { 
+        cuentaBancariaDestino: {
+          select: {
             numeroCuenta: true,
             nombreOficialCuenta: true,
             bank: { select: { nombre: true } }
-          } 
+          }
         }
       },
       orderBy: { fechaTraspaso: 'desc' },
@@ -334,9 +455,9 @@ const CajaService = {
       ...traspasos.map(t => {
         const esOrigen = t.cajaOrigenId === cajaId;
         const esDestino = t.cajaDestinoId === cajaId;
-        
+
         let origen, destino, tipoTraspaso;
-        
+
         if (t.cajaOrigen && t.cajaDestino) {
           // Traspaso entre cajas
           origen = t.cajaOrigen.nombre;
@@ -397,7 +518,7 @@ const CajaService = {
       for (const caja of cajasActivas) {
         const aperturas = await prisma.aperturaCaja.findMany({
           where: { cajaId: caja.id },
-          include: { 
+          include: {
             usuario: { select: { nombre: true, apellido: true } },
             caja: { select: { nombre: true } }
           },
@@ -406,7 +527,7 @@ const CajaService = {
 
         const cierres = await prisma.cierreCaja.findMany({
           where: { cajaId: caja.id },
-          include: { 
+          include: {
             usuario: { select: { nombre: true, apellido: true } },
             caja: { select: { nombre: true } }
           },
@@ -516,12 +637,24 @@ const CajaService = {
     });
 
     const saldoActual = await this.calcularSaldoActual(cajaId);
+    
+    const totalIngresos = Number(ingresos._sum.monto || 0);
+    const totalGastos = Number(gastos._sum.monto || 0);
+    const balanceNeto = totalIngresos - totalGastos;
+    
+    // Calcular número de días en el período
+    const fechaInicioDt = new Date(fechaInicio);
+    const fechaFinDt = new Date(fechaFin);
+    const diasDiferencia = Math.ceil((fechaFinDt.getTime() - fechaInicioDt.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const promedioDiario = diasDiferencia > 0 ? balanceNeto / diasDiferencia : 0;
 
     return {
-      totalIngresos: ingresos._sum.monto || 0,
-      totalGastos: gastos._sum.monto || 0,
-      balancePeriodo: (ingresos._sum.monto || 0) - (gastos._sum.monto || 0),
-      saldoActual,
+      totalIngresos,
+      totalGastos,
+      balancePeriodo: balanceNeto,
+      saldoActual: Number(saldoActual),
+      balanceNeto,
+      promedioDiario,
     };
   },
 
@@ -529,16 +662,16 @@ const CajaService = {
     try {
       // Manejar fechas correctamente para zona horaria GMT-4 (República Dominicana)
       let startOfDay, endOfDay;
-      
+
       if (fecha) {
         // Para fecha específica, crear el rango en hora local GMT-4
         // Parsear la fecha como YYYY-MM-DD en hora local
         const [year, month, day] = fecha.split('-').map(Number);
-        
+
         // Crear fechas en GMT-4 (UTC-4)
         startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
         endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
-        
+
         // Convertir a UTC para la consulta (sumar 4 horas)
         startOfDay = new Date(startOfDay.getTime() + (4 * 60 * 60 * 1000));
         endOfDay = new Date(endOfDay.getTime() + (4 * 60 * 60 * 1000));
@@ -547,7 +680,7 @@ const CajaService = {
         const now = new Date();
         startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
         endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
-        
+
         // Convertir a UTC (sumar 4 horas para GMT-4)
         startOfDay = new Date(startOfDay.getTime() + (4 * 60 * 60 * 1000));
         endOfDay = new Date(endOfDay.getTime() + (4 * 60 * 60 * 1000));
@@ -694,6 +827,145 @@ const CajaService = {
     }
   },
 
+  async getSavingsAnalysis() {
+    try {
+      // Identificar categoría de traspasos para excluir movimientos internos
+      const categoriaTraspasos = await prisma.categoriaCuenta.findFirst({ where: { nombre: 'Traspasos' } });
+
+      // Excluir bancos internos/no operativos (ej. Fondesa)
+      const excludedBanks = await prisma.bank.findMany({
+        where: { nombre: { contains: 'fondesa', mode: 'insensitive' } },
+        select: { id: true }
+      });
+      const excludedBankIds = excludedBanks.map(b => b.id);
+
+      const bankFilterMovimientos = excludedBankIds.length
+        ? {
+            NOT: {
+              OR: [
+                { cuentaBancaria: { bankId: { in: excludedBankIds } } },
+                { bankId: { in: excludedBankIds } }
+              ]
+            }
+          }
+        : {};
+
+      // 1. Obtener Ingreso Proyectado Real (VALOR SUSCRIPCIONES)
+      const totalSuscripcionesAgg = await prisma.suscripcion.aggregate({
+        _sum: { precioMensual: true },
+        where: { estado: { in: ['activo', 'ACTIVO', 'Activo'] } }
+      });
+      const ingresoMensualProyectado = parseFloat(totalSuscripcionesAgg._sum.precioMensual || 0);
+
+      // 2. Obtener Desglose de Recaudación (Días 15 vs Otros)
+      const montoDia15Agg = await prisma.suscripcion.aggregate({
+        where: { diaFacturacion: 15, estado: { in: ['activo', 'ACTIVO', 'Activo'] } },
+        _sum: { precioMensual: true }
+      });
+      const montoOtrosDiasAgg = await prisma.suscripcion.aggregate({
+        where: { diaFacturacion: { in: [30, 20, 10] }, estado: { in: ['activo', 'ACTIVO', 'Activo'] } },
+        _sum: { precioMensual: true }
+      });
+      const montoDia15 = parseFloat(montoDia15Agg._sum.precioMensual || 0);
+      const montoOtrosDias = parseFloat(montoOtrosDiasAgg._sum.precioMensual || 0);
+
+      // 3. Gastos Presupuestados (Mantener como referencia base para el ahorro)
+      const gastosPresupuestados = {
+        nomina: 48000,
+        internet: 5900, // COGS - Insumo principal
+        gasolina: 1200,
+        flotas: 3400,
+        alquiler: 7000,
+        luz: 1600
+      };
+
+      const totalGastosFijos = Object.values(gastosPresupuestados).reduce((a, b) => a + b, 0);
+      const ahorroProyectado = ingresoMensualProyectado - totalGastosFijos;
+      const margenAhorro = ingresoMensualProyectado > 0 ? (ahorroProyectado / ingresoMensualProyectado) * 100 : 0;
+
+      // 4. Datos Reales del Mes Actual
+      const fechaActual = new Date();
+      const monthStart = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1);
+      const monthEnd = new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 0);
+      monthEnd.setHours(23, 59, 59, 999);
+
+      const ingresosRealesAgg = await prisma.movimientoContable.aggregate({
+        _sum: { monto: true },
+        where: {
+          tipo: 'ingreso',
+          fecha: { gte: monthStart, lte: monthEnd },
+          metodo: { in: ['caja', 'banco'] }, // Solo ingresos operativos
+          ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {}),
+          ...bankFilterMovimientos
+        }
+      });
+
+      const gastosRealesAgg = await prisma.movimientoContable.aggregate({
+        _sum: { monto: true },
+        where: {
+          tipo: 'gasto',
+          fecha: { gte: monthStart, lte: monthEnd },
+          ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {}),
+          ...bankFilterMovimientos
+        }
+      });
+
+      const ingresosReales = parseFloat(ingresosRealesAgg._sum.monto || 0);
+      const gastosReales = parseFloat(gastosRealesAgg._sum.monto || 0);
+
+      // 5. Cuentas por Cobrar (Deuda de clientes)
+      const facturasPendientesAgg = await prisma.facturaCliente.aggregate({
+        where: {
+          estado: { in: ['pendiente', 'parcial', 'vencida'] }
+        },
+        _sum: { total: true }
+      });
+      const montoCuentasPorCobrar = parseFloat(facturasPendientesAgg._sum.total || 0);
+
+      return {
+        proyectado: {
+          ingreso: ingresoMensualProyectado,
+          recaudacion15: montoDia15,
+          recaudacionOtros: montoOtrosDias,
+          gastos: gastosPresupuestados,
+          totalGastos: totalGastosFijos,
+          ahorro: ahorroProyectado,
+          margenAhorro: margenAhorro.toFixed(2)
+        },
+        realMes: {
+          ingreso: ingresosReales,
+          gastos: gastosReales,
+          ahorro: ingresosReales - gastosReales,
+          margenAhorro: ingresosReales > 0 ? (((ingresosReales - gastosReales) / ingresosReales) * 100).toFixed(2) : 0,
+          cuentasPorCobrar: montoCuentasPorCobrar
+        },
+        recomendaciones: [
+          {
+            tipo: 'negocio',
+            titulo: 'Flujo de Caja - Día 15',
+            mensaje: `El ${((montoDia15 / ingresoMensualProyectado) * 100).toFixed(1)}% de tus ingresos entran el día 15. Asegura tener tus pagos mayores programados para esa fecha.`,
+            prioridad: 'media'
+          },
+          {
+            tipo: 'recaudacion',
+            titulo: 'Cuentas por Cobrar',
+            mensaje: `Tienes ${new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP' }).format(montoCuentasPorCobrar)} pendientes de cobro. Reforzar la gestión en los días 20 y 30.`,
+            prioridad: 'alta'
+          },
+          ...((ingresoMensualProyectado > 100000) ? [{
+            tipo: 'ahorro',
+            titulo: 'Potencial de Inversión',
+            mensaje: `Con un ingreso proyectado de ${new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'DOP' }).format(ingresoMensualProyectado)}, tu capacidad de ahorro es sólida.`,
+            prioridad: 'alta'
+          }] : [])
+        ]
+      };
+    } catch (error) {
+      console.error('Error en getSavingsAnalysis:', error);
+      throw error;
+    }
+  },
+
   async getDashboardStats(filter, customMonth) {
     console.time('getDashboardStats');
     try {
@@ -734,6 +1006,30 @@ const CajaService = {
 
       console.time('ParallelQueries');
 
+      // --- ESTRICT BANK ISOLATION (FIXED) ---
+      // --- EXCLUSION-BASED BANK FILTERING (FIXED) ---
+      const excludedBanks = await prisma.bank.findMany({
+        where: { nombre: { contains: 'fondesa', mode: 'insensitive' } },
+        select: { id: true }
+      });
+
+      const excludedBankIds = excludedBanks.map(b => b.id);
+
+      const bankFilterPagos = [
+        { cuentaBancaria: { bankId: { notIn: excludedBankIds } } }
+      ];
+
+      const bankFilterMovimientos = [
+        {
+          NOT: {
+            OR: [
+              { cuentaBancaria: { bankId: { in: excludedBankIds } } },
+              { bankId: { in: excludedBankIds } }
+            ]
+          }
+        }
+      ];
+
       const [
         cajaPrincipal,
         cajaPapeleria,
@@ -773,11 +1069,57 @@ const CajaService = {
         prisma.cliente.count({ where: { estado: { in: ['activo', 'ACTIVO', 'Activo'] } } }),
         prisma.facturaCliente.aggregate({ _sum: { total: true }, where: { estado: 'pendiente' } }),
 
-        prisma.pagoCliente.aggregate({ _sum: { monto: true }, where: { cuentaBancariaId: { not: null }, fechaPago: { gte: monthStart, lte: monthEnd }, estado: 'confirmado' } }),
-        prisma.movimientoContable.aggregate({ _sum: { monto: true }, where: { metodo: 'banco', tipo: 'ingreso', fecha: { gte: monthStart, lte: monthEnd }, NOT: { descripcion: { contains: 'Pago Cliente' } } } }),
+        // Ingresos de bancos (MES) solo para bancos permitidos
+        prisma.pagoCliente.aggregate({
+          _sum: { monto: true },
+          where: {
+            cuentaBancariaId: { not: null },
+            estado: 'confirmado',
+            fechaPago: { gte: monthStart, lte: monthEnd },
+            ...bankFilterPagos[0],
+          }
+        }),
+        prisma.movimientoContable.aggregate({
+          _sum: { monto: true },
+          where: {
+            metodo: 'banco',
+            tipo: 'ingreso',
+            fecha: { gte: monthStart, lte: monthEnd },
+            NOT: {
+              OR: [
+                { descripcion: { contains: 'Pago Cliente' } },
+                ...(categoriaTraspasos ? [{ categoriaId: categoriaTraspasos.id }] : [])
+              ]
+            },
+            ...bankFilterMovimientos[0],
+          }
+        }),
         prisma.movimientoContable.aggregate({ _sum: { monto: true }, where: { metodo: 'caja', tipo: 'ingreso', fecha: { gte: inicioMesAnterior, lte: finMesAnterior }, ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {}) } }),
-        prisma.pagoCliente.aggregate({ _sum: { monto: true }, where: { cuentaBancariaId: { not: null }, fechaPago: { gte: inicioMesAnterior, lte: finMesAnterior }, estado: 'confirmado' } }),
-        prisma.movimientoContable.aggregate({ _sum: { monto: true }, where: { metodo: 'banco', tipo: 'ingreso', fecha: { gte: inicioMesAnterior, lte: finMesAnterior }, NOT: { descripcion: { contains: 'Pago Cliente' } } } }),
+        // Ingresos de bancos (MES ANTERIOR) solo bancos permitidos
+        prisma.pagoCliente.aggregate({
+          _sum: { monto: true },
+          where: {
+            cuentaBancariaId: { not: null },
+            estado: 'confirmado',
+            fechaPago: { gte: inicioMesAnterior, lte: finMesAnterior },
+            ...bankFilterPagos[0],
+          }
+        }),
+        prisma.movimientoContable.aggregate({
+          _sum: { monto: true },
+          where: {
+            metodo: 'banco',
+            tipo: 'ingreso',
+            fecha: { gte: inicioMesAnterior, lte: finMesAnterior },
+            NOT: {
+              OR: [
+                { descripcion: { contains: 'Pago Cliente' } },
+                ...(categoriaTraspasos ? [{ categoriaId: categoriaTraspasos.id }] : [])
+              ]
+            },
+            ...bankFilterMovimientos[0],
+          }
+        }),
         prisma.suscripcion.aggregate({ _sum: { precioMensual: true }, where: { estado: { in: ['activo', 'ACTIVO', 'Activo'] } } }),
         prisma.movimientoContable.aggregate({ _sum: { monto: true }, where: { metodo: 'caja', tipo: 'ingreso', fecha: { gte: todayStart, lte: todayEnd }, ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {}) } }),
         prisma.movimientoContable.aggregate({ _sum: { monto: true }, where: { metodo: 'caja', tipo: 'gasto', fecha: { gte: todayStart, lte: todayEnd }, ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {}) } }),
@@ -785,22 +1127,60 @@ const CajaService = {
         prisma.movimientoContable.aggregate({ _sum: { monto: true }, where: { metodo: 'papeleria', tipo: 'gasto', fecha: { gte: todayStart, lte: todayEnd } } }),
         prisma.movimientoContable.aggregate({ _sum: { monto: true }, where: { metodo: 'caja', tipo: 'gasto', fecha: { gte: monthStart, lte: monthEnd }, ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {}) } }),
         prisma.movimientoContable.aggregate({ _sum: { monto: true }, where: { metodo: 'papeleria', tipo: 'gasto', fecha: { gte: monthStart, lte: monthEnd }, ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {}) } }),
-        prisma.movimientoContable.aggregate({ _sum: { monto: true }, where: { metodo: 'banco', tipo: 'gasto', fecha: { gte: monthStart, lte: monthEnd } } }),
+        prisma.movimientoContable.aggregate({
+          _sum: { monto: true },
+          where: {
+            metodo: 'banco',
+            tipo: 'gasto',
+            fecha: { gte: monthStart, lte: monthEnd },
+            ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {}),
+            ...bankFilterMovimientos[0],
+          }
+        }),
         prisma.movimientoContable.aggregate({ _sum: { monto: true }, where: { metodo: 'caja', tipo: 'ingreso', fecha: { gte: monthStart, lte: monthEnd }, ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {}) } }),
-        prisma.movimientoContable.findMany({ 
-          where: { 
-            fecha: { gte: yearStart, lte: yearEnd }, 
-            NOT: { 
+        prisma.movimientoContable.findMany({
+          where: {
+            fecha: { gte: yearStart, lte: yearEnd },
+            NOT: {
               OR: [
                 { descripcion: { contains: 'Pago Cliente' } },
                 ...(categoriaTraspasos ? [{ categoriaId: categoriaTraspasos.id }] : [])
               ]
-            }
-          }, 
-          select: { fecha: true, monto: true, tipo: true, metodo: true } 
+            },
+            OR: [
+              { metodo: { not: 'banco' } },
+              { ...bankFilterMovimientos[0] }
+            ]
+          },
+          select: { fecha: true, monto: true, tipo: true, metodo: true }
         }),
-        prisma.pagoCliente.findMany({ where: { cuentaBancariaId: { not: null }, fechaPago: { gte: yearStart, lte: yearEnd }, estado: 'confirmado' }, select: { fechaPago: true, monto: true } }),
-        prisma.pagoCliente.findMany({ where: { facturaId: { not: null }, fechaPago: { gte: yearStart }, estado: 'confirmado' }, include: { factura: { select: { fechaVencimiento: true } }, cliente: { select: { nombre: true, apellidos: true } } } }),
+        prisma.pagoCliente.findMany({
+          where: {
+            cuentaBancariaId: { not: null },
+            estado: 'confirmado',
+            fechaPago: { gte: yearStart, lte: yearEnd },
+            ...bankFilterPagos[0],
+          },
+          select: { fechaPago: true, monto: true }
+        }),
+          prisma.pagoCliente.findMany({ 
+            where: { facturaId: { not: null }, fechaPago: { gte: yearStart }, estado: 'confirmado' }, 
+            include: { 
+              factura: { select: { fechaVencimiento: true } }, 
+              cliente: { 
+                select: { 
+                  id: true,
+                  nombre: true, 
+                  apellidos: true,
+                  suscripciones: {
+                    where: { estado: { in: ['activo', 'ACTIVO', 'Activo'] } },
+                    select: { diaFacturacion: true },
+                    take: 1
+                  }
+                } 
+              } 
+            } 
+          }),
         prisma.evento.findMany({ take: 3, orderBy: { createdAt: 'desc' } }),
         prisma.tarea.findMany({ take: 3, orderBy: { createdAt: 'desc' } })
       ]);
@@ -836,28 +1216,9 @@ const CajaService = {
       const gastosMesPapeleriaNum = Number(gastosMesPapeleriaAgg?._sum?.monto || 0);
       const gastosMesBancoNum = Number(gastosMesBancoAgg._sum.monto || 0);
 
-      // --- BALANCE BANCO (FIXED) ---
-      // Get unique cuenta contable IDs from active bank accounts and sum their saldos
-      const cuentasBancarias = await prisma.cuentaBancaria.findMany({
-        where: { activo: true },
-        select: { cuentaContableId: true }
-      });
-
-      // Get unique cuenta contable IDs 
-      const uniqueCuentaContableIds = [...new Set(cuentasBancarias.map(c => c.cuentaContableId))];
-
-      // Sum saldos from unique cuentas contables only
-      const cuentasContables = await prisma.cuentaContable.findMany({
-        where: { 
-          id: { in: uniqueCuentaContableIds },
-          activa: true 
-        },
-        select: { saldoActual: true }
-      });
-
-      const balanceBancoNum = cuentasContables.reduce((total, cuenta) => {
-        return total + Number(cuenta.saldoActual || 0);
-      }, 0);
+      // --- NET MONTHLY BANK INCOME (FOR 'BANCO' CARD) ---
+      const ingresosMesBancoNum = Number(pagosClientesBancoAggMes?._sum?.monto || 0) + Number(ingresosMovimientosBancoAggMes?._sum?.monto || 0);
+      const balanceBancoNum = ingresosMesBancoNum - gastosMesBancoNum;
 
       // --- INGRESO REAL MES (Caja + Banco) ---
 
@@ -874,7 +1235,6 @@ const CajaService = {
       const totalFacturasPendientes = Number(totalFacturasPendientesAgg._sum.total || 0);
       // --- INGRESO REAL MES (Restored Logic) ---
       const ingresosMesCajaPrincipalNum = Number(ingresosMesCajaPrincipalAgg?._sum?.monto || 0);
-      const ingresosMesBancoNum = Number(pagosClientesBancoAggMes?._sum?.monto || 0) + Number(ingresosMovimientosBancoAggMes?._sum?.monto || 0);
       const ingresoRealMesNum = ingresosMesCajaPrincipalNum + ingresosMesBancoNum;
       // --- INGRESOS BIMENSUALES ---
 
@@ -894,10 +1254,10 @@ const CajaService = {
       const monthlyData = {};
       for (let i = 0; i < 12; i++) {
         const monthName = new Date(0, i).toLocaleString('es-ES', { month: 'short' });
-        monthlyData[i] = { 
-          name: monthName, 
-          IngresoCaja: 0, 
-          IngresoBanco: 0, 
+        monthlyData[i] = {
+          name: monthName,
+          IngresoCaja: 0,
+          IngresoBanco: 0,
           IngresoPapeleria: 0,
           GastoCaja: 0,
           GastoBanco: 0,
@@ -908,7 +1268,7 @@ const CajaService = {
       movimientosAnual.forEach(m => {
         const month = new Date(m.fecha).getMonth();
         const monto = Number(m.monto);
-        
+
         if (m.tipo === 'ingreso') {
           if (m.metodo === 'caja') monthlyData[month].IngresoCaja += monto;
           else if (m.metodo === 'banco') monthlyData[month].IngresoBanco += monto;
@@ -920,27 +1280,38 @@ const CajaService = {
         }
       });
 
-      pagosAnual.forEach(p => {
-        const month = new Date(p.fechaPago).getMonth();
-        const monto = Number(p.monto);
-        monthlyData[month].IngresoBanco += monto;
-      });
-
       const chartData = Object.values(monthlyData);
 
       // --- TOP EARLY PAYERS ---
-      // (Data already fetched)
-
+      // Clientes que pagan ANTES de su día de facturación (15 o 30 de cada mes)
+      
       const earlyPayerMap = new Map();
-      pagosConFactura.forEach(p => {
-        if (p.factura && new Date(p.fechaPago) <= new Date(p.factura.fechaVencimiento)) {
-          const name = p.cliente ? `${p.cliente.nombre} ${p.cliente.apellidos || ''}`.trim() : 'Cliente';
-          const curr = earlyPayerMap.get(name) || { val: 0, date: p.fechaPago, count: 0 };
-          curr.val += Number(p.monto);
+      
+      for (const pago of pagosConFactura) {
+        if (!pago.cliente) continue;
+        
+          // Obtener las suscripciones del cliente (ya están cargadas en la query)
+          const suscripciones = pago.cliente.suscripciones || [];
+        
+        if (suscripciones.length === 0) continue;
+        
+        // Usar el día de facturación de la primera suscripción activa
+        const diaFacturacion = suscripciones[0].diaFacturacion;
+        
+        // Obtener la fecha de pago
+        const fechaPago = new Date(pago.fechaPago);
+        const diaPago = fechaPago.getDate();
+        
+        // Verificar si pagó ANTES del día de facturación
+        // Si el día de pago es menor al día de facturación, se considera pago anticipado
+        if (diaPago < diaFacturacion) {
+          const name = `${pago.cliente.nombre} ${pago.cliente.apellidos || ''}`.trim();
+          const curr = earlyPayerMap.get(name) || { val: 0, date: pago.fechaPago, count: 0 };
+          curr.val += Number(pago.monto);
           curr.count += 1;
           earlyPayerMap.set(name, curr);
         }
-      });
+      }
 
       const topEarlyPayers = Array.from(earlyPayerMap.entries())
         .map(([name, d]) => ({ name, total: d.val, date: d.date, count: d.count }))

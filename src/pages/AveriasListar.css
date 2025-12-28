@@ -111,3 +111,135 @@
   background: transparent !important;
   box-shadow: none !important;
 }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .page-container {
+    padding: clamp(12px, 2vw, 16px);
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(8px, 1.5vw, 12px);
+    margin-bottom: clamp(12px, 2vw, 16px);
+  }
+
+  .page-title {
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
+    margin-bottom: clamp(3px, 0.8vw, 5px);
+  }
+
+  .page-subtitle {
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+  }
+
+  .card {
+    padding: clamp(14px, 3vw, 18px);
+    margin-bottom: clamp(14px, 2vw, 18px);
+    border-radius: clamp(12px, 2vw, 16px);
+  }
+
+  .card-title {
+    font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+    margin-bottom: clamp(10px, 1.5vw, 14px);
+    padding-bottom: clamp(6px, 1vw, 10px);
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: clamp(8px, 1.5vw, 12px) clamp(8px, 1.5vw, 14px);
+    font-size: clamp(0.75rem, 1.8vw, 0.875rem);
+  }
+
+  .data-table th {
+    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+  }
+
+  .dt-actions {
+    gap: clamp(4px, 0.8vw, 6px);
+  }
+
+  .dt-actions .action-button {
+    width: clamp(28px, 6vw, 32px) !important;
+    height: clamp(28px, 6vw, 32px) !important;
+    padding: clamp(4px, 1vw, 6px) !important;
+  }
+
+  .dt-actions .action-button .material-icons {
+    font-size: clamp(18px, 4vw, 22px);
+  }
+
+  .button-small {
+    padding: clamp(4px, 1vw, 5px) clamp(8px, 1.5vw, 10px);
+    font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    padding: clamp(8px, 1.5vw, 10px);
+  }
+
+  .dashboard-header {
+    gap: clamp(6px, 1vw, 8px);
+    margin-bottom: clamp(10px, 1.5vw, 12px);
+  }
+
+  .page-title {
+    font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+    margin-bottom: clamp(2px, 0.5vw, 3px);
+  }
+
+  .page-subtitle {
+    font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+  }
+
+  .card {
+    padding: clamp(10px, 2vw, 14px);
+    margin-bottom: clamp(10px, 1.5vw, 14px);
+    border-radius: clamp(10px, 1.5vw, 12px);
+  }
+
+  .card-title {
+    font-size: clamp(0.95rem, 3vw, 1.1rem);
+    margin-bottom: clamp(8px, 1.2vw, 10px);
+    padding-bottom: clamp(4px, 0.8vw, 6px);
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: clamp(6px, 1vw, 8px) clamp(4px, 0.8vw, 6px);
+    font-size: clamp(0.65rem, 1.2vw, 0.75rem);
+  }
+
+  .data-table th {
+    font-size: clamp(0.6rem, 1vw, 0.7rem);
+    letter-spacing: 0.02em;
+  }
+
+  .dt-actions {
+    gap: clamp(2px, 0.5vw, 4px);
+    flex-wrap: wrap;
+  }
+
+  .dt-actions .action-button {
+    width: clamp(26px, 5vw, 28px) !important;
+    height: clamp(26px, 5vw, 28px) !important;
+    padding: clamp(3px, 0.6vw, 4px) !important;
+  }
+
+  .dt-actions .action-button .material-icons {
+    font-size: clamp(16px, 3.5vw, 18px);
+  }
+
+  .button-small {
+    padding: clamp(3px, 0.6vw, 4px) clamp(6px, 1vw, 8px);
+    font-size: clamp(0.6rem, 1.2vw, 0.7rem);
+  }
+
+  .error-message {
+    padding: clamp(8px, 1.5vw, 10px);
+    font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+  }
+}

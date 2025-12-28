@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Pencil, Trash2, Plus, RefreshCw } from 'lucide-react';
 import { getCategorias, createCategoria, updateCategoria, deleteCategoria, type Categoria } from '../services/categoriaService';
 import Button from '../components/ui/Button';
 import DataTable from '../components/ui/DataTable';
@@ -101,7 +102,7 @@ const Categorias: React.FC = () => {
     if (!result.isConfirmed) {
       return;
     }
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -153,15 +154,15 @@ const Categorias: React.FC = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       if (editingCategoria) {
         // Update category
         const updatedCategoria = await updateCategoria(editingCategoria.id, newCategoria);
@@ -171,7 +172,7 @@ const Categorias: React.FC = () => {
         const createdCategoria = await createCategoria(newCategoria);
         setCategorias([...categorias, createdCategoria]);
       }
-      
+
       setShowModal(false);
       setNewCategoria(initialNewCategoriaState);
       setEditingCategoria(null);
@@ -237,21 +238,21 @@ const Categorias: React.FC = () => {
       header: 'Acciones',
       cell: ({ row }) => (
         <div className="table-actions">
-          <button 
+          <button
             className="action-btn edit-btn"
             onClick={() => handleEdit(row.original)}
             title="Editar"
             disabled={loading}
           >
-            <span className="material-icons">edit</span>
+            <Pencil size={18} strokeWidth={2.5} />
           </button>
-          <button 
+          <button
             className="action-btn delete-btn"
             onClick={() => handleDelete(row.original.id)}
             title="Eliminar"
             disabled={loading}
           >
-            <span className="material-icons">delete</span>
+            <Trash2 size={18} strokeWidth={2.5} />
           </button>
         </div>
       ),
@@ -274,7 +275,7 @@ const Categorias: React.FC = () => {
           padding: '4rem',
           color: 'var(--colors-text-secondary)'
         }}>
-          <span className="material-icons" style={{ fontSize: '3rem', animation: 'spin 1s linear infinite' }}>refresh</span>
+          <RefreshCw size={48} strokeWidth={2.5} className="rotating" />
           <p style={{ marginTop: '1rem', fontSize: '1.1rem' }}>Cargando categorías...</p>
         </div>
       </div>
@@ -290,12 +291,12 @@ const Categorias: React.FC = () => {
           <p>Administra las categorías de servicios.</p>
         </div>
         <div className="header-right">
-          <Button 
-            className="primary" 
+          <Button
+            className="primary"
             onClick={handleCreate}
             disabled={loading}
           >
-            <span className="material-icons">add</span>
+            <Plus size={20} strokeWidth={2.5} />
             Nueva Categoría
           </Button>
         </div>
@@ -315,7 +316,7 @@ const Categorias: React.FC = () => {
           <span className="material-icons">error</span>
           <div>
             <strong>Error:</strong> {error}
-            <button 
+            <button
               onClick={() => setError(null)}
               style={{
                 marginLeft: '1rem',
@@ -330,7 +331,7 @@ const Categorias: React.FC = () => {
               Cerrar
             </button>
             {!showModal && (
-              <button 
+              <button
                 onClick={fetchCategorias}
                 style={{
                   marginLeft: '0.5rem',
@@ -390,10 +391,10 @@ const Categorias: React.FC = () => {
           <form onSubmit={handleSave}>
             <div className="form-group">
               <label>Nombre *</label>
-              <input 
-                type="text" 
-                value={newCategoria.nombre} 
-                onChange={(e) => setNewCategoria({ ...newCategoria, nombre: e.target.value })} 
+              <input
+                type="text"
+                value={newCategoria.nombre}
+                onChange={(e) => setNewCategoria({ ...newCategoria, nombre: e.target.value })}
                 className="compact-input"
                 required
                 disabled={loading}
@@ -405,9 +406,9 @@ const Categorias: React.FC = () => {
             </div>
             <div className="form-group">
               <label>Descripción</label>
-              <textarea 
-                value={newCategoria.descripcion} 
-                onChange={(e) => setNewCategoria({ ...newCategoria, descripcion: e.target.value })} 
+              <textarea
+                value={newCategoria.descripcion}
+                onChange={(e) => setNewCategoria({ ...newCategoria, descripcion: e.target.value })}
                 className="compact-input"
                 disabled={loading}
                 maxLength={1000}
@@ -419,17 +420,17 @@ const Categorias: React.FC = () => {
             </div>
             <div className="form-group">
               <label>Icono (Material Icons)</label>
-              <input 
-                type="text" 
-                value={newCategoria.icono} 
-                onChange={(e) => setNewCategoria({ ...newCategoria, icono: e.target.value })} 
+              <input
+                type="text"
+                value={newCategoria.icono}
+                onChange={(e) => setNewCategoria({ ...newCategoria, icono: e.target.value })}
                 className="compact-input"
                 placeholder="Ej: wifi, settings, home"
                 disabled={loading}
                 maxLength={100}
               />
               <small style={{ color: 'var(--colors-text-secondary)', fontSize: '0.8rem' }}>
-                Solo el nombre del icono (máximo 100 caracteres). 
+                Solo el nombre del icono (máximo 100 caracteres).
                 <a href="https://fonts.google.com/icons" target="_blank" rel="noopener noreferrer" style={{ marginLeft: '0.5rem' }}>
                   Ver iconos disponibles
                 </a>
@@ -445,20 +446,20 @@ const Categorias: React.FC = () => {
             </div>
             <div className="form-group">
               <label>Color</label>
-              <input 
-                type="color" 
-                value={newCategoria.color} 
-                onChange={(e) => setNewCategoria({ ...newCategoria, color: e.target.value })} 
+              <input
+                type="color"
+                value={newCategoria.color}
+                onChange={(e) => setNewCategoria({ ...newCategoria, color: e.target.value })}
                 className="compact-input"
                 disabled={loading}
               />
             </div>
             <div className="form-group">
               <label>Orden</label>
-              <input 
-                type="number" 
-                value={newCategoria.orden} 
-                onChange={(e) => setNewCategoria({ ...newCategoria, orden: parseInt(e.target.value) || 0 })} 
+              <input
+                type="number"
+                value={newCategoria.orden}
+                onChange={(e) => setNewCategoria({ ...newCategoria, orden: parseInt(e.target.value) || 0 })}
                 className="compact-input"
                 disabled={loading}
                 min={0}
@@ -469,9 +470,9 @@ const Categorias: React.FC = () => {
             </div>
             <div className="form-group checkbox-group">
               <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  checked={newCategoria.activo} 
+                <input
+                  type="checkbox"
+                  checked={newCategoria.activo}
                   onChange={(e) => setNewCategoria({ ...newCategoria, activo: e.target.checked })}
                   disabled={loading}
                 />
@@ -480,12 +481,12 @@ const Categorias: React.FC = () => {
               </label>
             </div>
             <div className="form-actions">
-              <Button 
+              <Button
                 type="button"
                 onClick={() => {
                   setShowModal(false);
                   setError(null);
-                }} 
+                }}
                 disabled={loading}
               >
                 Cancelar

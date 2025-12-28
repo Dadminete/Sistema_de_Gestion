@@ -16,7 +16,7 @@ const SalesChart: React.FC<SalesChartProps> = ({ data }) => {
       <h3 style={{ margin: '0 0 15px 0', fontSize: '1.1rem', fontWeight: 600, color: 'var(--colors-text-primary)' }}>
         Top Clientes Cumplidos
         <span style={{ display: 'block', fontSize: '0.8rem', fontWeight: 400, color: 'var(--colors-text-secondary)' }}>
-          Pagos realizados antes del vencimiento
+          Pagos realizados antes de su día de facturación
         </span>
       </h3>
 
@@ -49,7 +49,7 @@ const SalesChart: React.FC<SalesChartProps> = ({ data }) => {
                 <div>
                   <div style={{ fontWeight: 500, fontSize: '0.9rem' }}>{payer.name}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--colors-text-secondary)' }}>
-                    {payer.count} facturas pagadas a tiempo
+                    {payer.count} facturas pagadas anticipadamente
                   </div>
                 </div>
               </div>

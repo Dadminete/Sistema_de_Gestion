@@ -28,7 +28,6 @@ body.dark {
         opacity: 0;
         transform: translateY(20px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -39,8 +38,442 @@ body.dark {
     from {
         opacity: 0;
     }
-
     to {
-        justify-content: flex-end;
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Bank Detail Page Layout */
+.bank-detail-page {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.bank-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    padding: 24px;
+}
+
+.header-title {
+    flex: 1;
+}
+
+.breadcrumb {
+    font-size: 0.875rem;
+    color: var(--av-subtext);
+    margin-bottom: 8px;
+}
+
+.breadcrumb a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.header-title h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--av-text);
+}
+
+/* Glass Card */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: var(--glass-shadow);
+    animation: slideInUp 0.5s ease-out backwards;
+}
+
+.card-bank-header {
+    padding: 28px !important;
+}
+
+/* Bank Icon */
+.bank-icon-large {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--gradient-purple-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(103, 126, 234, 0.4);
+}
+
+.bank-icon-large .material-icons {
+    font-size: 32px;
+    color: white;
+}
+
+/* Dashboard Row */
+.dashboard-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    width: 100%;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-badge.success {
+    background: rgba(16, 185, 129, 0.15);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-badge.danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-badge.warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Action Buttons */
+.table-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: transparent;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.view-btn {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.edit-btn {
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.delete-btn {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Primary Button */
+.btn-primary-gradient {
+    background: var(--gradient-purple-blue);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(103, 126, 234, 0.4);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary-gradient:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(103, 126, 234, 0.5);
+}
+
+.btn-primary-gradient:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Modern Table Container */
+.modern-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Form Styles */
+.form-group label {
+    font-weight: 600;
+    color: var(--av-text);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.compact-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    color: var(--av-text);
+    transition: all 0.3s ease;
+}
+
+body.dark .compact-input {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.compact-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(103, 126, 234, 0.15);
+    background: rgba(255, 255, 255, 0.8);
+}
+
+body.dark .compact-input:focus {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .dashboard-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .bank-detail-page {
+        padding: clamp(10px, 2vw, 16px);
+        gap: clamp(10px, 2vw, 16px);
+    }
+
+    .bank-detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: clamp(10px, 2vw, 14px);
+        padding: clamp(14px, 3vw, 20px);
+        border-radius: clamp(12px, 2.5vw, 16px);
+    }
+
+    .breadcrumb {
+        font-size: clamp(0.75rem, 2vw, 0.825rem);
+        margin-bottom: clamp(4px, 1vw, 6px);
+    }
+
+    .header-title h1 {
+        font-size: clamp(1.25rem, 4vw, 1.5rem);
+    }
+
+    .glass-card {
+        padding: clamp(12px, 2.5vw, 18px);
+        border-radius: clamp(12px, 2.5vw, 16px);
+    }
+
+    .card-bank-header {
+        padding: clamp(16px, 3vw, 22px) !important;
+    }
+
+    .bank-icon-large {
+        width: clamp(48px, 10vw, 56px);
+        height: clamp(48px, 10vw, 56px);
+        border-radius: clamp(12px, 2.5vw, 14px);
+    }
+
+    .bank-icon-large .material-icons {
+        font-size: clamp(24px, 5vw, 28px);
+    }
+
+    .dashboard-row {
+        grid-template-columns: 1fr;
+        gap: clamp(12px, 2vw, 16px);
+    }
+
+    .status-badge {
+        padding: clamp(3px, 1vw, 5px) clamp(8px, 2vw, 10px);
+        font-size: clamp(0.65rem, 1.8vw, 0.75rem);
+        gap: clamp(4px, 1vw, 6px);
+    }
+
+    .status-badge .material-icons {
+        font-size: clamp(12px, 2.5vw, 14px);
+    }
+
+    .table-actions {
+        gap: clamp(4px, 1vw, 6px);
+    }
+
+    .action-btn {
+        width: clamp(28px, 5vw, 32px);
+        height: clamp(28px, 5vw, 32px);
+        border-radius: clamp(6px, 1.5vw, 8px);
+    }
+
+    .action-btn .material-icons {
+        font-size: clamp(16px, 3.5vw, 18px);
+    }
+
+    .btn-primary-gradient {
+        padding: clamp(8px, 2vw, 10px) clamp(14px, 3vw, 18px);
+        border-radius: clamp(8px, 2vw, 10px);
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        gap: clamp(4px, 1vw, 6px);
+    }
+
+    .btn-primary-gradient .material-icons {
+        font-size: clamp(16px, 3.5vw, 18px);
+    }
+
+    .form-group {
+        margin-bottom: clamp(12px, 2.5vw, 16px);
+    }
+
+    .form-group label {
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        margin-bottom: clamp(4px, 1vw, 6px);
+    }
+
+    .compact-input {
+        padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 14px);
+        border-radius: clamp(8px, 2vw, 10px);
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .bank-detail-page {
+        padding: clamp(8px, 2vw, 10px);
+        gap: clamp(8px, 2vw, 10px);
+    }
+
+    .bank-detail-header {
+        padding: clamp(10px, 2.5vw, 14px);
+        gap: clamp(8px, 2vw, 10px);
+        border-radius: clamp(10px, 2vw, 12px);
+    }
+
+    .breadcrumb {
+        font-size: clamp(0.65rem, 2vw, 0.75rem);
+        margin-bottom: clamp(2px, 0.5vw, 4px);
+    }
+
+    .header-title h1 {
+        font-size: clamp(1rem, 4.5vw, 1.2rem);
+        font-weight: 600;
+    }
+
+    .glass-card {
+        padding: clamp(8px, 2vw, 12px);
+        border-radius: clamp(10px, 2vw, 12px);
+    }
+
+    .card-bank-header {
+        padding: clamp(12px, 2.5vw, 16px) !important;
+    }
+
+    .bank-icon-large {
+        width: clamp(40px, 9vw, 48px);
+        height: clamp(40px, 9vw, 48px);
+        border-radius: clamp(10px, 2vw, 12px);
+    }
+
+    .bank-icon-large .material-icons {
+        font-size: clamp(20px, 4.5vw, 24px);
+    }
+
+    .dashboard-row {
+        gap: clamp(8px, 2vw, 10px);
+    }
+
+    .status-badge {
+        padding: clamp(2px, 0.5vw, 3px) clamp(6px, 1.5vw, 8px);
+        font-size: clamp(0.6rem, 1.8vw, 0.65rem);
+        gap: clamp(3px, 0.8vw, 4px);
+        border-radius: clamp(12px, 2.5vw, 16px);
+    }
+
+    .status-badge .material-icons {
+        font-size: clamp(10px, 2.5vw, 12px);
+    }
+
+    .table-actions {
+        gap: clamp(3px, 0.8vw, 4px);
+        flex-wrap: nowrap;
+    }
+
+    .action-btn {
+        width: clamp(26px, 5.5vw, 28px);
+        height: clamp(26px, 5.5vw, 28px);
+        border-radius: clamp(5px, 1.2vw, 6px);
+        padding: 0;
+    }
+
+    .action-btn .material-icons {
+        font-size: clamp(14px, 3.5vw, 16px);
+    }
+
+    .btn-primary-gradient {
+        padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2.5vw, 14px);
+        border-radius: clamp(6px, 1.5vw, 8px);
+        font-size: clamp(0.7rem, 2vw, 0.8rem);
+        gap: clamp(3px, 0.8vw, 4px);
+    }
+
+    .btn-primary-gradient .material-icons {
+        font-size: clamp(14px, 3.5vw, 16px);
+    }
+
+    .form-group {
+        margin-bottom: clamp(10px, 2vw, 12px);
+    }
+
+    .form-group label {
+        font-size: clamp(0.7rem, 2vw, 0.8rem);
+        margin-bottom: clamp(3px, 0.8vw, 4px);
+    }
+
+    .compact-input {
+        padding: clamp(6px, 1.5vw, 8px) clamp(8px, 2vw, 10px);
+        border-radius: clamp(6px, 1.5vw, 8px);
+        font-size: clamp(0.7rem, 2vw, 0.8rem);
+    }
+
+    .modern-table-container {
+        margin: 0 clamp(-8px, -2vw, -12px);
     }
 }

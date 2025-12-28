@@ -1,11 +1,11 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getVentas, deleteVenta, type VentaPapeleria } from '@/services/papeleriaApi';
+import { useQuery } from '@tanstack/react-query';
+import { getVentas, type VentaPapeleria } from '@/services/papeleriaApi';
 import DataTable from '@/components/ui/DataTable';
 import VentaEditModal from '@/components/ui/VentaEditModal';
+import { Eye, Printer } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { FaPrint } from 'react-icons/fa'; // Import FaPrint icon
 import Swal from 'sweetalert2'; // Import SweetAlert2 for potential print confirmations
 import './ListadoPapeleria.css';
 import { useAuth } from '@/context/AuthProvider'; // Needed for user info in ticket
@@ -21,7 +21,7 @@ const formatCurrency = (amount: number): string => {
 };
 
 const ListadoPapeleria: React.FC = () => {
-  const queryClient = useQueryClient();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [editingVentaId, setEditingVentaId] = useState<string | null>(null);
 
@@ -94,37 +94,13 @@ const ListadoPapeleria: React.FC = () => {
 
   console.log("Productos vendidos processed:", productosVendidos);
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteVenta,
-    onSuccess: () => {
-      toast.success('Venta eliminada con éxito');
-      queryClient.invalidateQueries({ queryKey: ['ventasPapeleria'] });
-    },
-    onError: (error) => {
-      toast.error(`Error al eliminar la venta: ${error.message}`);
-    },
-  });
+
 
   const handleEdit = (ventaId: string) => {
     setEditingVentaId(ventaId);
   };
 
-  const handleDelete = async (ventaId: string) => {
-    const result = await Swal.fire({
-      title: '¿Estás seguro?',
-      text: '¿Estás seguro de que quieres eliminar esta venta? Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    });
 
-    if (result.isConfirmed) {
-      deleteMutation.mutate(ventaId);
-    }
-  };
 
   const { user } = useAuth(); // Get user from auth context
 
@@ -176,10 +152,10 @@ const ListadoPapeleria: React.FC = () => {
 
     const printWindow = window.open('', '', 'height=600,width=800');
     if (printWindow) {
-        printWindow.document.write('<html><head><title>Ticket de Venta</title>');
-        printWindow.document.write('<link rel="stylesheet" href="/src/pages/Ticket.css">'); // Link to the existing Ticket.css
-        printWindow.document.write('<style>');
-        printWindow.document.write(`
+      printWindow.document.write('<html><head><title>Ticket de Venta</title>');
+      printWindow.document.write('<link rel="stylesheet" href="/src/pages/Ticket.css">'); // Link to the existing Ticket.css
+      printWindow.document.write('<style>');
+      printWindow.document.write(`
             body { font-family: 'Courier New', Courier, monospace; color: #000; background: #fff; margin: 0; padding: 0; }
             .ticket { width: 300px; margin: 10px auto; padding: 10px; border: 1px dashed #000; font-size: 12px; }
             .ticket h2 { text-align: center; margin-bottom: 10px; font-size: 16px; }
@@ -199,15 +175,15 @@ const ListadoPapeleria: React.FC = () => {
                 .ticket-actions { display: none; } /* Hide buttons when printing */
             }
         `);
-        printWindow.document.write('</style>');
-        printWindow.document.write('</head><body>');
-        printWindow.document.write(ticketContent);
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.onload = () => {
-            // No automatic print here, let the user click the button
-        };
+      printWindow.document.write('</style>');
+      printWindow.document.write('</head><body>');
+      printWindow.document.write(ticketContent);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.onload = () => {
+        // No automatic print here, let the user click the button
+      };
     }
   };
 
@@ -256,7 +232,7 @@ const ListadoPapeleria: React.FC = () => {
             className="action-btn edit-btn"
             title="Ver Venta"
           >
-            <span className="material-icons">visibility</span>
+            <Eye size={18} strokeWidth={2.5} />
           </button>
           <button
             onClick={() => {
@@ -270,7 +246,7 @@ const ListadoPapeleria: React.FC = () => {
             className="action-btn print-btn"
             title="Imprimir Ticket"
           >
-            <FaPrint />
+            <Printer size={18} strokeWidth={2.5} />
           </button>
         </div>
       ),
@@ -280,9 +256,9 @@ const ListadoPapeleria: React.FC = () => {
   return (
     <div className="dashboard-layout">
       {editingVentaId && (
-        <VentaEditModal 
-          ventaId={editingVentaId} 
-          onClose={() => setEditingVentaId(null)} 
+        <VentaEditModal
+          ventaId={editingVentaId}
+          onClose={() => setEditingVentaId(null)}
         />
       )}
 
@@ -292,7 +268,7 @@ const ListadoPapeleria: React.FC = () => {
           <p>Gestiona las ventas de tu papelería.</p>
         </div>
       </header>
-      
+
       {isLoading ? (
         <div className="loading-message" style={{ textAlign: 'center', padding: '2rem' }}>
           <p>Cargando productos vendidos...</p>

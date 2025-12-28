@@ -85,6 +85,12 @@ button.action-btn {
   background-color: transparent;
 }
 
+.action-btn svg, .action-button svg {
+  stroke-width: 2.5px !important;
+  min-width: 16px;
+  min-height: 16px;
+}
+
 /* Remove all outlines and borders that could cause black borders */
 * {
   outline: none !important;

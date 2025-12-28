@@ -61,6 +61,18 @@ router.get('/dashboard/recent-transactions', async (req, res) => {
 });
 
 
+// NUEVA RUTA: Obtener análisis de ahorro personalizado
+router.get('/dashboard/savings-analysis', async (req, res) => {
+  try {
+    const data = await CajaService.getSavingsAnalysis();
+    res.json(data);
+  } catch (error) {
+    console.error('Error en /api/cajas/dashboard/savings-analysis:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 // Obtener una caja específica
 router.get('/:id', async (req, res) => {
   try {

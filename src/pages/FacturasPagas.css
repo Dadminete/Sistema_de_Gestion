@@ -273,6 +273,16 @@ body.dark .status-badge-paid {
 }
 
 /* Action buttons - using DataTable.css styles */
+.action-btn.revert-btn {
+  background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+  color: white;
+}
+
+.action-btn.revert-btn:hover {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
 
 /* Loading state */
 .loading-container {

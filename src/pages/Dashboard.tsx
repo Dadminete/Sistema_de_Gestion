@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import KpiWidget from '@/components/ui/KpiWidget';
+import { Wallet, FileText, Landmark, Briefcase, Users, AlertTriangle, TrendingUp, PlayCircle, RefreshCw, Settings, AlertCircle, CheckCircle2, Circle } from 'lucide-react';
 import InfoCard from '@/components/ui/InfoCard';
 import RevenueChart from '@/components/charts/RevenueChart';
 import SalesChart from '@/components/charts/SalesChart';
 import { AuthService } from '@/services/authService';
-import { getDashboardData, type DashboardData } from '@/services/cajaService';
+import { getDashboardData, type DashboardData, getSavingsAnalysis, type SavingsAnalysis } from '@/services/cajaService';
 import { recentClientsService, type RecentSubscribedClient } from '../services/recentClientsService';
 import '../styles/RecentClients.css';
 import '../styles/DashboardOptimizations.css';
@@ -24,6 +25,7 @@ const Dashboard: React.FC = () => {
   const userName = currentUser ? `${currentUser.nombre} ${currentUser.apellido}` : 'Usuario';
 
   const [cajaData, setCajaData] = useState<DashboardData | null>(null);
+  const [savingsAnalysis, setSavingsAnalysis] = useState<SavingsAnalysis | null>(null);
   const [recentClients, setRecentClients] = useState<RecentSubscribedClient[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingClients, setLoadingClients] = useState(true);
@@ -41,7 +43,7 @@ const Dashboard: React.FC = () => {
       const startTime = performance.now();
       console.log('🔄 Starting dashboard data fetch...');
 
-      const [cajaDataResult, recentClientsResult] = await Promise.all([
+      const [cajaDataResult, recentClientsResult, savingsResult] = await Promise.all([
         getDashboardData('week').catch(error => {
           console.error('Error fetching caja data:', error);
           setError('Error cargando datos de caja');
@@ -50,6 +52,10 @@ const Dashboard: React.FC = () => {
         recentClientsService.getRecentSubscribedClients(5).catch(error => {
           console.error('Error fetching recent clients:', error);
           return [];
+        }),
+        getSavingsAnalysis().catch(error => {
+          console.error('Error fetching savings analysis:', error);
+          return null;
         })
       ]);
 
@@ -67,6 +73,7 @@ const Dashboard: React.FC = () => {
 
       setCajaData(cajaDataResult);
       setRecentClients(recentClientsResult);
+      setSavingsAnalysis(savingsResult);
       setLastRefresh(new Date());
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -109,7 +116,7 @@ const Dashboard: React.FC = () => {
         value: formatCurrency(cajaData.stats.balanceCajaPrincipal || 0),
         percentage: `Gasto Mensual: ${formatCurrency(cajaData.stats.gastosMesCajaPrincipal || 0)}`,
         percentageClass: "bright-red",
-        icon: <span className="material-icons">account_balance_wallet</span>,
+        icon: <Wallet size={24} strokeWidth={2.5} />,
         barColor: "#00BFA5"
       },
       {
@@ -117,15 +124,15 @@ const Dashboard: React.FC = () => {
         value: formatCurrency(cajaData.stats.balancePapeleria || 0),
         percentage: `Gastos Mes: ${formatCurrency(cajaData.stats.gastosMesPapeleria || 0)}`,
         percentageClass: "bright-red",
-        icon: <span className="material-icons">description</span>,
+        icon: <FileText size={24} strokeWidth={2.5} />,
         barColor: "#F44336"
       },
       {
-        title: "BANCO",
+        title: "BALANCE BANCO NETO",
         value: formatCurrency(cajaData.stats.balanceBanco || 0),
-        percentage: `Gastos Mes: ${formatCurrency(cajaData.stats.gastosMesBanco || 0)}`,
+        percentage: `Gastos Banco: ${formatCurrency(cajaData.stats.gastosMesBanco || 0)}`,
         percentageClass: "bright-red",
-        icon: <span className="material-icons">monetization_on</span>,
+        icon: <Landmark size={24} strokeWidth={2.5} />,
         barColor: "#00BFA5"
       },
       {
@@ -133,7 +140,7 @@ const Dashboard: React.FC = () => {
         value: formatCurrency(cajaData.stats.ingresoRealMes || 0),
         percentage: `Gastos Totales: ${formatCurrency((cajaData.stats.gastosMesCajaPrincipal || 0) + (cajaData.stats.gastosMesPapeleria || 0) + (cajaData.stats.gastosMesBanco || 0))}`,
         percentageClass: "bright-red",
-        icon: <span className="material-icons">work</span>,
+        icon: <Briefcase size={24} strokeWidth={2.5} />,
         barColor: "#FFC107"
       },
       {
@@ -141,7 +148,7 @@ const Dashboard: React.FC = () => {
         value: (cajaData.stats.totalClientesActivos?.toString() || "0"),
         percentage: "Total Clientes activos",
         percentageClass: "neutral",
-        icon: <span className="material-icons">people</span>,
+        icon: <Users size={24} strokeWidth={2.5} />,
         barColor: "#2196F3"
       },
       {
@@ -149,27 +156,27 @@ const Dashboard: React.FC = () => {
         value: formatCurrency(cajaData.stats.totalFacturasPendientes || 0),
         percentage: "Monto total facturas pendientes",
         percentageClass: "negative",
-        icon: <span className="material-icons">assignment_late</span>,
+        icon: <AlertTriangle size={24} strokeWidth={2.5} />,
         barColor: "#9C27B0"
       },
       {
-        title: "INGRESOS (2 MESES)",
-        value: formatCurrency(cajaData.stats.totalIngresosBimensual || 0),
-        percentage: "Mes Anterior + Mes Actual",
+        title: "POTENCIAL AHORRO",
+        value: savingsAnalysis ? formatCurrency(savingsAnalysis.proyectado.ahorro) : formatCurrency(72900),
+        percentage: `Margen: ${savingsAnalysis?.proyectado.margenAhorro || '52.07'}%`,
         percentageClass: "positive",
-        icon: <span className="material-icons">savings</span>,
-        barColor: "#E91E63"
+        icon: <TrendingUp size={24} strokeWidth={2.5} />,
+        barColor: "#4CAF50"
       },
       {
         title: "VALOR SUSCRIPCIONES",
         value: formatCurrency(cajaData.stats.ingresosServiciosMes || 0),
         percentage: "Total precio mensual activo",
         percentageClass: "positive",
-        icon: <span className="material-icons">subscriptions</span>,
+        icon: <PlayCircle size={24} strokeWidth={2.5} />,
         barColor: "#607D8B"
       }
     ];
-  }, [cajaData, formatCurrency]);
+  }, [cajaData, savingsAnalysis, formatCurrency]);
 
   return (
     <div className="dashboard-layout">
@@ -193,10 +200,10 @@ const Dashboard: React.FC = () => {
               disabled={isDataLoading}
               style={{ opacity: isDataLoading ? 0.6 : 1 }}
             >
-              <span className={`material-icons ${isDataLoading ? 'rotating' : ''}`}>refresh</span>
+              <RefreshCw size={20} strokeWidth={2.5} className={isDataLoading ? 'rotating' : ''} />
             </button>
             <button title="Configuración">
-              <span className="material-icons">settings</span>
+              <Settings size={20} strokeWidth={2.5} />
             </button>
           </div>
         </div>
@@ -212,7 +219,7 @@ const Dashboard: React.FC = () => {
           marginBottom: '20px',
           color: '#c62828'
         }}>
-          <span className="material-icons" style={{ marginRight: '8px', verticalAlign: 'middle' }}>error</span>
+          <AlertCircle size={20} strokeWidth={2.5} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
           {error}
           <button
             onClick={handleRefresh}
@@ -288,9 +295,11 @@ const Dashboard: React.FC = () => {
                     {cajaData?.recentTasks?.length ? (
                       cajaData.recentTasks.map(task => (
                         <div key={task.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', padding: '8px', background: 'var(--colors-background-paper-secondary, rgba(0,0,0,0.02))', borderRadius: '6px' }}>
-                          <span className="material-icons" style={{ fontSize: '18px', marginRight: '10px', color: task.completada ? '#4caf50' : (task.color || '#ff9800') }}>
-                            {task.completada ? 'check_circle' : 'radio_button_unchecked'}
-                          </span>
+                          {task.completada ? (
+                            <CheckCircle2 size={18} strokeWidth={2.5} style={{ marginRight: '10px', color: '#4caf50' }} />
+                          ) : (
+                            <Circle size={18} strokeWidth={2.5} style={{ marginRight: '10px', color: task.color || '#ff9800' }} />
+                          )}
                           <div style={{ flex: 1, overflow: 'hidden' }}>
                             <div style={{ fontSize: '0.85rem', fontWeight: 500, textDecoration: task.completada ? 'line-through' : 'none', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{task.titulo}</div>
                           </div>
@@ -441,28 +450,88 @@ const Dashboard: React.FC = () => {
             </InfoCard>
           </div>
           <div className="card-reports">
-            <InfoCard title="Reports Overview">
-              <div>
-                <div className="reports-progress-bar-container">
-                  <div className="reports-progress-bar"></div>
-                </div>
-                <div className="reports-details">
-                  <div className="report-item">
-                    <span>Monthly Report</span>
-                    <span className="badge success">Complete</span>
-                    <span>100%</span>
+            <InfoCard title="Análisis de Presupuesto">
+              <div className="budget-analysis">
+                {savingsAnalysis ? (
+                  <>
+                    <div className="collection-breakdown" style={{ marginBottom: '20px', padding: '12px', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px', background: '#f8fafc' }}>
+                      <h6 style={{ margin: '0 0 10px 0', fontSize: '0.75rem', color: 'var(--colors-text-secondary)', textTransform: 'uppercase' }}>Recaudación Proyectada</h6>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                          <span>Día 15 (Suscripciones)</span>
+                          <span style={{ fontWeight: 600, color: '#10b981' }}>{formatCurrency(savingsAnalysis.proyectado.recaudacion15)}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                          <span>Otros Días (Cobros)</span>
+                          <span style={{ fontWeight: 600, color: '#3b82f6' }}>{formatCurrency(savingsAnalysis.proyectado.recaudacionOtros)}</span>
+                        </div>
+                        <div style={{ padding: '8px 0', marginTop: '4px', borderTop: '1px dashed #cbd5e1', display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 600 }}>
+                          <span>Total Mensual</span>
+                          <span>{formatCurrency(savingsAnalysis.proyectado.ingreso)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="collection-breakdown" style={{ marginBottom: '20px', padding: '12px', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '8px', background: '#f1f5f9' }}>
+                      <h6 style={{ margin: '0 0 10px 0', fontSize: '0.75rem', color: 'var(--colors-text-secondary)', textTransform: 'uppercase' }}>Resultado Real del Mes</h6>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                          <span>Ingreso Real</span>
+                          <span style={{ fontWeight: 600, color: '#0ea5e9' }}>{formatCurrency(savingsAnalysis.realMes.ingreso)}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                          <span>Gastos Reales</span>
+                          <span style={{ fontWeight: 600, color: '#ef4444' }}>{formatCurrency(savingsAnalysis.realMes.gastos)}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                          <span>Total Real</span>
+                          <span style={{ fontWeight: 700, color: '#16a34a' }}>{formatCurrency(savingsAnalysis.realMes.ahorro)}</span>
+                        </div>
+                        <div style={{ padding: '8px 0', marginTop: '4px', borderTop: '1px dashed #cbd5e1', display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 600 }}>
+                          <span>Margen Real</span>
+                          <span>{`${savingsAnalysis.realMes.margenAhorro}%`}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: '15px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '5px' }}>
+                        <span>Gastos Fijos Previstos</span>
+                        <span style={{ fontWeight: 600, color: '#f59e0b' }}>{formatCurrency(savingsAnalysis.proyectado.totalGastos)}</span>
+                      </div>
+                      <div className="reports-progress-bar-container">
+                        <div className="reports-progress-bar" style={{
+                          width: `${Math.min(100, (savingsAnalysis.proyectado.totalGastos / savingsAnalysis.proyectado.ingreso) * 100)}%`,
+                          backgroundColor: '#f59e0b'
+                        }}></div>
+                      </div>
+                      <small style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                        Consumo del {((savingsAnalysis.proyectado.totalGastos / savingsAnalysis.proyectado.ingreso) * 100).toFixed(1)}% de la recaudación proyectada
+                      </small>
+                    </div>
+
+                    <div className="budget-details" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <h6 style={{ margin: '5px 0 8px 0', fontSize: '0.75rem', color: 'var(--colors-text-secondary)', textTransform: 'uppercase' }}>Desglose de Gastos Fijos</h6>
+                      {Object.entries(savingsAnalysis.proyectado.gastos).map(([name, amount]) => (
+                        <div key={name} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', padding: '4px 0', borderBottom: '1px solid rgba(0,0,0,0.03)' }}>
+                          <span style={{ textTransform: 'capitalize' }}>{name}</span>
+                          <span style={{ fontWeight: 500 }}>{formatCurrency(amount)}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ marginTop: '15px', padding: '10px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px' }}>
+                      <h5 style={{ margin: '0 0 5px 0', fontSize: '0.8rem', color: '#2e7d32' }}>💡 Sugerencia</h5>
+                      <p style={{ margin: 0, fontSize: '0.75rem', color: '#1b5e20', lineHeight: 1.4 }}>
+                        {savingsAnalysis.recomendaciones[1].mensaje}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '20px', color: 'var(--colors-text-secondary)' }}>
+                    Cargando análisis...
                   </div>
-                  <div className="report-item">
-                    <span>Weekly Analysis</span>
-                    <span className="badge warning">Pending</span>
-                    <span>80%</span>
-                  </div>
-                  <div className="report-item">
-                    <span>Daily Summary</span>
-                    <span className="badge danger">Failed</span>
-                    <span>0%</span>
-                  </div>
-                </div>
+                )}
               </div>
             </InfoCard>
           </div>

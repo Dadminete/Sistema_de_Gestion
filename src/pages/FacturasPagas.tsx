@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Eye, CheckCircle, Printer, Edit } from 'lucide-react';
+import { Eye, CheckCircle, Printer, Edit, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import DataTable from '../components/ui/DataTable';
 import facturaService from '../services/facturaService';
 import { formatearMoneda, obtenerColorEstado, obtenerTextoEstado } from '../utils/facturaUtils';
 import './FacturasPagas.css';
 
 interface Pago {
+    id: string;
     metodoPago: string;
     fechaPago: string;
     cuentaBancaria?: {
@@ -101,6 +103,49 @@ const FacturasPagas: React.FC = () => {
         return fechasMasRecientes[0].toLocaleDateString('es-DO');
     };
 
+    const handleRevertirPago = async (factura: Factura) => {
+        if (!factura.pagos || factura.pagos.length === 0) {
+            Swal.fire('Error', 'Esta factura no tiene pagos registrados', 'error');
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: '¿Revertir pago?',
+            html: `¿Estás seguro de que deseas revertir el pago de la factura <strong>${factura.numeroFactura}</strong>?<br><br>Esta acción cambiará el estado de la factura a <strong>pendiente</strong>.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sí, revertir',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                // Revertir el último pago (el más reciente)
+                const ultimoPago = factura.pagos[factura.pagos.length - 1];
+                await facturaService.revertirPago(ultimoPago.id);
+                
+                Swal.fire({
+                    title: '¡Revertido!',
+                    text: 'El pago ha sido revertido exitosamente',
+                    icon: 'success',
+                    confirmButtonColor: '#3b82f6'
+                });
+                
+                cargarFacturas(); // Recargar la lista
+            } catch (error: any) {
+                console.error('Error al revertir pago:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: error.message || 'No se pudo revertir el pago',
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+    };
+
     const columns = useMemo<ColumnDef<Factura>[]>(
         () => [
             {
@@ -176,6 +221,16 @@ const FacturasPagas: React.FC = () => {
                             className="action-btn edit-btn"
                         >
                             <Edit size={16} />
+                        </button>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleRevertirPago(info.row.original);
+                            }}
+                            title="Revertir pago (cambiar a pendiente)"
+                            className="action-btn revert-btn"
+                        >
+                            <XCircle size={16} />
                         </button>
                         <button
                             onClick={(e) => {

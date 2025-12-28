@@ -21,7 +21,14 @@ const getAllBanks = async () => {
             activo: true,
             observaciones: true,
             createdAt: true,
-            updatedAt: true
+            updatedAt: true,
+            cuentaContable: {
+              select: {
+                id: true,
+                nombre: true,
+                saldoActual: true
+              }
+            }
           }
         }
       },
@@ -294,11 +301,151 @@ const getClientPaymentsByBank = async (bankId) => {
   }
 };
 
+// Obtener estadísticas mensuales de bancos
+const getMonthlyStats = async () => {
+  try {
+    // Obtener límites del mes actual en hora local/servidor
+    const now = new Date();
+    const primerDiaMes = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+    const ultimoDiaMes = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    console.log(`[BankStats] Rango local: ${primerDiaMes.toLocaleString()} - ${ultimoDiaMes.toLocaleString()}`);
+
+    // Obtener todas las cuentas bancarias activas
+    const cuentasBancarias = await prisma.cuentaBancaria.findMany({
+      where: { activo: true },
+      include: {
+        bank: true,
+        cuentaContable: {
+          select: {
+            id: true,
+            nombre: true,
+            saldoActual: true
+          }
+        }
+      }
+    });
+
+    const cuentaBancariaIds = cuentasBancarias.map(c => c.id);
+
+    // Obtener categoría de traspasos para excluirla
+    const categoriaTraspasos = await prisma.categoriaCuenta.findFirst({
+      where: { nombre: { contains: 'Traspaso', mode: 'insensitive' } }
+    });
+
+    // Calcular INGRESOS TOTALES = Pagos de clientes + Movimientos de ingreso (excluyendo "Pago Cliente" y traspasos)
+    const pagosClientesTotales = await prisma.pagoCliente.aggregate({
+      _sum: { monto: true },
+      where: {
+        cuentaBancariaId: { in: cuentaBancariaIds },
+        estado: 'confirmado'
+      }
+    });
+
+    const movimientosIngresoTotales = await prisma.movimientoContable.aggregate({
+      _sum: { monto: true },
+      where: {
+        cuentaBancariaId: { in: cuentaBancariaIds },
+        tipo: 'ingreso',
+        NOT: {
+          OR: [
+            { descripcion: { contains: 'Pago Cliente' } },
+            ...(categoriaTraspasos ? [{ categoriaId: categoriaTraspasos.id }] : [])
+          ]
+        }
+      }
+    });
+
+    // No necesitamos una suma manual de ingresos totales históricos aquí si vamos a mostrar el balance actual real
+    // Pero si se desea el acumulado total (histórico):
+    const ingresosTotales = (parseFloat(pagosClientesTotales._sum.monto || 0)) + (parseFloat(movimientosIngresoTotales._sum.monto || 0));
+
+    // Calcular BALANCE ACTUAL sumando el saldo contable de todas las cuentas CONTABLES únicas
+    const uniqueCCIds = new Set();
+    const balanceActual = cuentasBancarias.reduce((acc, c) => {
+      if (c.cuentaContableId && !uniqueCCIds.has(c.cuentaContableId)) {
+        uniqueCCIds.add(c.cuentaContableId);
+        return acc + (parseFloat(c.cuentaContable?.saldoActual || 0));
+      }
+      return acc;
+    }, 0);
+
+    console.log('BALANCE ACTUAL CALCULADO POR SALDO:', balanceActual);
+    console.log('==============================');
+
+    // INGRESOS DEL MES = Todos los movimientos de tipo ingreso para estas cuentas
+    // Esto ya incluye los pagos de clientes porque facturaService crea un movimiento contable para cada pago.
+    const ingresosDelMesAgg = await prisma.movimientoContable.aggregate({
+      _sum: { monto: true },
+      where: {
+        cuentaBancariaId: { in: cuentaBancariaIds },
+        tipo: 'ingreso',
+        fecha: {
+          gte: primerDiaMes,
+          lte: ultimoDiaMes
+        },
+        // Excluir traspasos para no inflar los ingresos reales
+        ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {})
+      }
+    });
+
+    const ingresosDelMes = parseFloat(ingresosDelMesAgg._sum.monto || 0);
+
+    // Si también queremos ver específicamente cuánto fue de pagos de clientes:
+    const pagosClientesMes = await prisma.pagoCliente.aggregate({
+      _sum: { monto: true },
+      where: {
+        cuentaBancariaId: { in: cuentaBancariaIds },
+        estado: 'confirmado',
+        fechaPago: {
+          gte: primerDiaMes,
+          lte: ultimoDiaMes
+        }
+      }
+    });
+
+    console.log(`[BankStats] Ingresos totales: ${ingresosDelMes} (de los cuales ${pagosClientesMes._sum.monto || 0} son pagos de facturas)`);
+
+    // Obtener gastos del mes (excluyendo traspasos)
+    const gastos = await prisma.movimientoContable.aggregate({
+      _sum: { monto: true },
+      where: {
+        cuentaBancariaId: { in: cuentaBancariaIds },
+        tipo: 'gasto',
+        fecha: {
+          gte: primerDiaMes,
+          lte: ultimoDiaMes
+        },
+        ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {})
+      }
+    });
+
+    // Contar transacciones pendientes (pagos de clientes pendientes)
+    const transaccionesPendientes = await prisma.pagoCliente.count({
+      where: {
+        cuentaBancariaId: { in: cuentaBancariaIds },
+        estado: 'pendiente'
+      }
+    });
+
+    return {
+      ingresosDelMes: ingresosDelMes,
+      gastosDelMes: parseFloat(gastos._sum.monto || 0),
+      balanceActual: balanceActual,
+      transaccionesPendientes: transaccionesPendientes
+    };
+  } catch (error) {
+    console.error('Error en getMonthlyStats:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   getAllBanks,
   getBankById,
   createBank,
   updateBank,
   deleteBank,
-  getClientPaymentsByBank
+  getClientPaymentsByBank,
+  getMonthlyStats
 };

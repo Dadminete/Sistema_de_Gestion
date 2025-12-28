@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Pencil, Trash2, Plus, AlertCircle, RefreshCw } from 'lucide-react';
 import { servicioService } from '../services/servicioService';
 import { getCategorias, type Categoria } from '../services/categoriaService';
 
@@ -36,7 +37,7 @@ const initialServiceState = {
   tipo: 'internet',
   esRecurrente: false,
   requierePlan: false,
-  precioBase: 0,
+  precio: 0,
   moneda: 'DOP',
   unidadTiempo: 'mes',
   imagen: '',
@@ -67,7 +68,7 @@ const Servicios: React.FC = () => {
       const response = await servicioService.getServicios();
       // Ordenar alfabéticamente por nombre
       const serviciosData = response.data || response;
-      const sortedServicios = serviciosData.sort((a, b) => {
+      const sortedServicios = (serviciosData as Servicio[]).sort((a: Servicio, b: Servicio) => {
         const nameA = (a.nombre || '').toLowerCase();
         const nameB = (b.nombre || '').toLowerCase();
         return nameA.localeCompare(nameB, 'es');
@@ -250,19 +251,19 @@ const Servicios: React.FC = () => {
       header: 'Acciones',
       cell: ({ row }) => (
         <div className="table-actions">
-          <button 
+          <button
             className="action-btn edit-btn"
             onClick={() => handleEdit(row.original)}
             title="Editar"
           >
-            <span className="material-icons" style={{ fontSize: '16px' }}>edit</span>
+            <Pencil size={16} strokeWidth={2.5} />
           </button>
-          <button 
+          <button
             className="action-btn delete-btn"
             onClick={() => handleDelete(row.original.id)}
             title="Eliminar"
           >
-            <span className="material-icons" style={{ fontSize: '16px' }}>delete</span>
+            <Trash2 size={16} strokeWidth={2.5} />
           </button>
         </div>
       ),
@@ -274,16 +275,16 @@ const Servicios: React.FC = () => {
       <div className="dashboard-header">
         <div className="header-left">
           <div className="breadcrumb">
-          <h1>Gestión de Servicios</h1></div>
+            <h1>Gestión de Servicios</h1></div>
           <p>Administra los servicios ofrecidos por tu empresa.</p>
         </div>
         <div className="header-right">
-          <Button 
-            className="primary" 
+          <Button
+            className="primary"
             onClick={handleCreate}
             disabled={loading}
           >
-            <span className="material-icons">add</span>
+            <Plus size={20} strokeWidth={2.5} />
             Nuevo Servicio
           </Button>
         </div>
@@ -300,7 +301,7 @@ const Servicios: React.FC = () => {
           alignItems: 'center',
           gap: '0.5rem'
         }}>
-          <span className="material-icons">error</span>
+          <AlertCircle size={20} strokeWidth={2.5} />
           {error}
         </div>
       )}
@@ -311,7 +312,7 @@ const Servicios: React.FC = () => {
           padding: '2rem',
           color: 'var(--colors-text-secondary)'
         }}>
-          <span className="material-icons" style={{ fontSize: '2rem', animation: 'spin 1s linear infinite' }}>refresh</span>
+          <RefreshCw size={32} strokeWidth={2.5} className="rotating" />
           <p>Cargando...</p>
         </div>
       )}
@@ -327,34 +328,34 @@ const Servicios: React.FC = () => {
           <form onSubmit={handleSave}>
             <div className="form-group">
               <label>Nombre del Servicio</label>
-              <input 
-                type="text" 
-                value={newService.nombre} 
-                onChange={(e) => setNewService({ ...newService, nombre: e.target.value })} 
+              <input
+                type="text"
+                value={newService.nombre}
+                onChange={(e) => setNewService({ ...newService, nombre: e.target.value })}
                 className="compact-input"
                 required
                 placeholder="Ej: Corte de cabello"
               />
             </div>
-            
+
             <div className="form-group">
               <label>Descripción</label>
-              <textarea 
-                value={newService.descripcion} 
-                onChange={(e) => setNewService({ ...newService, descripcion: e.target.value })} 
+              <textarea
+                value={newService.descripcion}
+                onChange={(e) => setNewService({ ...newService, descripcion: e.target.value })}
                 className="compact-input"
                 rows={3}
                 placeholder="Describe el servicio en detalle"
                 required
               />
             </div>
-            
+
             <div className="form-group">
               <label>Precio (DOP)</label>
-              <input 
-                type="number" 
-                value={newService.precio} 
-                onChange={(e) => setNewService({ ...newService, precio: parseFloat(e.target.value) || 0 })} 
+              <input
+                type="number"
+                value={newService.precio}
+                onChange={(e) => setNewService({ ...newService, precio: parseFloat(e.target.value) || 0 })}
                 className="compact-input"
                 min="0"
                 step="0.01"
@@ -362,13 +363,13 @@ const Servicios: React.FC = () => {
                 placeholder="250.00"
               />
             </div>
-            
+
             <div className="form-group">
               <label>Duración (minutos)</label>
-              <input 
-                type="number" 
-                value={newService.duracion || ''} 
-                onChange={(e) => setNewService({ ...newService, duracion: parseInt(e.target.value) || 0 })} 
+              <input
+                type="number"
+                value={newService.duracion || ''}
+                onChange={(e) => setNewService({ ...newService, duracion: parseInt(e.target.value) || 0 })}
                 className="compact-input"
                 min="0"
                 placeholder="60"
@@ -391,19 +392,19 @@ const Servicios: React.FC = () => {
                 ))}
               </select>
             </div>
-            
+
             <div className="form-group checkbox-group">
               <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  checked={newService.activo} 
+                <input
+                  type="checkbox"
+                  checked={newService.activo}
                   onChange={(e) => setNewService({ ...newService, activo: e.target.checked })}
                 />
                 <span className="checkmark"></span>
                 Activo
               </label>
             </div>
-            
+
             <div className="form-actions">
               <Button onClick={() => setShowModal(false)} disabled={loading}>
                 Cancelar

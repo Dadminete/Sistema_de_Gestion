@@ -1,0 +1,21 @@
+﻿--- AUDIT REPORT (CURRENT MONTH) ---
+Excluded Banks: Ban Fondesa
+Traspasos Category ID: 6e95d1f6-bec7-464e-b18c-3d32be9a7df9
+
+--- BREAKDOWN ---
+Ingresos en Caja: RD$38271
+Pagos Clientes (Banco): RD$12300
+Otros Ingresos Banco: RD$10777.92
+Gastos en Caja: RD$24351
+Gastos en Banco: RD$18083.05
+
+--- FINAL CALCULATION ---
+Ingreso Real Mes: RD$61348.92
+Gastos Totales: RD$42434.05
+
+--- BANCOS EN EL SISTEMA ---
+- Ban Fondesa: EXCLUIDO
+- Banco Popular : INCLUIDO
+- Banco BHD León: INCLUIDO
+- BanReservas: INCLUIDO
+- QIK: INCLUIDO

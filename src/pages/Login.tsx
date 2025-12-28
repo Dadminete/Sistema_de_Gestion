@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Ban, AlertCircle, User, Lock, Eye, EyeOff, RefreshCw, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthProvider';
 import './Login.css';
 
@@ -245,7 +246,7 @@ const Login: React.FC = () => {
 
             {isBlocked && (
               <div className="alert alert-error">
-                <span className="material-icons">block</span>
+                <Ban size={20} strokeWidth={2.5} />
                 <div>
                   <strong>Cuenta Bloqueada</strong>
                   <p>Intenta nuevamente en {formatTime(blockTimeRemaining)}</p>
@@ -255,7 +256,7 @@ const Login: React.FC = () => {
 
             {error && !isBlocked && (
               <div className="alert alert-error">
-                <span className="material-icons">error_outline</span>
+                <AlertCircle size={20} strokeWidth={2.5} />
                 <p>{error}</p>
               </div>
             )}
@@ -264,7 +265,7 @@ const Login: React.FC = () => {
               <div className="form-group">
                 <label htmlFor="username">Usuario</label>
                 <div className="input-group">
-                  <span className="input-icon material-icons">person_outline</span>
+                  <User size={20} strokeWidth={2.5} className="input-icon" />
                   <input
                     type="text"
                     id="username"
@@ -282,7 +283,7 @@ const Login: React.FC = () => {
               <div className="form-group">
                 <label htmlFor="password">Contraseña</label>
                 <div className="input-group">
-                  <span className="input-icon material-icons">lock_outline</span>
+                  <Lock size={20} strokeWidth={2.5} className="input-icon" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     id="password"
@@ -300,9 +301,7 @@ const Login: React.FC = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     tabIndex={-1}
                   >
-                    <span className="material-icons">
-                      {showPassword ? 'visibility_off' : 'visibility'}
-                    </span>
+                    {showPassword ? <EyeOff size={20} strokeWidth={2.5} /> : <Eye size={20} strokeWidth={2.5} />}
                   </button>
                 </div>
               </div>
@@ -319,7 +318,7 @@ const Login: React.FC = () => {
                         onClick={generateCaptcha}
                         title="Generar nuevo código"
                       >
-                        <span className="material-icons">refresh</span>
+                        <RefreshCw size={18} strokeWidth={2.5} />
                       </button>
                     </div>
                     <input
@@ -367,7 +366,7 @@ const Login: React.FC = () => {
                 ) : (
                   <>
                     <span>Ingresar al Sistema</span>
-                    <span className="material-icons">arrow_forward</span>
+                    <ArrowRight size={20} strokeWidth={2.5} />
                   </>
                 )}
               </button>

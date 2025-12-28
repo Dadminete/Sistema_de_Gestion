@@ -61,6 +61,42 @@ router.post('/', authenticateToken, async (req, res) => {
 });
 
 /**
+ * PUT /api/traspasos/:id
+ * Actualizar un traspaso existente
+ */
+router.put('/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+        const traspasoData = {
+            ...req.body,
+            autorizadoPorId: userId,
+        };
+
+        const traspaso = await traspasoService.updateTraspaso(id, traspasoData);
+        res.json(traspaso);
+    } catch (error) {
+        console.error('Error al actualizar traspaso:', error);
+        res.status(400).json({ error: error.message });
+    }
+});
+
+/**
+ * DELETE /api/traspasos/:id
+ * Eliminar un traspaso
+ */
+router.delete('/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await traspasoService.deleteTraspaso(id, req.user.id);
+        res.json(result);
+    } catch (error) {
+        console.error('Error al eliminar traspaso:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/**
  * GET /api/traspasos/filtro/fecha
  * Filtrar traspasos por rango de fechas
  */

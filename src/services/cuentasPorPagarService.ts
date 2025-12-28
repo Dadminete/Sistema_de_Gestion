@@ -17,6 +17,7 @@ export interface CuentaPorPagar {
   concepto: string;
   montoOriginal: number;
   montoPendiente: number;
+  cuotaMensual?: number;
   moneda: string;
   estado: 'pendiente' | 'vencida' | 'pagada';
   diasVencido: number;
@@ -31,6 +32,8 @@ export interface ResumenCuentasPorPagar {
   totalProximasVencer: number;
   cuentasPendientes: number;
   cuentasVencidas: number;
+  totalCuotasMensuales: number;
+  totalPagadoMes: number;
 }
 
 export interface FiltrosCuentasPorPagar {
@@ -114,8 +117,16 @@ class CuentasPorPagarService {
     metodoPago: string;
     numeroReferencia?: string;
     observaciones?: string;
+    cajaId?: string;
+    cuentaBancariaId?: string;
   }) {
     const response = await api.post(`/contabilidad/cuentas-por-pagar/${cuentaId}/pagar`, pagoData);
+    return response.data;
+  }
+
+  // Obtener historial de pagos de una cuenta
+  async getPagos(cuentaId: string) {
+    const response = await api.get(`/contabilidad/cuentas-por-pagar/${cuentaId}/pagos`);
     return response.data;
   }
 }

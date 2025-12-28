@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Pencil, Trash2, Shield, User, Image, AlertCircle, RefreshCw, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getUsers, createUser, updateUser, deleteUser } from '../services/userService';
-import type { Usuario } from '@prisma/client';
 import type { UserWithRoles } from '../types/database';
 import { RoleService, type Role } from '../services/roleService';
 import Button from '../components/ui/Button';
@@ -68,8 +68,8 @@ const Users: React.FC = () => {
         const data = await getUsers();
         // Ordenar alfabéticamente por nombre y apellidos
         const sortedUsers = data.sort((a, b) => {
-          const nameA = `${a.nombre || ''} ${a.apellidos || ''}`.toLowerCase().trim();
-          const nameB = `${b.nombre || ''} ${b.apellidos || ''}`.toLowerCase().trim();
+          const nameA = `${a.nombre || ''} ${a.apellido || ''}`.toLowerCase().trim();
+          const nameB = `${b.nombre || ''} ${b.apellido || ''}`.toLowerCase().trim();
           return nameA.localeCompare(nameB, 'es');
         });
         setUsers(sortedUsers);
@@ -95,7 +95,7 @@ const Users: React.FC = () => {
 
   const handleCreate = () => {
     setEditingUser(null);
-    setNewUser({...initialNewUserState, roles: []});
+    setNewUser({ ...initialNewUserState, roles: [] });
     setShowModal(true);
   };
 
@@ -103,7 +103,7 @@ const Users: React.FC = () => {
     setEditingUser(user);
     // Get current user roles
     const currentRoles = user.usuariosRoles?.map((ur) => ur.rolId.toString()) || [];
-    
+
     setNewUser({
       username: user.username,
       nombre: user.nombre,
@@ -171,11 +171,11 @@ const Users: React.FC = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       if (editingUser) {
         // Update user
         const updatePayload: any = {
@@ -223,7 +223,7 @@ const Users: React.FC = () => {
         });
         setUsers([...users, createdUser]);
       }
-      
+
       // Only close modal and reset form after successful operation
       setShowModal(false);
       setNewUser(initialNewUserState);
@@ -244,14 +244,14 @@ const Users: React.FC = () => {
       cell: ({ row }) => (
         <div className="avatar-cell">
           {row.original.avatar ? (
-            <img 
-              src={row.original.avatar} 
-              alt="Avatar" 
+            <img
+              src={row.original.avatar}
+              alt="Avatar"
               className="avatar-table-img"
             />
           ) : (
             <div className="avatar-table-placeholder">
-              <span className="material-icons">person</span>
+              <User size={24} strokeWidth={2.5} />
             </div>
           )}
         </div>
@@ -322,26 +322,26 @@ const Users: React.FC = () => {
       header: 'Acciones',
       cell: ({ row }) => (
         <div className="table-actions">
-          <button 
+          <button
             className="action-btn edit-btn"
             onClick={() => handleEdit(row.original)}
             title="Editar"
           >
-            <span className="material-icons">edit</span>
+            <Pencil size={18} strokeWidth={2.5} />
           </button>
-          <button 
+          <button
             className="action-btn permissions-btn"
             onClick={() => navigate(`/users/${row.original.id}/permisos`)}
             title="Gestionar Permisos"
           >
-            <span className="material-icons">security</span>
+            <Shield size={18} strokeWidth={2.5} />
           </button>
-          <button 
+          <button
             className="action-btn delete-btn"
             onClick={() => handleDelete(row.original.id)}
             title="Eliminar"
           >
-            <span className="material-icons">delete</span>
+            <Trash2 size={18} strokeWidth={2.5} />
           </button>
         </div>
       ),
@@ -371,7 +371,7 @@ const Users: React.FC = () => {
           alignItems: 'center',
           gap: '0.5rem'
         }}>
-          <span className="material-icons">error</span>
+          <AlertCircle size={20} strokeWidth={2.5} />
           {error}
         </div>
       )}
@@ -382,13 +382,13 @@ const Users: React.FC = () => {
           padding: '2rem',
           color: 'var(--colors-text-secondary)'
         }}>
-          <span className="material-icons" style={{ fontSize: '2rem', animation: 'spin 1s linear infinite' }}>refresh</span>
+          <RefreshCw size={32} strokeWidth={2.5} className="rotating" />
           <p>Cargando...</p>
         </div>
       )}
 
-      <DataTable 
-        columns={columns} 
+      <DataTable
+        columns={columns}
         data={users}
         createAction={{
           label: 'Nuevo Usuario',
@@ -405,49 +405,49 @@ const Users: React.FC = () => {
           <form onSubmit={handleSave}>
             <div className="form-group">
               <label>Usuario</label>
-              <input 
-                type="text" 
-                value={newUser.username} 
-                onChange={(e) => setNewUser({ ...newUser, username: e.target.value })} 
+              <input
+                type="text"
+                value={newUser.username}
+                onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
                 className="compact-input"
                 required
               />
             </div>
             <div className="form-group">
               <label>Nombre</label>
-              <input 
-                type="text" 
-                value={newUser.nombre} 
-                onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })} 
+              <input
+                type="text"
+                value={newUser.nombre}
+                onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })}
                 className="compact-input"
                 required
               />
             </div>
             <div className="form-group">
               <label>Apellido</label>
-              <input 
-                type="text" 
-                value={newUser.apellido} 
-                onChange={(e) => setNewUser({ ...newUser, apellido: e.target.value })} 
+              <input
+                type="text"
+                value={newUser.apellido}
+                onChange={(e) => setNewUser({ ...newUser, apellido: e.target.value })}
                 className="compact-input"
                 required
               />
             </div>
             <div className="form-group">
               <label>Cédula</label>
-              <input 
-                type="text" 
-                value={newUser.cedula} 
-                onChange={(e) => setNewUser({ ...newUser, cedula: e.target.value })} 
+              <input
+                type="text"
+                value={newUser.cedula}
+                onChange={(e) => setNewUser({ ...newUser, cedula: e.target.value })}
                 className="compact-input"
               />
             </div>
             <div className="form-group">
               <label>Teléfono</label>
-              <input 
-                type="tel" 
-                value={newUser.telefono} 
-                onChange={(e) => setNewUser({ ...newUser, telefono: e.target.value })} 
+              <input
+                type="tel"
+                value={newUser.telefono}
+                onChange={(e) => setNewUser({ ...newUser, telefono: e.target.value })}
                 className="compact-input"
               />
             </div>
@@ -455,7 +455,7 @@ const Users: React.FC = () => {
             {/* Selector de Roles */}
             <div className="form-group">
               <label>Roles</label>
-              <select 
+              <select
                 multiple
                 className="compact-input role-selector"
                 value={newUser.roles}
@@ -474,8 +474,8 @@ const Users: React.FC = () => {
             </div>
             <div className="form-group">
               <label>Sexo</label>
-              <select 
-                value={newUser.sexo} 
+              <select
+                value={newUser.sexo}
                 onChange={(e) => setNewUser({ ...newUser, sexo: e.target.value })}
                 className="compact-input"
               >
@@ -486,10 +486,10 @@ const Users: React.FC = () => {
             </div>
             <div className="form-group full-width">
               <label>Contraseña {editingUser && <small>(dejar vacío para no cambiar)</small>}</label>
-              <input 
-                type="password" 
-                value={newUser.passwordHash} 
-                onChange={(e) => setNewUser({ ...newUser, passwordHash: e.target.value })} 
+              <input
+                type="password"
+                value={newUser.passwordHash}
+                onChange={(e) => setNewUser({ ...newUser, passwordHash: e.target.value })}
                 className="compact-input"
                 required={!editingUser}
                 placeholder={editingUser ? "Nueva contraseña (opcional)" : "Contraseña"}
@@ -497,9 +497,9 @@ const Users: React.FC = () => {
             </div>
             <div className="form-group checkbox-group">
               <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  checked={newUser.esEmpleado} 
+                <input
+                  type="checkbox"
+                  checked={newUser.esEmpleado}
                   onChange={(e) => setNewUser({ ...newUser, esEmpleado: e.target.checked })}
                 />
                 <span className="checkmark"></span>
@@ -508,9 +508,9 @@ const Users: React.FC = () => {
             </div>
             <div className="form-group checkbox-group">
               <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  checked={newUser.activo} 
+                <input
+                  type="checkbox"
+                  checked={newUser.activo}
                   onChange={(e) => setNewUser({ ...newUser, activo: e.target.checked })}
                 />
                 <span className="checkmark"></span>
@@ -521,29 +521,29 @@ const Users: React.FC = () => {
               <div className="form-group">
                 <label>Avatar</label>
                 <div className="avatar-input-group">
-                  <input 
-                    type="file" 
+                  <input
+                    type="file"
                     accept="image/*"
                     onChange={handleAvatarChange}
                     style={{ display: 'none' }}
                     id="avatar-upload"
                   />
                   <label htmlFor="avatar-upload" className="avatar-upload-btn">
-                    <span className="material-icons">image</span>
+                    <Image size={20} strokeWidth={2.5} />
                     Subir Imagen
                   </label>
                 </div>
               </div>
               <div className="avatar-preview">
                 {newUser.avatarPreview ? (
-                  <img 
-                    src={newUser.avatarPreview} 
-                    alt="Avatar preview" 
+                  <img
+                    src={newUser.avatarPreview}
+                    alt="Avatar preview"
                     className="avatar-preview-img"
                   />
                 ) : (
                   <div className="avatar-placeholder">
-                    <span className="material-icons">person</span>
+                    <User size={32} strokeWidth={2.5} />
                     <span>Sin imagen</span>
                   </div>
                 )}
@@ -551,19 +551,19 @@ const Users: React.FC = () => {
             </div>
             <div className="form-group">
               <label>Dirección</label>
-              <input 
+              <input
                 type="text"
-                value={newUser.direccion} 
-                onChange={(e) => setNewUser({ ...newUser, direccion: e.target.value })} 
+                value={newUser.direccion}
+                onChange={(e) => setNewUser({ ...newUser, direccion: e.target.value })}
                 className="compact-input"
               />
             </div>
             <div className="form-group">
               <label>Notas</label>
-              <input 
+              <input
                 type="text"
-                value={newUser.notas} 
-                onChange={(e) => setNewUser({ ...newUser, notas: e.target.value })} 
+                value={newUser.notas}
+                onChange={(e) => setNewUser({ ...newUser, notas: e.target.value })}
                 className="compact-input"
               />
             </div>
