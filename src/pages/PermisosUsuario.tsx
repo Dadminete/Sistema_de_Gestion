@@ -69,7 +69,7 @@ const PermisosUsuario: React.FC = () => {
       setUserPermissions(data);
 
       // Select only user-level permissions (not from roles)
-      const userPermisoIds = new Set(data.userPermissions.map((p: any) => p.id));
+      const userPermisoIds = new Set<string>(data.userPermissions.map((p: any) => p.id));
       setSelectedPermissions(userPermisoIds);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error loading user permissions');

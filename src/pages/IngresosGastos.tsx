@@ -307,7 +307,7 @@ const IngresosGastos: React.FC = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      const sortedMovimientos = (data || []).sort((a, b) => {
+      const sortedMovimientos = (data || []).sort((a: any, b: any) => {
         // Sort by date descending (most recent first)
         return new Date(b.fecha).getTime() - new Date(a.fecha).getTime();
       });

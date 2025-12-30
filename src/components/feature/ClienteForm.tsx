@@ -4,6 +4,7 @@ import { formatearMonto } from '../../utils/montoUtils';
 import { ddmmyyyyToISODateTime, isValidDDMMYYYY } from '../../utils/dateUtils';
 import { Upload, X } from 'lucide-react';
 import './ClienteForm.css';
+import Swal from 'sweetalert2';
 
 export interface ClientFormData {
   // Step 1: Información Personal

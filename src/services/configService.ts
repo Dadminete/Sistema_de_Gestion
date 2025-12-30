@@ -15,9 +15,6 @@ export class ConfigService {
         { categoria: 'asc' },
         { clave: 'asc' }
       ],
-      cacheStrategy: {
-        ttl: 600, // Cache largo para configuraciones
-      },
     })
   }
 
@@ -25,9 +22,6 @@ export class ConfigService {
   static async getConfigByKey(clave: string) {
     return await prisma.configuracion.findUnique({
       where: { clave },
-      cacheStrategy: {
-        ttl: 600,
-      },
     })
   }
 
@@ -41,9 +35,6 @@ export class ConfigService {
     return await prisma.configuracion.findMany({
       where,
       orderBy: { clave: 'asc' },
-      cacheStrategy: {
-        ttl: 600,
-      },
     })
   }
 

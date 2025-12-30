@@ -280,7 +280,6 @@ const FacturasPagas: React.FC = () => {
                     columns={columns}
                     data={facturas}
                     onRowClick={() => { }}
-                    noDataMessage="No hay facturas pagadas"
                 />
             </div>
         </div>

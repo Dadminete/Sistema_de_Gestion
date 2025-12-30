@@ -74,9 +74,6 @@ export class AuditService {
       },
       take: filters?.limit || 100,
       skip: filters?.offset || 0,
-      cacheStrategy: {
-        ttl: 60, // Cache corto para datos de auditoría
-      },
     })
   }
 

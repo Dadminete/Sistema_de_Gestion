@@ -28,7 +28,7 @@ const ClientesPapeleria: React.FC = () => {
         queryFn: () => getClientes().then(res => res.data),
         select: (data) => {
             if (!Array.isArray(data)) return [];
-            return data.sort((a, b) => `${a.nombre} ${a.apellidos}`.localeCompare(`${b.nombre} ${b.apellidos}`, 'es'));
+            return data.sort((a, b) => `${a.nombre} ${a.apellido}`.localeCompare(`${b.nombre} ${b.apellido}`, 'es'));
         }
     });
 

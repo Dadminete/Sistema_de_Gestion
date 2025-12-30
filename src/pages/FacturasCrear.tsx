@@ -273,7 +273,6 @@ const FacturasCrear: React.FC = () => {
                     precioUnitario: 0,
                     subtotal: 0,
                     descuento: 0,
-                    impuesto: 0,
                     total: 0
                 }]);
                 setObservaciones('');

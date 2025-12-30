@@ -69,9 +69,9 @@ const BanksDashboard: React.FC = () => {
 
     banksData.forEach(bank => {
       (bank.cuentas || []).forEach(cuenta => {
-        const cuentaContableId = cuenta.cuentaContable?.id;
-        if (cuentaContableId && !seenAccountIds.has(cuentaContableId)) {
-          seenAccountIds.add(cuentaContableId);
+        const cuentaKey = cuenta.cuentaContable?.nombre || cuenta.id;
+        if (cuentaKey && !seenAccountIds.has(cuentaKey)) {
+          seenAccountIds.add(cuentaKey);
           totalBalance += Number(cuenta.cuentaContable?.saldoActual ?? 0);
         }
       });

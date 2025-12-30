@@ -435,7 +435,8 @@ const Traspasos: React.FC = () => {
                 <DataTable
                     columns={columns}
                     data={filteredTraspasos}
-                    filterText={filterText}
+                    tableName="traspasos"
+                    isLoading={isLoading}
                 />
             </div>
 

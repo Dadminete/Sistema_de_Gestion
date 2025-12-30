@@ -39,7 +39,7 @@ const ClientesInactivos: React.FC = () => {
       setError(null);
       // Fetch clientes with status 'inactivo' or 'suspendido' (separated by comma)
       const response = await clientService.getClients({ status: 'inactivo,suspendido' });
-      const sortedClients = response.data.sort((a, b) => {
+      const sortedClients = response.data.sort((a: any, b: any) => {
         const nameA = `${a.nombre || ''} ${a.apellidos || ''}`.toLowerCase().trim();
         const nameB = `${b.nombre || ''} ${b.apellidos || ''}`.toLowerCase().trim();
         return nameA.localeCompare(nameB, 'es');
@@ -78,7 +78,7 @@ const ClientesInactivos: React.FC = () => {
         });
 
         // Calculate prices and create display data
-        const displayDataWithPrices: ClienteDisplayData[] = sortedClients.map(client => {
+        const displayDataWithPrices: ClienteDisplayData[] = sortedClients.map((client: any) => {
           const suscripciones = susMap.get(client.id) || [];
           const totalPrecio = suscripciones.reduce((sum: number, s: any) => sum + Number(s.precioMensual || 0), 0);
           return { ...client, precioMensualCalculado: totalPrecio };
@@ -100,13 +100,11 @@ const ClientesInactivos: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleRealTimeUpdate = React.useCallback((event: any) => {
-    if (event.entityType === 'cliente' || event.entityType === 'suscripcion') {
-      fetchData();
-    }
+  const handleRealTimeUpdate = React.useCallback(() => {
+    fetchData();
   }, []);
 
-  useRealTimeUpdates(handleRealTimeUpdate, ['cliente', 'suscripcion']);
+  useRealTimeUpdates(handleRealTimeUpdate);
 
   const handleViewDetails = async (client: ClienteWithRelations) => {
     try {

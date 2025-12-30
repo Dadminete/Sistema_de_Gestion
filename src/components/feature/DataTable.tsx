@@ -11,15 +11,15 @@ import {
 import { FaSort, FaSortUp, FaSortDown, FaChevronLeft, FaChevronRight, FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 import './DataTable.css';
 
-interface DataTableProps<T extends object> {
-    columns: ColumnDef<T>[];
-    data: T[];
+interface DataTableProps {
+    columns: ColumnDef<any>[];
+    data: any[];
     isLoading: boolean;
     tableName: string;
-    getRowProps?: (row: T) => React.HTMLAttributes<HTMLTableRowElement>;
+    getRowProps?: (row: any) => React.HTMLAttributes<HTMLTableRowElement>;
 }
 
-const DataTable = <T extends object>({ columns, data, isLoading, tableName, getRowProps }: DataTableProps<T>) => {
+const DataTable: React.FC<DataTableProps> = ({ columns, data, isLoading, tableName, getRowProps }) => {
     const table = useReactTable({
         columns,
         data,

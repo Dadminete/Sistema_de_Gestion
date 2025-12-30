@@ -231,28 +231,25 @@ const ClientesEquiposServicios: React.FC = () => {
         const activeClientIds = new Set(clientsData.map(c => c.id));
 
         setClients(clientsData.sort((a, b) => `${a.nombre} ${a.apellidos}`.localeCompare(`${b.nombre} ${b.apellidos}`, 'es')));
-        setServicios((serviciosResponse || []).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')));
-        setPlanes((planesResponse || []).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')));
+        setServicios((serviciosResponse || []).sort((a: any, b: any) => a.nombre.localeCompare(b.nombre, 'es')));
+        setPlanes((planesResponse || []).sort((a: any, b: any) => a.nombre.localeCompare(b.nombre, 'es')));
 
         // Filter suscripciones to only include those from active clients
-        const activeSuscripciones = (suscripcionesData || []).filter(sus => {
+        const activeSuscripciones = (suscripcionesData || []).filter((sus: any) => {
           const isActive = sus.cliente?.id && activeClientIds.has(sus.cliente.id);
           if (!isActive) {
             console.log('Filtering out suscripcion for inactive client:', sus.cliente?.nombre, sus.cliente?.apellidos, 'estado:', sus.cliente?.estado);
           }
           return isActive;
         });
-        setSuscripciones(activeSuscripciones.sort((a, b) => `${a.cliente?.nombre || ''} ${a.cliente?.apellidos || ''}`.localeCompare(`${b.cliente?.nombre || ''} ${b.cliente?.apellidos || ''}`, 'es')));
+        setSuscripciones(activeSuscripciones.sort((a: SuscripcionDisplay, b: SuscripcionDisplay) => `${a.cliente?.nombre || ''} ${a.cliente?.apellidos || ''}`.localeCompare(`${b.cliente?.nombre || ''} ${b.cliente?.apellidos || ''}`, 'es')));
 
         // Filter equipos to only include those from active clients
-        const activeEquipos = (equiposData || []).filter(equipo => {
+        const activeEquipos = (equiposData || []).filter((equipo: EquipoDisplay) => {
           const isActive = equipo.cliente?.id && activeClientIds.has(equipo.cliente.id);
-          if (!isActive) {
-            console.log('Filtering out equipo for inactive client:', equipo.cliente?.nombre, equipo.cliente?.apellidos, 'estado:', equipo.cliente?.estado);
-          }
           return isActive;
         });
-        setEquipos(activeEquipos.sort((a, b) => `${a.cliente?.nombre || ''} ${a.cliente?.apellidos || ''}`.localeCompare(`${b.cliente?.nombre || ''} ${b.cliente?.apellidos || ''}`, 'es')));
+        setEquipos(activeEquipos.sort((a: any, b: any) => `${a.cliente?.nombre || ''} ${a.cliente?.apellidos || ''}`.localeCompare(`${b.cliente?.nombre || ''} ${b.cliente?.apellidos || ''}`, 'es')));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error desconocido');
       } finally {
@@ -263,13 +260,12 @@ const ClientesEquiposServicios: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleRealTimeUpdate = React.useCallback((event: any) => {
-    if (event.entityType === 'cliente') {
-      fetchData();
-    }
+  const handleRealTimeUpdate = React.useCallback(() => {
+    // Fetch data is defined inside useEffect, so we need to refetch manually
+    window.location.reload();
   }, []);
 
-  useRealTimeUpdates(handleRealTimeUpdate, ['cliente']);
+  useRealTimeUpdates(handleRealTimeUpdate);
 
   // Function to calculate monthly price
   const calculateMonthlyPrice = (servicioId: string, planId: string): number => {
@@ -497,7 +493,7 @@ const ClientesEquiposServicios: React.FC = () => {
         },
       }).then(res => res.json());
       const activeClientIds = new Set(clients.map(c => c.id));
-      const filteredSuscripciones = (suscripcionesData || []).filter(sus =>
+      const filteredSuscripciones = (suscripcionesData || []).filter((sus: any) =>
         sus.cliente?.id && activeClientIds.has(sus.cliente.id)
       );
       setSuscripciones(filteredSuscripciones);
@@ -594,7 +590,7 @@ const ClientesEquiposServicios: React.FC = () => {
         },
       }).then(res => res.json());
       const activeClientIds = new Set(clients.map(c => c.id));
-      const filteredEquipos = (equiposData || []).filter(equipo =>
+      const filteredEquipos = (equiposData || []).filter((equipo: any) =>
         equipo.cliente?.id && activeClientIds.has(equipo.cliente.id)
       );
       setEquipos(filteredEquipos);
@@ -627,12 +623,12 @@ const ClientesEquiposServicios: React.FC = () => {
   const handleEditSuscripcion = async (suscripcion: SuscripcionDisplay) => {
     // For now, we'll populate the form and let the user modify and submit
     // In a future enhancement, we could create a separate edit modal
-    
+
     // Usar fechaSuscripcion del cliente si está disponible, sino usar fechaInicio de la suscripción
-    const fechaInicioToUse = suscripcion.cliente?.fechaSuscripcion 
-      ? new Date(suscripcion.cliente.fechaSuscripcion) 
+    const fechaInicioToUse = suscripcion.cliente?.fechaSuscripcion
+      ? new Date(suscripcion.cliente.fechaSuscripcion)
       : new Date(suscripcion.fechaInicio);
-    
+
     setServicioForm({
       numeroContrato: suscripcion.numeroContrato,
       contratoId: suscripcion.cliente?.id || '',
@@ -698,7 +694,7 @@ const ClientesEquiposServicios: React.FC = () => {
           },
         }).then(res => res.json());
         const activeClientIds = new Set(clients.map(c => c.id));
-        const filteredSuscripciones = (suscripcionesData || []).filter(sus =>
+        const filteredSuscripciones = (suscripcionesData || []).filter((sus: any) =>
           sus.cliente?.id && activeClientIds.has(sus.cliente.id)
         );
         setSuscripciones(filteredSuscripciones);
@@ -766,7 +762,7 @@ const ClientesEquiposServicios: React.FC = () => {
           },
         }).then(res => res.json());
         const activeClientIds = new Set(clients.map(c => c.id));
-        const filteredEquipos = (equiposData || []).filter(equipo =>
+        const filteredEquipos = (equiposData || []).filter((equipo: any) =>
           equipo.cliente?.id && activeClientIds.has(equipo.cliente.id)
         );
         setEquipos(filteredEquipos);

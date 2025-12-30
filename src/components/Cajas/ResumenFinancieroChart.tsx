@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import type { ChartData, ChartOptions } from 'chart.js';
 import axios from 'axios';
 
 ChartJS.register(
@@ -21,13 +22,13 @@ ChartJS.register(
 );
 
 const ResumenFinancieroChart = () => {
-  const [view, setView] = useState('semanal'); // 'semanal' or 'mensual'
-  const [chartData, setChartData] = useState({
+  const [view, setView] = useState<'semanal' | 'mensual'>('semanal');
+  const [chartData, setChartData] = useState<ChartData<'bar'>>({
     labels: [],
     datasets: [],
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Get dynamic API base URL
   const API_BASE_URL = (() => {
@@ -52,7 +53,7 @@ const ResumenFinancieroChart = () => {
         });
         const data = response.data;
 
-        const processData = (view) => {
+        const processData = (view: 'semanal' | 'mensual') => {
           const source = data[view];
           if (!source) {
             setChartData({ labels: [], datasets: [] });
@@ -163,14 +164,12 @@ const ResumenFinancieroChart = () => {
   }, [view]);
 
 
-  const options = {
+  const options: ChartOptions<'bar'> = {
     responsive: true,
     maintainAspectRatio: false,
-    barPercentage: 0.2,
-    categoryPercentage: 0.4,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: 'top',
         labels: {
           font: {
             size: 12,

@@ -10,8 +10,8 @@ interface CierreFormProps {
         gastosDelDia: number;
         totalVentasPapeleria: number;
         observaciones: string;
-        montosFinales?: Record<string, number>;
-        resumenCajas?: Record<string, { ingresos: number; gastos: number }>;
+        montosFinales: Record<string, number>;
+        resumenCajas: Record<string, { ingresos: number; gastos: number }>;
     };
     setForm: React.Dispatch<React.SetStateAction<{
         cajaId: string;
@@ -20,8 +20,8 @@ interface CierreFormProps {
         gastosDelDia: number;
         totalVentasPapeleria: number;
         observaciones: string;
-        montosFinales?: Record<string, number>;
-        resumenCajas?: Record<string, { ingresos: number; gastos: number }>;
+        montosFinales: Record<string, number>;
+        resumenCajas: Record<string, { ingresos: number; gastos: number }>;
     }>>;
     onSubmit: (e: React.FormEvent) => Promise<void>;
     isSubmitting: boolean;
@@ -86,11 +86,11 @@ const CierreForm: React.FC<CierreFormProps> = ({ form, setForm, onSubmit, isSubm
                                     <div className="caja-resumen-dia">
                                         <div className="resumen-item ingreso">
                                             <small>Ingresos:</small>
-                                            <span>{formatCurrency((form as any).resumenCajas?.[caja.id]?.ingresos || 0)}</span>
+                                            <span>{formatCurrency(form.resumenCajas?.[caja.id]?.ingresos || 0)}</span>
                                         </div>
                                         <div className="resumen-item gasto">
                                             <small>Gastos:</small>
-                                            <span>{formatCurrency((form as any).resumenCajas?.[caja.id]?.gastos || 0)}</span>
+                                            <span>{formatCurrency(form.resumenCajas?.[caja.id]?.gastos || 0)}</span>
                                         </div>
                                     </div>
                                 </div>

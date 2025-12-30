@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import type { ChartData, ChartOptions } from 'chart.js';
 import type { ChartDataPoint } from '../../services/cajaService';
 
 ChartJS.register(
@@ -26,19 +27,19 @@ interface IngresosGastosChartProps {
 }
 
 const IngresosGastosChart: React.FC<IngresosGastosChartProps> = ({ data, period }) => {
-  const chartData = {
+  const chartData: ChartData<'bar'> = {
     labels: data.map(d => d.name),
     datasets: [
       {
         label: 'Ingresos',
-        data: data.map(d => d.ingresos),
+        data: data.map(d => (d.IngresoCaja ?? 0) + (d.IngresoBanco ?? 0) + (d.IngresoPapeleria ?? 0)),
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1,
       },
       {
         label: 'Gastos',
-        data: data.map(d => d.gastos),
+        data: data.map(d => (d.GastoCaja ?? 0) + (d.GastoBanco ?? 0) + (d.GastoPapeleria ?? 0)),
         backgroundColor: 'rgba(255, 99, 132, 0.6)',
         borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
@@ -46,7 +47,7 @@ const IngresosGastosChart: React.FC<IngresosGastosChartProps> = ({ data, period 
     ],
   };
 
-  const options = {
+  const options: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
       legend: {

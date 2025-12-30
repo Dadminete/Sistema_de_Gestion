@@ -25,7 +25,7 @@ const ListadoBackups: React.FC = () => {
     try {
       setIsLoading(true);
       const response = await apiClient.get('/database/backups');
-      const sortedBackups = (response || []).sort((a, b) => {
+      const sortedBackups = (response || []).sort((a: any, b: any) => {
         // Sort by filename alphabetically
         return (a.filename || '').localeCompare(b.filename || '', 'es');
       });

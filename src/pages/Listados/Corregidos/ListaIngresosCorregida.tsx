@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
-import DataTable from '../../components/feature/DataTable';
-import { useAuth } from '../../context/AuthProvider';
+import DataTable from '../../../components/feature/DataTable';
+import { useAuth } from '../../../context/AuthProvider';
 import Swal from 'sweetalert2';
 import './FiltrosListados.css';
 import { movimientoContableService, type MovimientoContable } from '../../../services/movimientoContableService';
@@ -90,39 +90,39 @@ const ListaIngresosCorregida: React.FC = () => {
       };
 
       const formattedFecha = formatDateForSearch(mov.fecha);
-      
+
       // Verificar filtros individuales
-      const matchFecha = filterFecha ? 
+      const matchFecha = filterFecha ?
         mov.fecha.includes(filterFecha) || formattedFecha.toLowerCase().includes(filterFecha.toLowerCase()) : true;
-        
-      const matchCategoria = filterCategoria ? 
+
+      const matchCategoria = filterCategoria ?
         categoriaNombre.toLowerCase().includes(filterCategoria.toLowerCase()) : true;
-        
-      const matchMonto = filterMonto ? 
+
+      const matchMonto = filterMonto ?
         mov.monto.toString().includes(filterMonto) : true;
-        
-      const matchMetodo = filterMetodo ? 
+
+      const matchMetodo = filterMetodo ?
         mov.metodo.toLowerCase().includes(filterMetodo.toLowerCase()) : true;
-        
-      const matchCuenta = filterCuenta ? 
+
+      const matchCuenta = filterCuenta ?
         (mov.cuentaBancaria?.numeroCuenta?.toLowerCase().includes(filterCuenta.toLowerCase()) || false) : true;
-        
-      const matchUsuario = filterUsuario ? 
+
+      const matchUsuario = filterUsuario ?
         (mov.usuario?.nombre?.toLowerCase().includes(filterUsuario.toLowerCase()) ||
-         mov.usuario?.apellido?.toLowerCase().includes(filterUsuario.toLowerCase()) ||
-         mov.usuario?.username?.toLowerCase().includes(filterUsuario.toLowerCase())) : true;
-      
+          mov.usuario?.apellido?.toLowerCase().includes(filterUsuario.toLowerCase()) ||
+          mov.usuario?.username?.toLowerCase().includes(filterUsuario.toLowerCase())) : true;
+
       // Verificar filtro de texto general
       const matchGeneral = filterText ?
         (categoriaNombre.toLowerCase().includes(filterText.toLowerCase()) ||
-         mov.descripcion?.toLowerCase().includes(filterText.toLowerCase()) ||
-         mov.fecha.includes(filterText) ||
-         formattedFecha.toLowerCase().includes(filterText.toLowerCase()) ||
-         mov.metodo.toLowerCase().includes(filterText.toLowerCase()) ||
-         (mov.cuentaBancaria?.numeroCuenta?.toLowerCase().includes(filterText.toLowerCase()) || false) ||
-         (mov.usuario?.nombre?.toLowerCase().includes(filterText.toLowerCase()) ||
-          mov.usuario?.apellido?.toLowerCase().includes(filterText.toLowerCase()) ||
-          mov.usuario?.username?.toLowerCase().includes(filterText.toLowerCase()))) : true;
+          mov.descripcion?.toLowerCase().includes(filterText.toLowerCase()) ||
+          mov.fecha.includes(filterText) ||
+          formattedFecha.toLowerCase().includes(filterText.toLowerCase()) ||
+          mov.metodo.toLowerCase().includes(filterText.toLowerCase()) ||
+          (mov.cuentaBancaria?.numeroCuenta?.toLowerCase().includes(filterText.toLowerCase()) || false) ||
+          (mov.usuario?.nombre?.toLowerCase().includes(filterText.toLowerCase()) ||
+            mov.usuario?.apellido?.toLowerCase().includes(filterText.toLowerCase()) ||
+            mov.usuario?.username?.toLowerCase().includes(filterText.toLowerCase()))) : true;
 
       return matchFecha && matchCategoria && matchMonto && matchMetodo && matchCuenta && matchUsuario && matchGeneral;
     });
@@ -200,7 +200,7 @@ const ListaIngresosCorregida: React.FC = () => {
     <div className="listado-ingresos-gastos-container">
       <div className="data-table-card">
         <h2>Listado de Ingresos</h2>
-        
+
         {/* Filtros fuera del datatable */}
         <div className="filters-section">
           <div className="filter-row">
@@ -257,7 +257,7 @@ const ListaIngresosCorregida: React.FC = () => {
             />
           </div>
         </div>
-        
+
         {/* Datatable */}
         <div className="data-table-section">
           <DataTable

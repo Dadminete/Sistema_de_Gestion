@@ -875,7 +875,8 @@ const CuentasPorPagar: React.FC = () => {
               <DataTable
                 data={cuentas}
                 columns={columns}
-                loading={loading}
+                isLoading={loading}
+                tableName="cuentas-por-pagar"
               />
             </div>
           </div>

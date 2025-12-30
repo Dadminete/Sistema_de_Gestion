@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import type { ChartData, ChartOptions } from 'chart.js';
 import axios from 'axios';
 
 ChartJS.register(
@@ -21,28 +22,32 @@ ChartJS.register(
 );
 
 const CajasChart = () => {
-  const [chartData, setChartData] = useState({
+  const [chartData, setChartData] = useState<ChartData<'bar'>>({
     labels: [],
     datasets: [
       {
         label: 'Ingresos Caja Principal',
         data: [],
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        stack: 'Stack 0',
       },
       {
         label: 'Gastos Caja Principal',
         data: [],
         backgroundColor: 'rgba(255, 99, 132, 0.6)',
+        stack: 'Stack 1',
       },
       {
         label: 'Ingresos Papelería',
         data: [],
         backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        stack: 'Stack 0',
       },
       {
         label: 'Gastos Papelería',
         data: [],
         backgroundColor: 'rgba(255, 206, 86, 0.6)',
+        stack: 'Stack 1',
       },
     ],
   });
@@ -71,11 +76,11 @@ const CajasChart = () => {
     fetchData();
   }, [timeFrame]);
 
-  const options = {
+  const options: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: 'top' as const,
       },
       title: {
         display: true,

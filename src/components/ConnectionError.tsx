@@ -113,7 +113,7 @@ export const ConnectionError: React.FC<ConnectionErrorProps> = ({
         </button>
       )}
       
-      <style jsx>{`
+      <style>{`
         @keyframes spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
@@ -124,7 +124,7 @@ export const ConnectionError: React.FC<ConnectionErrorProps> = ({
 };
 
 // Hook para manejar estados de carga con reintentos
-export const useApiRequest = <T>(
+export const useApiRequest = <T,>(
   apiCall: () => Promise<T>,
   dependencies: any[] = []
 ) => {

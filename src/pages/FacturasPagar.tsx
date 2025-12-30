@@ -103,11 +103,10 @@ const FacturasPagar: React.FC = () => {
             setProcesandoPago(true);
             await facturaService.pagarFactura(facturaSeleccionada.id, {
                 monto: montoPagar,
-                descuento: descuento,
                 metodoPago: formaPago,
                 cuentaBancariaId,
                 cajaId,
-                observaciones: descuento > 0 
+                observaciones: descuento > 0
                     ? `${observaciones ? observaciones + ' - ' : ''}Descuento aplicado: ${formatearMoneda(descuento)}`
                     : observaciones
             });
@@ -285,11 +284,11 @@ const FacturasPagar: React.FC = () => {
                             placeholder="0.00"
                         />
                         {descuento > 0 && (
-                            <p style={{ 
-                                marginTop: '5px', 
-                                fontSize: '14px', 
+                            <p style={{
+                                marginTop: '5px',
+                                fontSize: '14px',
                                 color: '#059669',
-                                fontWeight: 600 
+                                fontWeight: 600
                             }}>
                                 Monto efectivo a pagar: {formatearMoneda(montoPagar - descuento)}
                             </p>

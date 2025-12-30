@@ -1,17 +1,12 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchUsers } from '../../services/userService';
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
+import { getUsers } from '../../services/userService';
+import type { UserWithRoles } from '../../types/database';
 
 const UserList: React.FC = () => {
-  const { data, isLoading, error } = useQuery<User[], Error>({
+  const { data, isLoading, error } = useQuery<UserWithRoles[], Error>({
     queryKey: ['users'],
-    queryFn: fetchUsers,
+    queryFn: getUsers,
   });
 
   if (isLoading) return <div>Loading users...</div>;
@@ -23,7 +18,7 @@ const UserList: React.FC = () => {
       <ul>
         {data?.map((user) => (
           <li key={user.id}>
-            {user.name} ({user.email})
+            {user.username || `${user.nombre} ${user.apellido}`} ({user.email || 'sin email'})
           </li>
         ))}
       </ul>

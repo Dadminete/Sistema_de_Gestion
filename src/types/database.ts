@@ -2,13 +2,7 @@ import type {
   Usuario,
   Role,
   Permiso,
-  RoleUsuario,
-  RolePermiso,
-  UsuarioPermiso,
   Cliente,
-  DatosClienteISP,
-  DatosClientePapeleria,
-  DatosFinancierosCliente,
   Categoria,
   Servicio,
   Plan,
@@ -69,48 +63,26 @@ import type {
   Bitacora,
   SesionUsuario,
   Configuracion,
-  Empresa,
-  Sexo,
-  CategoriaCliente,
-  EstadoCliente,
-  EstadoTicket,
-  EstadoFactura,
-  EstadoSuscripcion
+  Empresa
 } from '@prisma/client';
 
-// ============================================
-// ENUM TYPES
-// ============================================
-
-export type {
-  Sexo,
-  CategoriaCliente,
-  EstadoCliente,
-  EstadoTicket,
-  EstadoFactura,
-  EstadoSuscripcion
-};
+// Note: Enum types are only available if defined in Prisma schema.
+// Avoid re-exporting missing enums to prevent build errors.
 
 // ============================================
 // USER & AUTHENTICATION TYPES
 // ============================================
 
 export type RoleWithPermissions = Role & {
-  rolesPermisos: (RolePermiso & {
-    permiso: Permiso;
-  })[];
+  rolesPermisos: { permiso: Permiso }[];
 };
 
 export type UserWithRoles = Usuario & {
-  usuariosRoles: (RoleUsuario & {
-    rol: Role;
-  })[];
+  usuariosRoles: { rol: Role }[];
 };
 
 export type UserWithPermissions = Usuario & {
-  usuariosPermisos: (UsuarioPermiso & {
-    permiso: Permiso;
-  })[];
+  usuariosPermisos: { permiso: Permiso }[];
 };
 
 // ============================================
@@ -118,9 +90,9 @@ export type UserWithPermissions = Usuario & {
 // ============================================
 
 export type ClienteWithRelations = Cliente & {
-  datosISP?: DatosClienteISP;
-  datosPapeleria?: DatosClientePapeleria;
-  datosFinancieros?: DatosFinancierosCliente;
+  datosISP?: any;
+  datosPapeleria?: any;
+  datosFinancieros?: any;
   contratos: Contrato[];
   facturas: FacturaCliente[];
   pagos: PagoCliente[];
@@ -134,7 +106,7 @@ export type ClienteWithRelations = Cliente & {
 };
 
 export type ClienteISPWithData = Cliente & {
-  datosISP: DatosClienteISP & {
+  datosISP: any & {
     equipos: EquipoCliente[];
   };
 };
@@ -184,7 +156,7 @@ export type ContratoWithRelations = Contrato & {
 // ============================================
 
 export type EquipoClienteWithRelations = EquipoCliente & {
-  datosCliente: DatosClienteISP;
+  datosCliente: any;
   suscripcion?: Suscripcion;
   contrato?: Contrato;
 };

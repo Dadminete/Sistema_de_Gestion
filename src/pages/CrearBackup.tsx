@@ -224,8 +224,19 @@ const CrearBackup: React.FC = () => {
   const handleDownload = async (filename: string) => {
     try {
       // Construir la URL completa del endpoint de descarga
-      const baseURL = apiClient.defaults?.baseURL || window.location.origin;
-      const downloadUrl = `${baseURL}/api/database/backups/${encodeURIComponent(filename)}/download`;
+      const envUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
+      const baseURL = (() => {
+        if (envUrl && envUrl.trim()) {
+          const trimmed = envUrl.replace(/\/$/, '');
+          return /\/api$/i.test(trimmed) ? trimmed : `${trimmed}/api`;
+        }
+        const hostname = window.location.hostname;
+        const port = window.location.port ? `:${window.location.port}` : '';
+        const protocol = window.location.protocol.replace(':', '');
+        // Asumir que el backend expone /api en el mismo host/puerto cuando no hay env explícito
+        return `${protocol}://${hostname}${port}/api`;
+      })();
+      const downloadUrl = `${baseURL}/database/backups/${encodeURIComponent(filename)}/download`;
       
       // Crear enlace de descarga directo
       const link = document.createElement('a');
@@ -235,7 +246,7 @@ const CrearBackup: React.FC = () => {
       link.style.display = 'none';
       
       // Agregar headers de autenticación si existen
-      const authToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+      const authToken = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
       if (authToken) {
         // Para descargas directas con autenticación, usar fetch
         const response = await fetch(downloadUrl, {

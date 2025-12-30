@@ -1,7 +1,8 @@
 import path from 'path'
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import { visualizer } from 'rollup-plugin-visualizer';
+import { visualizer } from 'rollup-plugin-visualizer'
+import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
 // Export a function config to access mode and load env
@@ -18,6 +19,53 @@ export default defineConfig(({ mode }) => {
       visualizer({
         open: true, // Opens the report in your browser
         filename: 'bundle-analyzer-report.html', // Name of the report file
+      }),
+      VitePWA({
+        registerType: 'autoUpdate',
+        injectRegister: 'auto',
+        manifest: {
+          name: 'Sistema de Gestión',
+          short_name: 'Sistema',
+          description: 'Aplicación de gestión de cajas, facturas y clientes',
+          theme_color: '#ffffff',
+          background_color: '#ffffff',
+          display: 'standalone',
+          scope: '/',
+          start_url: '/',
+          icons: [
+            {
+              src: '/icon-192.png',
+              sizes: '192x192',
+              type: 'image/png',
+              purpose: 'any'
+            },
+            {
+              src: '/icon-512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any'
+            }
+          ]
+        },
+        workbox: {
+          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/api\//,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'api-cache',
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 300
+                }
+              }
+            }
+          ]
+        },
+        devOptions: {
+          enabled: true
+        }
       }),
     ],
     resolve: {

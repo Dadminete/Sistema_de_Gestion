@@ -102,7 +102,7 @@ const Users: React.FC = () => {
   const handleEdit = (user: UserWithRoles) => {
     setEditingUser(user);
     // Get current user roles
-    const currentRoles = user.usuariosRoles?.map((ur) => ur.rolId.toString()) || [];
+    const currentRoles = user.usuariosRoles?.map((ur) => ur.rol.id.toString()) || [];
 
     setNewUser({
       username: user.username,

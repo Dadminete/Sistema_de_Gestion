@@ -100,7 +100,7 @@ const LoansPage = () => {
     // Calculate stats
     const totalLoans = loans.length;
     const activeLoans = loans.filter(l => l.estado === 'APROBADO').length;
-    const pendingLoans = loans.filter(l => l.estado === 'SOLICITADO' || l.estado === 'PENDIENTE').length;
+    const pendingLoans = loans.filter(l => l.estado === 'SOLICITADO').length;
     const totalAmount = loans.reduce((sum, l) => sum + (Number(l.montoSolicitado) || 0), 0);
 
     return (

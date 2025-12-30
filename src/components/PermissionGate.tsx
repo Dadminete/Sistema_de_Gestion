@@ -96,7 +96,7 @@ export const menuPermissionMap: Record<string, string> = {
   'Comisiones': 'rrhh.comisiones',
 
   // Servicios
-  'Categorias': 'servicios.categorias',
+  'Categorias Servicios': 'servicios.categorias',
   'Servicios': 'servicios.servicios',
   'Planes': 'servicios.planes',
 

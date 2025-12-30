@@ -287,7 +287,7 @@ const CajasDashboard: React.FC = () => {
                       </span>
                     </td>
                     <td>
-                      <span className="caja-name">{item.caja || 'N/A'}</span>
+                      <span className="caja-name">{item.origen || item.destino || 'N/A'}</span>
                     </td>
                     <td>{new Date(item.fecha).toLocaleString('es-ES')}</td>
                     <td className="amount-cell">

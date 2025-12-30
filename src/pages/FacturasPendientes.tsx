@@ -302,7 +302,6 @@ const FacturasPendientes: React.FC = () => {
                     columns={columns}
                     data={facturas}
                     onRowClick={() => { }}
-                    noDataMessage="No hay facturas pendientes"
                 />
             </div>
 
