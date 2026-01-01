@@ -695,6 +695,7 @@ const CajaService = {
             gte: startOfDay,
             lte: endOfDay,
           },
+          metodo: { not: 'ajuste' }, // Excluir ajustes contables
         },
       });
 
@@ -707,6 +708,7 @@ const CajaService = {
             gte: startOfDay,
             lte: endOfDay,
           },
+          metodo: { not: 'ajuste' }, // Excluir ajustes contables
         },
       });
 

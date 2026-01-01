@@ -721,18 +721,19 @@ class FacturaService {
             console.error('Error al crear movimiento contable para pago:', error);
         }
 
-        // Calcular total pagado
+        // Calcular total pagado (monto pagado + descuentos aplicados)
         const totalPagado = await prisma.pagoCliente.aggregate({
             where: {
                 facturaId,
                 estado: 'confirmado'
             },
             _sum: {
-                monto: true
+                monto: true,
+                descuento: true
             }
         });
 
-        const montoPagado = totalPagado._sum.monto || 0;
+        const montoPagado = (totalPagado._sum.monto || 0) + (totalPagado._sum.descuento || 0);
 
         // Actualizar estado de factura
         let nuevoEstado = factura.estado;

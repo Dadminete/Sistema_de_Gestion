@@ -45,11 +45,19 @@ const FacturasPagar: React.FC = () => {
     const cargarFacturas = async () => {
         try {
             setLoading(true);
-            // Obtener facturas pendientes o parciales
-            const data = await facturaService.obtenerFacturas({ estado: 'pendiente', limit: 100 });
-            // También podríamos querer incluir 'parcial' si la API lo soportara explícitamente en el filtro, 
-            // pero por ahora 'pendiente' suele incluir las que tienen saldo pendiente.
-            setFacturas(data.facturas || []);
+            // Obtener facturas pendientes y parciales
+            const [dataPendientes, dataParciales] = await Promise.all([
+                facturaService.obtenerFacturas({ estado: 'pendiente', limit: 100 }),
+                facturaService.obtenerFacturas({ estado: 'parcial', limit: 100 })
+            ]);
+            
+            // Combinar ambos resultados
+            const todasFacturas = [
+                ...(dataPendientes.facturas || []),
+                ...(dataParciales.facturas || [])
+            ];
+            
+            setFacturas(todasFacturas);
         } catch (error) {
             console.error('Error al cargar facturas:', error);
         } finally {
@@ -102,7 +110,8 @@ const FacturasPagar: React.FC = () => {
         try {
             setProcesandoPago(true);
             await facturaService.pagarFactura(facturaSeleccionada.id, {
-                monto: montoPagar,
+                monto: montoPagar - descuento, // Monto real que entra en caja
+                descuento: descuento, // Descuento aplicado
                 metodoPago: formaPago,
                 cuentaBancariaId,
                 cajaId,
