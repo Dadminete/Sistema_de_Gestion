@@ -53,45 +53,40 @@ router.get('/', async (req, res) => {
       limit = 50
     } = req.query;
 
-    const where = {
-      AND: []
-    };
+    const where = {};
 
     // Filtros
     if (proveedorId) {
-      where.AND.push({ proveedorId });
+      where.proveedorId = proveedorId;
     }
 
     if (estado) {
-      where.AND.push({ estado });
+      where.estado = estado;
     }
 
     if (fechaDesde || fechaHasta) {
-      const fechaFiltro = {};
-      if (fechaDesde) fechaFiltro.gte = new Date(fechaDesde);
-      if (fechaHasta) fechaFiltro.lte = new Date(fechaHasta);
-      where.AND.push({ fechaVencimiento: fechaFiltro });
+      where.fechaVencimiento = {};
+      if (fechaDesde) where.fechaVencimiento.gte = new Date(fechaDesde);
+      if (fechaHasta) where.fechaVencimiento.lte = new Date(fechaHasta);
     }
 
     if (montoMinimo || montoMaximo) {
-      const montoFiltro = {};
-      if (montoMinimo) montoFiltro.gte = parseFloat(montoMinimo);
-      if (montoMaximo) montoFiltro.lte = parseFloat(montoMaximo);
-      where.AND.push({ montoPendiente: montoFiltro });
+      where.montoPendiente = {};
+      if (montoMinimo) where.montoPendiente.gte = parseFloat(montoMinimo);
+      if (montoMaximo) where.montoPendiente.lte = parseFloat(montoMaximo);
     }
 
     if (diasVencidoDesde || diasVencidoHasta) {
-      const diasFiltro = {};
-      if (diasVencidoDesde) diasFiltro.gte = parseInt(diasVencidoDesde);
-      if (diasVencidoHasta) diasFiltro.lte = parseInt(diasVencidoHasta);
-      where.AND.push({ diasVencido: diasFiltro });
+      where.diasVencido = {};
+      if (diasVencidoDesde) where.diasVencido.gte = parseInt(diasVencidoDesde);
+      if (diasVencidoHasta) where.diasVencido.lte = parseInt(diasVencidoHasta);
     }
 
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
     const [cuentas, total] = await Promise.all([
       prisma.cuentaPorPagar.findMany({
-        where: where.AND.length > 0 ? where : {},
+        where,
         include: {
           proveedor: {
             select: {
@@ -108,7 +103,7 @@ router.get('/', async (req, res) => {
         take: parseInt(limit)
       }),
       prisma.cuentaPorPagar.count({
-        where: where.AND.length > 0 ? where : {}
+        where
       })
     ]);
 

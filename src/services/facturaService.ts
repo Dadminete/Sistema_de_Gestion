@@ -85,6 +85,7 @@ export const crearFactura = async (data: {
 // Pagar factura
 export const pagarFactura = async (facturaId: string, data: {
   monto: number;
+  descuento?: number;
   metodoPago: string;
   cuentaBancariaId?: string;
   cajaId?: string;

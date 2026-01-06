@@ -10,6 +10,7 @@ export interface CuentaPorPagar {
     razonSocial?: string;
     telefono?: string;
     email?: string;
+    tipoProveedor?: string;
   };
   tipoDocumento: string;
   fechaEmision: string;

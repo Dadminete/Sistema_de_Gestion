@@ -25,7 +25,7 @@ const FacturasDashboard: React.FC = () => {
   const [ultimasFacturas, setUltimasFacturas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [año, setAño] = useState(new Date().getFullYear());
-  const [mes, setMes] = useState(0); // 0 = Todos
+  const [mes, setMes] = useState(new Date().getMonth() + 1); // Mes actual (1-12)
 
   useEffect(() => {
     cargarDatos();
@@ -278,7 +278,7 @@ const FacturasDashboard: React.FC = () => {
         <KpiWidget
           title="ANULADAS"
           value={(estadisticas?.facturasAnuladas || 0).toString()}
-          percentage="Este mes"
+          percentage="Este año"
           percentageClass="negative"
           icon={<AlertCircle className="w-5 h-5" />}
           barColor="#ef4444" // Red

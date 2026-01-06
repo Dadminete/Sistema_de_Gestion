@@ -1,0 +1,47 @@
+--- BROAD PAYMENT DEBUG ---
+Total PagoCuentaPorPagar records: 0
+
+Total MovimientoContable since 2026-01-01: 41
+- ID: 9e044b05-3441-4de7-983b-6b4466a10589, Amount: 800, Type: ingreso, Desc: Pago Factura #FAC-2025-00074 - caja - , Date: Sun Jan 04 2026 09:28:35 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 5958d13b-af19-41d2-922f-33496b28be25, Amount: 600, Type: gasto, Desc: Para Instalacion Nuevas Baterias, Date: Sat Jan 03 2026 16:51:44 GMT-0400 (Venezuela Time), Cat: Equipos (Propiedad, Planta y Equipo)
+- ID: 597ebbcb-e252-49cd-a836-5fe49040a070, Amount: 145, Type: gasto, Desc: motor, Date: Sat Jan 03 2026 15:35:59 GMT-0400 (Venezuela Time), Cat: Combustible
+- ID: ffb45c7a-9104-4677-b40d-e8a14d2a27d2, Amount: 1200, Type: ingreso, Desc: Pago Factura #FAC-2025-00071 - caja - pago con 20 USA, Date: Sat Jan 03 2026 15:34:14 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 9002c720-1fa9-4326-b705-684c11a696a4, Amount: 150.17, Type: ingreso, Desc: pago inters bancario, Date: Sat Jan 03 2026 15:28:03 GMT-0400 (Venezuela Time), Cat: Otros Ingresos
+- ID: 62f6fc7f-f9d9-49da-bb18-aee33479e061, Amount: 7.34, Type: gasto, Desc: Pago Tarjeta de Credito, Date: Sat Jan 03 2026 15:01:45 GMT-0400 (Venezuela Time), Cat: Intereses Bancarios
+- ID: 269ff9ad-4502-44cb-936e-fb8261411421, Amount: 4893.42, Type: ingreso, Desc: Traspaso TR-202601-00003: Pago Balance a la Fecha, Date: Sat Jan 03 2026 15:00:57 GMT-0400 (Venezuela Time), Cat: Traspasos
+- ID: 935a8aa9-ec3d-48e9-a80b-51afca1d3219, Amount: 4893.42, Type: gasto, Desc: Traspaso TR-202601-00003: Pago Balance a la Fecha, Date: Sat Jan 03 2026 15:00:57 GMT-0400 (Venezuela Time), Cat: Traspasos
+- ID: fdba0e73-9f3f-413e-ad55-6a1e18153371, Amount: 1356.98, Type: gasto, Desc: Pago de deuda: Extracredito, Date: Sat Jan 03 2026 14:45:58 GMT-0400 (Venezuela Time), Cat: Pago Prestamo
+- ID: b0ad4f0a-3e46-4db9-9e72-298c1976aa1d, Amount: 1356.98, Type: gasto, Desc: Pago de deuda: Extracredito, Date: Sat Jan 03 2026 14:44:06 GMT-0400 (Venezuela Time), Cat: Pago Prestamo
+- ID: 293838ea-2c8b-47d6-af5b-8fdd077cb4d6, Amount: 1000, Type: ingreso, Desc: Pago Factura #FAC-2025-00081 - caja - , Date: Sat Jan 03 2026 12:51:28 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: b022b8a4-c6e0-457a-b830-a1432b502baf, Amount: 1000, Type: ingreso, Desc: Pago Factura #FAC-2025-00058 - caja - , Date: Sat Jan 03 2026 11:26:20 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 739cfb38-b5de-44af-bdfa-b18e78032fff, Amount: 700, Type: ingreso, Desc: Pago Factura #FAC-2026-00002 - caja (Desc: $0.01) - Descuento aplicado: RD$ 0.01, Date: Sat Jan 03 2026 11:20:33 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: c8af7469-f4d6-498e-888e-04d58d4a0521, Amount: 8115.08, Type: ingreso, Desc: Traspaso TR-202601-00002: Para pagos servicios, Date: Sat Jan 03 2026 10:42:43 GMT-0400 (Venezuela Time), Cat: Traspasos
+- ID: 8a3af3a3-041b-44c3-98bc-19ee38e55d18, Amount: 8115.08, Type: gasto, Desc: Traspaso TR-202601-00002: Para pagos servicios, Date: Sat Jan 03 2026 10:42:42 GMT-0400 (Venezuela Time), Cat: Traspasos
+- ID: 63480904-60ce-491a-a048-9ff8d905aef1, Amount: 26700, Type: ingreso, Desc: Traspaso TR-202601-00001: Trapaso para Pagos Servicios y ahorros, Date: Sat Jan 03 2026 10:39:52 GMT-0400 (Venezuela Time), Cat: Traspasos
+- ID: 6f5f04dd-adec-46be-91b2-e6e7a88bcaeb, Amount: 26700, Type: gasto, Desc: Traspaso TR-202601-00001: Trapaso para Pagos Servicios y ahorros, Date: Sat Jan 03 2026 10:39:51 GMT-0400 (Venezuela Time), Cat: Traspasos
+- ID: 647e4a4a-f394-4700-a1f9-b638043638e6, Amount: 1000, Type: ingreso, Desc: Pago Factura #FAC-2025-00094 - caja - , Date: Sat Jan 03 2026 09:52:37 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: ee47f182-d0b9-43ed-86f4-bf5c94d546c6, Amount: 60, Type: ingreso, Desc: Venta de papelería #VENTA-1767389036254, Date: Fri Jan 02 2026 17:23:59 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 221d9a90-6252-4e11-889e-01bcc6b4709d, Amount: 800, Type: ingreso, Desc: Pago Factura #FAC-2025-00073 - caja - Efectivo, Date: Fri Jan 02 2026 16:47:12 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: e1fec7d1-72a6-4fd0-90bc-0acdc4c1ab9e, Amount: 1600, Type: ingreso, Desc: Pago Factura #FAC-2025-00099 - caja - Efectivo, Date: Fri Jan 02 2026 16:46:19 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: ebf6dd76-25d6-4dc3-95a0-4947836158de, Amount: 280, Type: ingreso, Desc: Venta de papelería #VENTA-1767386533309, Date: Fri Jan 02 2026 16:42:15 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 160264f4-caf3-493b-9d57-50bc28d0cb2d, Amount: 1000, Type: ingreso, Desc: Pago Factura #FAC-2025-00049 - caja - Efectivo, Date: Fri Jan 02 2026 16:40:17 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 87014fe3-de59-41c0-8ae6-f230cc771192, Amount: 1200, Type: ingreso, Desc: Pago Factura #FAC-2025-00083 - caja - , Date: Fri Jan 02 2026 16:29:13 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: df6ab41f-788f-4384-a26c-4c6a0e2cc2c2, Amount: 1400, Type: ingreso, Desc: Pago Factura #FAC-2026-00001 - caja - Efectivo, Date: Fri Jan 02 2026 16:16:27 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 59f0dd3e-da55-473a-96d7-c2a43bd4f354, Amount: 1900, Type: ingreso, Desc: Pago Factura #FAC-2025-00079 - caja - Efectivo, Date: Fri Jan 02 2026 15:32:40 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 058df11d-c733-4a76-b7f9-9c9c7bfa7ba8, Amount: 1200, Type: ingreso, Desc: Pago Factura #FAC-2025-00092 - caja - Efectivo, Date: Fri Jan 02 2026 15:32:11 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 79e36864-08e2-465f-9116-a7fc9a5c6b1c, Amount: 1400, Type: ingreso, Desc: Pago Factura #FAC-2025-00106 - transferencia - Via BANCO, Date: Fri Jan 02 2026 14:32:30 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: c3c39259-1901-4a60-8417-3939e2266566, Amount: 1400, Type: ingreso, Desc: Pago Factura #FAC-2025-00060 - transferencia - Via Banco, Date: Fri Jan 02 2026 14:03:24 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 4bc5816b-eae0-4cc7-8aab-b2e3df8c7a95, Amount: 1000, Type: ingreso, Desc: Pago Factura #FAC-2025-00084 - transferencia - Via Banco, Date: Fri Jan 02 2026 14:01:58 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 50031f8c-0419-4106-b6bd-359ca43fa95e, Amount: 181.96, Type: gasto, Desc: Gasto Motor, Date: Fri Jan 02 2026 11:38:09 GMT-0400 (Venezuela Time), Cat: Combustible
+- ID: 466bef9c-b2c7-4169-bd7b-85cee7c5c550, Amount: 1000, Type: ingreso, Desc: Pago Factura #FAC-2025-00053 - caja - Efectivo, Date: Fri Jan 02 2026 11:35:39 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 8359ea5b-19b0-4f39-ab4e-609e278c7f36, Amount: 1200, Type: ingreso, Desc: Pago Factura #FAC-2025-00064 - transferencia - Via Banco, Date: Fri Jan 02 2026 11:17:21 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: e1454bd4-2371-4948-b4b8-256021ff003c, Amount: 1400, Type: ingreso, Desc: Pago Factura #FAC-2025-00100 - transferencia - Via Banco, Date: Fri Jan 02 2026 11:12:22 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: a3ca39b5-6baf-4fca-9535-97ca81ce48e0, Amount: 60, Type: gasto, Desc: Via Banco, Date: Fri Jan 02 2026 10:16:06 GMT-0400 (Venezuela Time), Cat: Intereses Bancarios
+- ID: 469f8296-4b00-4510-9856-6cf19fd1467e, Amount: 1200, Type: ingreso, Desc: Pago Factura #FAC-2025-00050 - transferencia - Via Banco, Date: Fri Jan 02 2026 10:14:53 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 87ccf72f-cf38-4b5e-8203-9074316e5654, Amount: 450, Type: ingreso, Desc: Pago Atraso Moises , Date: Fri Jan 02 2026 10:12:53 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 39d0be0b-e670-46e0-aadc-d0ad379cfcc8, Amount: 1550, Type: ingreso, Desc: Pago Factura #FAC-2025-00104 - caja - Efectivo, Date: Fri Jan 02 2026 10:11:47 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 682f0bd4-a9f1-43d5-93a1-1b1de96ea292, Amount: 1450, Type: ingreso, Desc: Pago Factura #FAC-2025-00103 - caja - Efectivo - Descuento aplicado: RD$ 50.00, Date: Fri Jan 02 2026 10:10:59 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: 8f6519c8-49bf-454e-b54e-59fe525f4c57, Amount: 1450, Type: ingreso, Desc: Pago Factura #FAC-2025-00105 - caja - Efectivo - Descuento aplicado: RD$ 50.00, Date: Fri Jan 02 2026 10:10:31 GMT-0400 (Venezuela Time), Cat: Ingresos por Servicios de Internet
+- ID: e26739c8-8c4c-4c33-b7f9-1dfebd8a3cf0, Amount: 125, Type: gasto, Desc: Compra Desayuno, Date: Fri Jan 02 2026 09:25:06 GMT-0400 (Venezuela Time), Cat: Comida
+
+Movements mentioning 'Popular': 0

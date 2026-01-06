@@ -1,0 +1,6 @@
+Found 1 payments for account 840819940:
+- Amount: 1356.98, Date: Fri Jan 02 2026 20:00:00 GMT-0400 (Venezuela Time), Created by: Administrador Sistema
+
+Found 2 linked movements:
+- ID: b0ad4f0a-3e46-4db9-9e72-298c1976aa1d, Concept: undefined, Debit: undefined, Credit: undefined
+- ID: fdba0e73-9f3f-413e-ad55-6a1e18153371, Concept: undefined, Debit: undefined, Credit: undefined

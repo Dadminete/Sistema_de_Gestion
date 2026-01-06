@@ -1,0 +1,31 @@
+﻿Environment variables loaded from .env
+Prisma schema loaded from schema.prisma
+node.exe : Error: 
+At C:\Program Files\no
+dejs\npx.ps1:29 char:3
++   & $NODE_EXE 
+$NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (Error: :St   
+ ring) [], RemoteE    
+xception
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+EPERM: operation not 
+permitted, rename 'E:\
+Web\DB_Sistema_2.0_NEO
+N\server\node_modules\
+.prisma\client\query_e
+ngine-windows.dll.node
+.tmp5584' -> 'E:\Web\D
+B_Sistema_2.0_NEON\ser
+ver\node_modules\.pris
+ma\client\query_engine
+-windows.dll.node'
+
+

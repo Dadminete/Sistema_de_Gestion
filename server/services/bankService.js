@@ -34,6 +34,24 @@ const getAllBanks = async () => {
       },
       orderBy: { nombre: 'asc' }
     });
+
+    // Calculate individual balance for each bank account using the same logic as getAccountsByBankId
+    console.log(`[getAllBanks] Calculando saldos individuales para ${banks.length} bancos...`);
+    
+    const { CuentaContableService } = require('./cuentaContableService');
+    
+    for (const bank of banks) {
+      console.log(`[getAllBanks] Banco: ${bank.nombre}, Cuentas: ${bank.cuentas.length}`);
+      
+      for (const cuenta of bank.cuentas) {
+        // Use the same balance calculation as BankDetail
+        const balance = await CuentaContableService.getBankAccountBalance(cuenta.id, 0);
+        cuenta.saldoIndividual = balance;
+        
+        console.log(`  [getAllBanks] Cuenta ${cuenta.numeroCuenta}: Saldo = ${balance}`);
+      }
+    }
+
     return banks;
   } catch (error) {
     console.error('Error en getAllBanks:', error);

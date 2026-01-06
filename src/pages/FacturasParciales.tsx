@@ -167,6 +167,7 @@ const FacturasParciales: React.FC = () => {
 
             await facturaService.pagarFactura(factura.id, {
                 monto: monto,
+                descuento: descuento,
                 metodoPago: 'efectivo',
                 observaciones: descuento > 0 ? `Pago parcial con descuento de ${formatearMoneda(descuento)}` : 'Pago parcial adicional desde facturas parciales'
             });
@@ -224,6 +225,7 @@ const FacturasParciales: React.FC = () => {
 
             await facturaService.pagarFactura(factura.id, {
                 monto: montoPendiente,
+                descuento: descuento,
                 metodoPago: 'efectivo',
                 observaciones: descuento > 0 ? `Pago completado con descuento de ${formatearMoneda(descuento)}` : 'Pago completado desde facturas parciales'
             });

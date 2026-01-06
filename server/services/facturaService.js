@@ -647,12 +647,36 @@ class FacturaService {
             throw new Error('Factura no encontrada');
         }
 
-        if (factura.estado === 'pagada') {
-            throw new Error('La factura ya está pagada');
-        }
-
         if (factura.estado === 'anulada') {
             throw new Error('No se puede pagar una factura anulada');
+        }
+
+        // Calcular cuánto se ha pagado hasta ahora
+        const totalPagadoActual = await prisma.pagoCliente.aggregate({
+            where: {
+                facturaId,
+                estado: 'confirmado'
+            },
+            _sum: {
+                monto: true,
+                descuento: true
+            }
+        });
+
+        const montoPagadoActual = (totalPagadoActual._sum.monto || 0) + (totalPagadoActual._sum.descuento || 0);
+        const montoPendiente = factura.total - montoPagadoActual;
+
+        // Verificar si la factura ya está completamente pagada
+        if (montoPendiente <= 0) {
+            throw new Error('La factura ya está pagada completamente. No se pueden agregar más pagos.');
+        }
+
+        // Verificar que el nuevo pago no exceda el monto pendiente
+        const descuentoFinal = parseFloat(descuento || 0);
+        const montoNuevoPago = parseFloat(monto) + descuentoFinal;
+        
+        if (montoNuevoPago > montoPendiente) {
+            throw new Error(`El pago de ${montoNuevoPago.toFixed(2)} excede el monto pendiente de ${montoPendiente.toFixed(2)}`);
         }
 
         // Generar número de pago
@@ -671,9 +695,6 @@ class FacturaService {
         // Crear fecha de pago en zona horaria local (América/Santo_Domingo)
         const now = new Date();
         const fechaPagoLocal = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
-
-        // Preparar descuento
-        const descuentoFinal = parseFloat(descuento || 0);
 
         // Crear pago
         const pago = await prisma.pagoCliente.create({
@@ -703,17 +724,18 @@ class FacturaService {
                     metodoMovimiento = 'banco';
                 }
 
-                // El monto a registrar en caja es solo lo que el cliente paga
+                // El monto a registrar en caja es solo lo que el cliente paga (monto - descuento)
                 // El descuento es administrativo y no entra en caja
+                const montoEfectivo = parseFloat(monto) - descuentoFinal;
                 await movimientoContableService.createMovimiento({
                     tipo: 'ingreso',
-                    monto: parseFloat(monto),
+                    monto: montoEfectivo,
                     categoriaId: categoria.id,
                     metodo: metodoMovimiento,
                     cajaId: cajaIdFinal && cajaIdFinal !== '' ? cajaIdFinal : undefined,
                     bankId: undefined,
                     cuentaBancariaId: cuentaBancariaId && cuentaBancariaId !== '' ? cuentaBancariaId : undefined,
-                    descripcion: `Pago Factura #${factura.numeroFactura} - ${metodoPago} - ${observaciones || ''}`,
+                    descripcion: `Pago Factura #${factura.numeroFactura} - ${metodoPago}${descuentoFinal > 0 ? ` (Desc: $${descuentoFinal.toFixed(2)})` : ''} - ${observaciones || ''}`,
                     usuarioId
                 });
             }
@@ -721,25 +743,14 @@ class FacturaService {
             console.error('Error al crear movimiento contable para pago:', error);
         }
 
-        // Calcular total pagado (monto pagado + descuentos aplicados)
-        const totalPagado = await prisma.pagoCliente.aggregate({
-            where: {
-                facturaId,
-                estado: 'confirmado'
-            },
-            _sum: {
-                monto: true,
-                descuento: true
-            }
-        });
-
-        const montoPagado = (totalPagado._sum.monto || 0) + (totalPagado._sum.descuento || 0);
+        // Calcular total pagado después de este pago (reutilizando cálculo anterior + nuevo pago)
+        const montoPagadoTotal = montoPagadoActual + parseFloat(monto) + descuentoFinal;
 
         // Actualizar estado de factura
         let nuevoEstado = factura.estado;
-        if (montoPagado >= factura.total) {
+        if (montoPagadoTotal >= factura.total) {
             nuevoEstado = 'pagada';
-        } else if (montoPagado > 0) {
+        } else if (montoPagadoTotal > 0) {
             nuevoEstado = 'parcial';
         }
 
@@ -751,13 +762,13 @@ class FacturaService {
         // Actualizar cuenta por cobrar
         if (factura.cuentasPorCobrar.length > 0) {
             const cuentaPorCobrar = factura.cuentasPorCobrar[0];
-            const montoPendiente = Math.max(0, factura.total - montoPagado);
+            const montoPendienteActualizado = Math.max(0, factura.total - montoPagadoTotal);
 
             await prisma.cuentaPorCobrar.update({
                 where: { id: cuentaPorCobrar.id },
                 data: {
-                    montoPendiente,
-                    estado: montoPendiente === 0 ? 'pagada' : 'pendiente'
+                    montoPendiente: montoPendienteActualizado,
+                    estado: montoPendienteActualizado === 0 ? 'pagada' : 'pendiente'
                 }
             });
         }
@@ -847,50 +858,95 @@ class FacturaService {
     // Dashboard - Estadísticas
     async obtenerEstadisticas(filtros = {}) {
         const { año, mes } = filtros;
-        const where = {};
+        const whereFacturas = {};
+        const wherePagos = {};
 
         if (año || mes) {
-            where.fechaFactura = {};
+            whereFacturas.fechaFactura = {};
+            wherePagos.fechaPago = {};
+            
             if (año && mes) {
                 // Primer día del mes a las 00:00:00
                 const fechaInicio = new Date(año, mes - 1, 1);
                 // Primer día del mes siguiente a las 00:00:00 (no inclusive)
                 const fechaFin = new Date(año, mes, 1);
-                where.fechaFactura.gte = fechaInicio;
-                where.fechaFactura.lte = fechaFin;
+                
+                whereFacturas.fechaFactura.gte = fechaInicio;
+                whereFacturas.fechaFactura.lt = fechaFin;
+                
+                wherePagos.fechaPago.gte = fechaInicio;
+                wherePagos.fechaPago.lt = fechaFin;
             } else if (año) {
                 const fechaInicio = new Date(año, 0, 1);
                 const fechaFin = new Date(año + 1, 0, 1);
-                where.fechaFactura.gte = fechaInicio;
-                where.fechaFactura.lte = fechaFin;
+                
+                whereFacturas.fechaFactura.gte = fechaInicio;
+                whereFacturas.fechaFactura.lt = fechaFin;
+                
+                wherePagos.fechaPago.gte = fechaInicio;
+                wherePagos.fechaPago.lt = fechaFin;
             }
+        }
+
+        // Si estamos filtrando por fecha, contar facturas que recibieron pagos en ese período
+        let facturasPagadas, facturasParciales, facturasPendientes, facturasAnuladas;
+        
+        if (año || mes) {
+            // Contar facturas por estado que recibieron pagos en el período
+            const facturasConPagos = await prisma.facturaCliente.groupBy({
+                by: ['estado'],
+                where: {
+                    pagos: {
+                        some: {
+                            ...wherePagos,
+                            estado: 'confirmado'
+                        }
+                    }
+                },
+                _count: true
+            });
+
+            const conteoEstados = facturasConPagos.reduce((acc, item) => {
+                acc[item.estado] = item._count;
+                return acc;
+            }, {});
+
+            facturasPagadas = conteoEstados.pagada || 0;
+            facturasParciales = conteoEstados.parcial || 0;
+            facturasPendientes = conteoEstados.pendiente || 0;
+            
+            // ANULADAS: siempre mostrar el total del AÑO (no del mes)
+            const whereAnuladas = { estado: 'anulada' };
+            if (año) {
+                whereAnuladas.fechaFactura = {
+                    gte: new Date(año, 0, 1),
+                    lt: new Date(año + 1, 0, 1)
+                };
+            }
+            facturasAnuladas = await prisma.facturaCliente.count({ where: whereAnuladas });
+        } else {
+            // Sin filtro de fecha, usar el conteo normal por fechaFactura
+            [facturasPendientes, facturasPagadas, facturasAnuladas, facturasParciales] = await Promise.all([
+                prisma.facturaCliente.count({ where: { ...whereFacturas, estado: 'pendiente' } }),
+                prisma.facturaCliente.count({ where: { ...whereFacturas, estado: 'pagada' } }),
+                prisma.facturaCliente.count({ where: { ...whereFacturas, estado: 'anulada' } }),
+                prisma.facturaCliente.count({ where: { ...whereFacturas, estado: 'parcial' } })
+            ]);
         }
 
         const [
             totalFacturas,
-            facturasPendientes,
-            facturasPagadas,
-            facturasAnuladas,
-            facturasParciales,
             totalPendiente,
             totalPagado
         ] = await Promise.all([
-            prisma.facturaCliente.count({ where }),
-            prisma.facturaCliente.count({ where: { ...where, estado: 'pendiente' } }),
-            prisma.facturaCliente.count({ where: { ...where, estado: 'pagada' } }),
-            prisma.facturaCliente.count({ where: { ...where, estado: 'anulada' } }),
-            prisma.facturaCliente.count({ where: { ...where, estado: 'parcial' } }),
+            prisma.facturaCliente.count({ where: whereFacturas }),
             prisma.facturaCliente.aggregate({
-                where: { ...where, estado: 'pendiente' },
+                where: { ...whereFacturas, estado: 'pendiente' },
                 _sum: { total: true }
             }),
             prisma.pagoCliente.aggregate({
                 where: {
-                    ...(where.fechaFactura ? {
-                        factura: {
-                            fechaFactura: where.fechaFactura
-                        }
-                    } : {}),
+                    ...wherePagos,
                     estado: 'confirmado'
                 },
                 _sum: { monto: true }

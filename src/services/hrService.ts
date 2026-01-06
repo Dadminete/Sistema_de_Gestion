@@ -187,6 +187,14 @@ export const hrService = {
     return apiClient.put(`/rrhh/prestamos/${id}`, data);
   },
 
+  approveLoan: async (id: string, approvalData: any) => {
+    return apiClient.post(`/rrhh/prestamos/${id}/approve`, approvalData);
+  },
+
+  rejectLoan: async (id: string, motivo: string) => {
+    return apiClient.post(`/rrhh/prestamos/${id}/reject`, { motivo });
+  },
+
   deleteLoan: async (id: string) => {
     return apiClient.delete(`/rrhh/prestamos/${id}`);
   },

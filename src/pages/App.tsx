@@ -71,6 +71,7 @@ import EmployeesList from './HR/Employees/EmployeesList';
 import PayrollPage from './HR/Payroll/PayrollPage';
 import LoansPage from './HR/Loans/LoansPage';
 import CommissionsPage from './HR/Commissions/CommissionsPage';
+import UserProfile from './UserProfile';
 // import VacacionesDashboard from './rrhh/vacaciones/VacacionesDashboard'; // Temporarily disabled
 
 const App: React.FC = () => {
@@ -88,6 +89,14 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <Layout><Dashboard /></Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Layout><UserProfile /></Layout>
               </ProtectedRoute>
             }
           />

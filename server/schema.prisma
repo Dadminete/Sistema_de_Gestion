@@ -760,6 +760,10 @@ model Prestamo {
   motivo          String?
   garantia        String?
   observaciones   String?
+  metodoPago      String?          @map("metodo_pago") @db.VarChar(50)
+  cajaId          String?          @map("caja_id") @db.Uuid
+  cuentaBancariaId String?         @map("cuenta_bancaria_id") @db.Uuid
+  observacionesAprobacion String?   @map("observaciones_aprobacion")
   aprobadoPorId   BigInt?          @map("aprobado_por")
   createdAt       DateTime         @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
   nominaPrestamos NominaPrestamo[]
@@ -767,11 +771,15 @@ model Prestamo {
   aprobadoPor     Empleado?        @relation("AprobadoPor", fields: [aprobadoPorId], references: [id])
   empleado        Empleado         @relation(fields: [empleadoId], references: [id])
   tipoPrestamo    TipoPrestamo     @relation(fields: [tipoPrestamoId], references: [id])
+  caja            Caja?            @relation(fields: [cajaId], references: [id])
+  cuentaBancaria  CuentaBancaria?  @relation(fields: [cuentaBancariaId], references: [id])
 
   @@index([empleadoId])
   @@index([tipoPrestamoId])
   @@index([estado])
   @@index([aprobadoPorId])
+  @@index([cajaId])
+  @@index([cuentaBancariaId])
   @@map("prestamos")
 }
 
@@ -1057,6 +1065,7 @@ model CuentaBancaria {
   traspasosOrigen     Traspaso[]           @relation("TraspasoOrigen")
   ventasPapeleria     VentaPapeleria[]
   nominas             Nomina[]
+  prestamos           Prestamo[]
 
   @@index([bankId])
   @@index([cuentaContableId])
@@ -1087,6 +1096,7 @@ model Caja {
   traspasosDestino Traspaso[]           @relation("TraspasoCajaDestino")
   traspasosOrigen  Traspaso[]           @relation("TraspasoCajaOrigen")
   ventasPapeleria  VentaPapeleria[]
+  prestamos        Prestamo[]
 
   @@index([cuentaContableId])
   @@index([responsableId])
@@ -1218,6 +1228,8 @@ model MovimientoContable {
   categoria        CategoriaCuenta @relation(fields: [categoriaId], references: [id])
   cuentaBancaria   CuentaBancaria? @relation(fields: [cuentaBancariaId], references: [id])
   usuario          Usuario         @relation(fields: [usuarioId], references: [id])
+  cuentaPorPagarId String?         @map("cuenta_por_pagar_id") @db.Uuid
+  cuentaPorPagar   CuentaPorPagar? @relation(fields: [cuentaPorPagarId], references: [id])
 
   @@index([categoriaId])
   @@index([usuarioId])
@@ -1484,6 +1496,7 @@ model CuentaPorPagar {
   updatedAt        DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
   proveedor        Proveedor?             @relation(fields: [proveedorId], references: [id])
   pagos            PagoCuentaPorPagar[]
+  movimientosContables MovimientoContable[]
 
   @@index([proveedorId])
   @@index([estado])

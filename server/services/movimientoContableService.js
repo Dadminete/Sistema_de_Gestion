@@ -162,6 +162,7 @@ const movimientoContableService = {
         descripcion,
         usuario: { connect: { id: usuarioId } },
         ...(fecha && { fecha: new Date(fecha) }),
+        ...(cuentaPorPagarId && { cuentaPorPagar: { connect: { id: cuentaPorPagarId } } }),
       },
       include: {
         categoria: true,
@@ -179,7 +180,8 @@ const movimientoContableService = {
           monto: parseFloat(monto),
           fechaPago: fecha || new Date(),
           metodoPago: metodo,
-          observaciones: `Pago registrado desde movimiento contable: ${descripcion || 'S/D'}`
+          observaciones: `Pago registrado desde movimiento contable: ${descripcion || 'S/D'}`,
+          usuarioId: usuarioId
         });
       } catch (error) {
         console.error('[CreateMovimiento] Error al registrar pago en cuenta por pagar:', error);

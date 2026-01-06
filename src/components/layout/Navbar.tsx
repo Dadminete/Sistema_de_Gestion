@@ -245,7 +245,10 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
                 </div>
               </div>
               <hr />
-              <button className="dropdown-item custom-menu-text" onClick={() => setShowUserMenu(false)}>
+              <button className="dropdown-item custom-menu-text" onClick={() => {
+                setShowUserMenu(false);
+                navigate('/profile');
+              }}>
                 <span className="material-icons">person</span>
                 Perfil
               </button>

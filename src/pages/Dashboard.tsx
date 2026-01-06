@@ -6,6 +6,7 @@ import RevenueChart from '@/components/charts/RevenueChart';
 import SalesChart from '@/components/charts/SalesChart';
 import { AuthService } from '@/services/authService';
 import { getDashboardData, type DashboardData, getSavingsAnalysis, type SavingsAnalysis } from '@/services/cajaService';
+import { getBanks, type Bank } from '@/services/bankService';
 import { recentClientsService, type RecentSubscribedClient } from '../services/recentClientsService';
 import '../styles/RecentClients.css';
 import '../styles/DashboardOptimizations.css';
@@ -27,6 +28,8 @@ const Dashboard: React.FC = () => {
   const [cajaData, setCajaData] = useState<DashboardData | null>(null);
   const [savingsAnalysis, setSavingsAnalysis] = useState<SavingsAnalysis | null>(null);
   const [recentClients, setRecentClients] = useState<RecentSubscribedClient[]>([]);
+  const [banks, setBanks] = useState<Bank[]>([]);
+  const [totalBankBalance, setTotalBankBalance] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [loadingClients, setLoadingClients] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +46,7 @@ const Dashboard: React.FC = () => {
       const startTime = performance.now();
       console.log('🔄 Starting dashboard data fetch...');
 
-      const [cajaDataResult, recentClientsResult, savingsResult] = await Promise.all([
+      const [cajaDataResult, recentClientsResult, savingsResult, banksResult] = await Promise.all([
         getDashboardData('week').catch(error => {
           console.error('Error fetching caja data:', error);
           setError('Error cargando datos de caja');
@@ -56,6 +59,10 @@ const Dashboard: React.FC = () => {
         getSavingsAnalysis().catch(error => {
           console.error('Error fetching savings analysis:', error);
           return null;
+        }),
+        getBanks().catch(error => {
+          console.error('Error fetching banks:', error);
+          return [];
         })
       ]);
 
@@ -74,6 +81,51 @@ const Dashboard: React.FC = () => {
       setCajaData(cajaDataResult);
       setRecentClients(recentClientsResult);
       setSavingsAnalysis(savingsResult);
+      setBanks(banksResult);
+      
+      // Calculate total bank balance excluding Banfondesa
+      // Use individual account balances (saldoIndividual) calculated from movements
+      const seenAccountIds = new Set<string>();
+      let totalBalance = 0;
+      console.log('🏦 Bancos encontrados:', banksResult.map(b => ({ nombre: b.nombre, cuentas: b.cuentas?.length || 0 })));
+      
+      banksResult.forEach(bank => {
+        const bankName = bank.nombre?.toLowerCase() || '';
+        const isBanfondesa = bankName.includes('fondesa') || bankName.includes('banfondesa');
+        const cuentasCount = bank.cuentas?.length || 0;
+        console.log(`Procesando banco: "${bank.nombre}" - Es Banfondesa: ${isBanfondesa} - Cuentas: ${cuentasCount}`);
+        
+        // Skip Banfondesa bank (handles "Ban Fondesa" and "Banfondesa")
+        if (isBanfondesa) {
+          console.log(`⏭️ Saltando banco Banfondesa: ${bank.nombre}`);
+          let excludedTotal = 0;
+          (bank.cuentas || []).forEach(cuenta => {
+            const saldo = Number((cuenta as any).saldoIndividual ?? 0);
+            excludedTotal += saldo;
+          });
+          console.log(`  🚫 Total excluido de ${bank.nombre}: ${excludedTotal}`);
+          return;
+        }
+        
+        let bankTotal = 0;
+        // Process accounts from non-Banfondesa banks
+        (bank.cuentas || []).forEach(cuenta => {
+          const cuentaKey = cuenta.id;
+          const saldo = Number((cuenta as any).saldoIndividual ?? 0);
+          
+          if (cuentaKey && !seenAccountIds.has(cuentaKey)) {
+            seenAccountIds.add(cuentaKey);
+            totalBalance += saldo;
+            bankTotal += saldo;
+            console.log(`  ✅ Cuenta: ${cuenta.numeroCuenta}, Saldo individual: ${saldo}`);
+          }
+        });
+        console.log(`  💵 Total del banco ${bank.nombre}: ${bankTotal}`);
+      });
+      
+      console.log(`💰 Balance total (sin Banfondesa): ${totalBalance}`);
+      setTotalBankBalance(totalBalance);
+      
       setLastRefresh(new Date());
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -129,7 +181,7 @@ const Dashboard: React.FC = () => {
       },
       {
         title: "BALANCE BANCO NETO",
-        value: formatCurrency(cajaData.stats.balanceBanco || 0),
+        value: formatCurrency(totalBankBalance),
         percentage: `Gastos Banco: ${formatCurrency(cajaData.stats.gastosMesBanco || 0)}`,
         percentageClass: "bright-red",
         icon: <Landmark size={24} strokeWidth={2.5} />,

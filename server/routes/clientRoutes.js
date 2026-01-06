@@ -1026,6 +1026,11 @@ router.get('/:clienteId/facturas-info', async (req, res) => {
 
     // Función para determinar el estado real de la factura
     const determinarEstadoReal = (factura) => {
+      // Si la factura está anulada, ese es su estado real
+      if (factura.estado === 'anulada') {
+        return 'anulada';
+      }
+
       const montoPagado = factura.pagos.reduce((sum, pago) => sum + Number(pago.monto), 0);
       const total = Number(factura.total);
 
@@ -1056,7 +1061,7 @@ router.get('/:clienteId/facturas-info', async (req, res) => {
     // Filtrar facturas pendientes (incluyendo vencidas y parcialmente pagadas)
     const facturasPendientes = facturasConEstado.filter(factura =>
       factura.montoPendiente > 0 &&
-      !['pagada', 'cancelada'].includes(factura.estadoReal)
+      !['pagada', 'cancelada', 'anulada'].includes(factura.estadoReal)
     ).sort((a, b) => {
       // Ordenar por fecha de vencimiento, las vencidas primero
       if (!a.fechaVencimiento && !b.fechaVencimiento) return 0;

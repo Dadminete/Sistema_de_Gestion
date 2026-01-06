@@ -1,24 +1,28 @@
 const { PrismaClient } = require('@prisma/client');
+const fs = require('fs');
 const prisma = new PrismaClient();
 
-async function checkAllLinks() {
-    const cajas = await prisma.caja.findMany({
-        include: { cuentaContable: true }
-    });
-    const bancos = await prisma.cuentaBancaria.findMany({
-        include: { bank: true, cuentaContable: true }
+async function checkLinks() {
+    let output = '--- MOVEMENT LINK DEBUG ---\n';
+
+    const movements = await prisma.movimientoContable.findMany({
+        where: {
+            descripcion: { contains: 'Extracredito', mode: 'insensitive' }
+        }
     });
 
-    console.log('--- CAJAS ---');
-    cajas.forEach(c => {
-        console.log(`Caja: ${c.nombre} | ID: ${c.id} | CC ID: ${c.cuentaContableId} | CC Name: ${c.cuentaContable?.nombre} | Balance: ${c.cuentaContable?.saldoActual}`);
+    output += `Found ${movements.length} movements for 'Extracredito':\n`;
+    movements.forEach(m => {
+        output += `- ID: ${m.id}, Amount: ${m.monto}, cuentaPorPagarId: ${m.cuentaPorPagarId}, Date: ${m.fecha}\n`;
     });
 
-    console.log('\n--- BANCOS ---');
-    bancos.forEach(b => {
-        console.log(`Bank: ${b.bank?.nombre} | Acc: ${b.numeroCuenta} | CC ID: ${b.cuentaContableId} | CC Name: ${b.cuentaContable?.nombre}`);
-    });
+    // Verify the count in PagoCuentaPorPagar again
+    const totalPagos = await prisma.pagoCuentaPorPagar.count();
+    output += `\nTotal PagoCuentaPorPagar count in DB: ${totalPagos}\n`;
 
-    await prisma.$disconnect();
+    fs.writeFileSync('link_debug_results.txt', output);
 }
-checkAllLinks();
+
+checkLinks()
+    .catch(e => console.error(e))
+    .finally(() => prisma.$disconnect());

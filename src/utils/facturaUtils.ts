@@ -51,7 +51,11 @@ export const formatearFechaInput = (fecha: Date | string): string => {
 
 // Formatear moneda (RD$)
 export const formatearMoneda = (monto: number): string => {
-  return `RD$ ${monto.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `RD$ ${monto.toLocaleString('es-DO', { 
+    minimumFractionDigits: 2, 
+    maximumFractionDigits: 2,
+    useGrouping: true 
+  })}`;
 };
 
 // Calcular subtotal de una línea de detalle

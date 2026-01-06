@@ -53,27 +53,44 @@ const CuentasPorPagarService = {
         };
     },
 
-    async registrarPago(id, { monto, fechaPago, metodoPago, numeroReferencia, observaciones }) {
-        const cuenta = await prisma.cuentaPorPagar.findUnique({ where: { id } });
-        if (!cuenta) throw new Error('Cuenta por pagar no encontrada');
-
+    async registrarPago(id, { monto, fechaPago, metodoPago, numeroReferencia, observaciones, usuarioId }) {
         const montoPago = parseFloat(monto);
-        if (montoPago > cuenta.montoPendiente) {
-            throw new Error('El monto del pago no puede ser mayor al monto pendiente');
-        }
 
-        const nuevoMontoPendiente = cuenta.montoPendiente - montoPago;
-        const diasVencido = this.calcularDiasVencidos(cuenta.fechaVencimiento);
-        const nuevoEstado = this.determinarEstado(diasVencido, nuevoMontoPendiente);
+        return await prisma.$transaction(async (tx) => {
+            const cuenta = await tx.cuentaPorPagar.findUnique({ where: { id } });
+            if (!cuenta) throw new Error('Cuenta por pagar no encontrada');
 
-        return await prisma.cuentaPorPagar.update({
-            where: { id },
-            data: {
-                montoPendiente: nuevoMontoPendiente,
-                estado: nuevoEstado,
-                diasVencido
-            },
-            include: { proveedor: true }
+            if (montoPago > cuenta.montoPendiente) {
+                throw new Error('El monto del pago no puede ser mayor al monto pendiente');
+            }
+
+            const nuevoMontoPendiente = cuenta.montoPendiente - montoPago;
+            const diasVencido = this.calcularDiasVencidos(cuenta.fechaVencimiento);
+            const nuevoEstado = this.determinarEstado(diasVencido, nuevoMontoPendiente);
+
+            // 1. Crear el registro de pago para el historial
+            await tx.pagoCuentaPorPagar.create({
+                data: {
+                    cuentaPorPagarId: id,
+                    monto: montoPago,
+                    fechaPago: fechaPago ? new Date(fechaPago) : new Date(),
+                    metodoPago,
+                    numeroReferencia,
+                    observaciones,
+                    creadoPorId: usuarioId
+                }
+            });
+
+            // 2. Actualizar la cuenta por pagar
+            return await tx.cuentaPorPagar.update({
+                where: { id },
+                data: {
+                    montoPendiente: nuevoMontoPendiente,
+                    estado: nuevoEstado,
+                    diasVencido
+                },
+                include: { proveedor: true }
+            });
         });
     }
 };

@@ -1,0 +1,14 @@
+--- DEBUGGING ACCOUNT: 840819940 ---
+ACCOUNT DETAILS:
+- ID: 07acf97a-80d3-4270-bd20-f587bfc7d6d5
+- Prov: Banco Popular
+- Original: 47137.41
+- Pendiente: 44423.45
+- Estado: pendiente
+
+PAYMENTS LINKED TO THIS ACCOUNT (0):
+
+SEARCHING MOVEMENTS FOR THIS ACCOUNT...
+Found 0 related movements:
+
+RECENT ACCOUNT PAYABLE PAYMENTS (LAST 20):

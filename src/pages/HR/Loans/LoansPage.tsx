@@ -8,23 +8,49 @@ import {
     DollarSign,
     X,
     CheckCircle,
-    AlertCircle,
-    Clock
+    Clock,
+    Edit,
+    ThumbsUp,
+    ThumbsDown,
+    Wallet,
+    Building2
 } from 'lucide-react';
 import { hrService, Loan, Employee } from '../../../services/hrService';
+import traspasoService, { Caja, CuentaBancaria } from '../../../services/traspasoService';
 import '../../../styles/LoansPage.css';
 
 const LoansPage = () => {
     const [loans, setLoans] = useState<Loan[]>([]);
     const [employees, setEmployees] = useState<Employee[]>([]);
+    const [cajas, setCajas] = useState<Caja[]>([]);
+    const [cuentasBancarias, setCuentasBancarias] = useState<CuentaBancaria[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+    const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+    const [selectedLoan, setSelectedLoan] = useState<Loan | null>(null);
     const [formData, setFormData] = useState({
         empleadoId: '',
         montoSolicitado: '',
         plazoMeses: '12',
         motivo: ''
+    });
+    const [editFormData, setEditFormData] = useState({
+        montoSolicitado: '',
+        plazoMeses: '',
+        cuotaMensual: '',
+        motivo: ''
+    });
+    const [approveFormData, setApproveFormData] = useState({
+        metodoPago: 'EFECTIVO',
+        cajaId: '',
+        cuentaBancariaId: '',
+        observacionesAprobacion: ''
+    });
+    const [rejectFormData, setRejectFormData] = useState({
+        motivoRechazo: ''
     });
 
     useEffect(() => {
@@ -34,9 +60,11 @@ const LoansPage = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const [loansData, employeesData] = await Promise.all([
+            const [loansData, employeesData, cajasData, cuentasData] = await Promise.all([
                 hrService.getLoans(),
-                hrService.getEmployees()
+                hrService.getEmployees(),
+                traspasoService.getCajasActivas(),
+                traspasoService.getCuentasBancariasActivas()
             ]);
 
             // Handle potential data wrapping
@@ -45,6 +73,8 @@ const LoansPage = () => {
 
             setLoans(loansList);
             setEmployees(employeesList);
+            setCajas(cajasData);
+            setCuentasBancarias(cuentasData);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -66,6 +96,80 @@ const LoansPage = () => {
         } catch (error) {
             console.error('Error creating loan:', error);
         }
+    };
+
+    const handleEditLoan = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedLoan) return;
+        try {
+            await hrService.updateLoan(selectedLoan.id, {
+                montoSolicitado: parseFloat(editFormData.montoSolicitado),
+                plazoMeses: parseInt(editFormData.plazoMeses),
+                cuotaMensual: parseFloat(editFormData.cuotaMensual),
+                motivo: editFormData.motivo
+            });
+            setIsEditModalOpen(false);
+            setSelectedLoan(null);
+            fetchData();
+        } catch (error) {
+            console.error('Error updating loan:', error);
+        }
+    };
+
+    const handleApproveLoan = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedLoan) return;
+        try {
+            await hrService.approveLoan(selectedLoan.id, {
+                metodoPago: approveFormData.metodoPago,
+                cajaId: approveFormData.metodoPago === 'EFECTIVO' && approveFormData.cajaId ? approveFormData.cajaId : undefined,
+                cuentaBancariaId: (approveFormData.metodoPago === 'TRANSFERENCIA' || approveFormData.metodoPago === 'CHEQUE') && approveFormData.cuentaBancariaId ? approveFormData.cuentaBancariaId : undefined,
+                observacionesAprobacion: approveFormData.observacionesAprobacion
+            });
+            setIsApproveModalOpen(false);
+            setSelectedLoan(null);
+            setApproveFormData({ metodoPago: 'EFECTIVO', cajaId: '', cuentaBancariaId: '', observacionesAprobacion: '' });
+            fetchData();
+        } catch (error) {
+            console.error('Error approving loan:', error);
+        }
+    };
+
+    const handleRejectLoan = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedLoan) return;
+        try {
+            await hrService.rejectLoan(selectedLoan.id, rejectFormData.motivoRechazo);
+            setIsRejectModalOpen(false);
+            setSelectedLoan(null);
+            setRejectFormData({ motivoRechazo: '' });
+            fetchData();
+        } catch (error) {
+            console.error('Error rejecting loan:', error);
+        }
+    };
+
+    const openEditModal = (loan: Loan) => {
+        setSelectedLoan(loan);
+        setEditFormData({
+            montoSolicitado: loan.montoSolicitado.toString(),
+            plazoMeses: loan.plazoMeses.toString(),
+            cuotaMensual: loan.cuotaMensual.toString(),
+            motivo: ''
+        });
+        setIsEditModalOpen(true);
+    };
+
+    const openApproveModal = (loan: Loan) => {
+        setSelectedLoan(loan);
+        setApproveFormData({ metodoPago: 'EFECTIVO', cajaId: '', cuentaBancariaId: '', observacionesAprobacion: '' });
+        setIsApproveModalOpen(true);
+    };
+
+    const openRejectModal = (loan: Loan) => {
+        setSelectedLoan(loan);
+        setRejectFormData({ motivoRechazo: '' });
+        setIsRejectModalOpen(true);
     };
 
     const formatCurrency = (amount: number) => {
@@ -229,9 +333,31 @@ const LoansPage = () => {
                                     </td>
                                     <td>
                                         <div className="table-actions">
-                                            <button className="action-btn action-btn-primary" title="Ver detalles">
-                                                <AlertCircle className="w-4 h-4" />
-                                            </button>
+                                            {loan.estado === 'SOLICITADO' && (
+                                                <>
+                                                    <button 
+                                                        className="action-btn action-btn-primary" 
+                                                        title="Editar"
+                                                        onClick={() => openEditModal(loan)}
+                                                    >
+                                                        <Edit className="w-4 h-4" />
+                                                    </button>
+                                                    <button 
+                                                        className="action-btn action-btn-success" 
+                                                        title="Aprobar"
+                                                        onClick={() => openApproveModal(loan)}
+                                                    >
+                                                        <ThumbsUp className="w-4 h-4" />
+                                                    </button>
+                                                    <button 
+                                                        className="action-btn action-btn-danger" 
+                                                        title="Rechazar"
+                                                        onClick={() => openRejectModal(loan)}
+                                                    >
+                                                        <ThumbsDown className="w-4 h-4" />
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
@@ -321,6 +447,277 @@ const LoansPage = () => {
                                     className="btn-primary"
                                 >
                                     Crear Solicitud
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Loan Modal */}
+            {isEditModalOpen && selectedLoan && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h3>Editar Préstamo</h3>
+                            <button onClick={() => setIsEditModalOpen(false)} className="modal-close-btn">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleEditLoan}>
+                            <div className="modal-body">
+                                <div className="grid-cols-2">
+                                    <div className="form-group">
+                                        <label className="form-label">Monto Solicitado</label>
+                                        <div className="relative">
+                                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                className="form-input pl-10"
+                                                placeholder="0.00"
+                                                value={editFormData.montoSolicitado}
+                                                onChange={(e) => setEditFormData({ ...editFormData, montoSolicitado: e.target.value })}
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Plazo (Meses)</label>
+                                        <div className="relative">
+                                            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                            <input
+                                                type="number"
+                                                className="form-input pl-10"
+                                                value={editFormData.plazoMeses}
+                                                onChange={(e) => setEditFormData({ ...editFormData, plazoMeses: e.target.value })}
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Cuota Mensual</label>
+                                    <div className="relative">
+                                        <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            className="form-input pl-10"
+                                            placeholder="0.00"
+                                            value={editFormData.cuotaMensual}
+                                            onChange={(e) => setEditFormData({ ...editFormData, cuotaMensual: e.target.value })}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Motivo / Observaciones</label>
+                                    <textarea
+                                        className="form-input"
+                                        rows={3}
+                                        value={editFormData.motivo}
+                                        onChange={(e) => setEditFormData({ ...editFormData, motivo: e.target.value })}
+                                    ></textarea>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsEditModalOpen(false)}
+                                    className="btn-secondary"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="btn-primary"
+                                >
+                                    Actualizar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Approve Loan Modal */}
+            {isApproveModalOpen && selectedLoan && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h3>Aprobar Préstamo</h3>
+                            <button onClick={() => setIsApproveModalOpen(false)} className="modal-close-btn">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleApproveLoan}>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label className="form-label">Empleado</label>
+                                    <div className="employee-detail">
+                                        {selectedLoan.empleado?.nombres} {selectedLoan.empleado?.apellidos}
+                                    </div>
+                                </div>
+                                <div className="grid-cols-2">
+                                    <div className="form-group">
+                                        <label className="form-label">Monto</label>
+                                        <div className="employee-detail">
+                                            {formatCurrency(selectedLoan.montoSolicitado)}
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Plazo</label>
+                                        <div className="employee-detail">
+                                            {selectedLoan.plazoMeses} meses
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Método de Pago</label>
+                                    <select
+                                        className="form-select"
+                                        value={approveFormData.metodoPago}
+                                        onChange={(e) => setApproveFormData({ ...approveFormData, metodoPago: e.target.value, cajaId: '', cuentaBancariaId: '' })}
+                                        required
+                                    >
+                                        <option value="EFECTIVO">Efectivo</option>
+                                        <option value="TRANSFERENCIA">Transferencia</option>
+                                        <option value="CHEQUE">Cheque</option>
+                                    </select>
+                                </div>
+                                {approveFormData.metodoPago === 'EFECTIVO' && (
+                                    <div className="form-group">
+                                        <label className="form-label">Caja</label>
+                                        <div className="relative">
+                                            <Wallet className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                            <select
+                                                className="form-select pl-10"
+                                                value={approveFormData.cajaId}
+                                                onChange={(e) => setApproveFormData({ ...approveFormData, cajaId: e.target.value })}
+                                                required
+                                            >
+                                                <option value="">Seleccionar caja...</option>
+                                                {cajas.map(caja => (
+                                                    <option key={caja.id} value={caja.id}>
+                                                        {caja.nombre}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+                                {(approveFormData.metodoPago === 'TRANSFERENCIA' || approveFormData.metodoPago === 'CHEQUE') && (
+                                    <div className="form-group">
+                                        <label className="form-label">Cuenta Bancaria</label>
+                                        <div className="relative">
+                                            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                            <select
+                                                className="form-select pl-10"
+                                                value={approveFormData.cuentaBancariaId}
+                                                onChange={(e) => setApproveFormData({ ...approveFormData, cuentaBancariaId: e.target.value })}
+                                                required
+                                            >
+                                                <option value="">Seleccionar cuenta...</option>
+                                                {cuentasBancarias.map(cuenta => (
+                                                    <option key={cuenta.id} value={cuenta.id}>
+                                                        {cuenta.bank?.nombre} - {cuenta.numeroCuenta}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="form-group">
+                                    <label className="form-label">Observaciones de Aprobación</label>
+                                    <textarea
+                                        className="form-input"
+                                        rows={3}
+                                        value={approveFormData.observacionesAprobacion}
+                                        onChange={(e) => setApproveFormData({ ...approveFormData, observacionesAprobacion: e.target.value })}
+                                        placeholder="Observaciones adicionales..."
+                                    ></textarea>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsApproveModalOpen(false)}
+                                    className="btn-secondary"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="btn-primary"
+                                >
+                                    <ThumbsUp className="w-4 h-4 mr-2" />
+                                    Aprobar Préstamo
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Reject Loan Modal */}
+            {isRejectModalOpen && selectedLoan && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h3>Rechazar Préstamo</h3>
+                            <button onClick={() => setIsRejectModalOpen(false)} className="modal-close-btn">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleRejectLoan}>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label className="form-label">Empleado</label>
+                                    <div className="employee-detail">
+                                        {selectedLoan.empleado?.nombres} {selectedLoan.empleado?.apellidos}
+                                    </div>
+                                </div>
+                                <div className="grid-cols-2">
+                                    <div className="form-group">
+                                        <label className="form-label">Monto</label>
+                                        <div className="employee-detail">
+                                            {formatCurrency(selectedLoan.montoSolicitado)}
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Plazo</label>
+                                        <div className="employee-detail">
+                                            {selectedLoan.plazoMeses} meses
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Motivo del Rechazo *</label>
+                                    <textarea
+                                        className="form-input"
+                                        rows={4}
+                                        value={rejectFormData.motivoRechazo}
+                                        onChange={(e) => setRejectFormData({ ...rejectFormData, motivoRechazo: e.target.value })}
+                                        placeholder="Explica por qué se rechaza este préstamo..."
+                                        required
+                                    ></textarea>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsRejectModalOpen(false)}
+                                    className="btn-secondary"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="btn-danger"
+                                >
+                                    <ThumbsDown className="w-4 h-4 mr-2" />
+                                    Rechazar Préstamo
                                 </button>
                             </div>
                         </form>

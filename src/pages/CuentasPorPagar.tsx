@@ -5,7 +5,8 @@ import Modal from '../components/feature/Modal';
 import Swal from 'sweetalert2';
 import {
   Receipt, Filter, RefreshCw, Plus, Eye, Edit, Trash2, CreditCard,
-  TrendingUp, DollarSign, Calendar, HandCoins, AlertTriangle, Clock, FileText, AlertCircle, X, Search
+  TrendingUp, DollarSign, Calendar, HandCoins, AlertTriangle, Clock, FileText, AlertCircle, X, Search,
+  Tag, Activity, CheckCircle, User, Phone, ChevronRight, CheckCircle2, Library, Briefcase, Check, Landmark
 } from 'lucide-react';
 import cuentasPorPagarService, {
   type CuentaPorPagar,
@@ -35,6 +36,8 @@ const CuentasPorPagar: React.FC = () => {
   const [modalDetalleOpen, setModalDetalleOpen] = useState(false);
   const [modalCrearProveedorOpen, setModalCrearProveedorOpen] = useState(false); // New state
   const [cuentaSeleccionada, setCuentaSeleccionada] = useState<CuentaPorPagar | null>(null);
+  const [historialPagos, setHistorialPagos] = useState<any[]>([]);
+  const [loadingPagos, setLoadingPagos] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
 
   // Estados de formularios
@@ -404,6 +407,21 @@ const CuentasPorPagar: React.FC = () => {
     setModalFormOpen(true);
   };
 
+  const openDetalleModal = async (cuenta: CuentaPorPagar) => {
+    setCuentaSeleccionada(cuenta);
+    setModalDetalleOpen(true);
+    setLoadingPagos(true);
+    try {
+      const pagos = await cuentasPorPagarService.getPagos(cuenta.id);
+      setHistorialPagos(pagos);
+    } catch (error) {
+      console.error('Error al cargar historial de pagos:', error);
+      setHistorialPagos([]);
+    } finally {
+      setLoadingPagos(false);
+    }
+  };
+
   const openPaymentModal = (cuenta: CuentaPorPagar) => {
     setCuentaSeleccionada(cuenta);
     setFormPago(prev => ({
@@ -549,10 +567,7 @@ const CuentasPorPagar: React.FC = () => {
       cell: ({ row }) => (
         <div style={{ display: 'flex', flexDirection: 'row', gap: '6px', alignItems: 'center', flexWrap: 'nowrap' }}>
           <button
-            onClick={() => {
-              setCuentaSeleccionada(row.original);
-              setModalDetalleOpen(true);
-            }}
+            onClick={() => openDetalleModal(row.original)}
             className="text-blue-600 hover:text-blue-900"
             title="Ver detalles"
             style={{ display: 'inline-flex', padding: '4px' }}
@@ -1317,97 +1332,219 @@ const CuentasPorPagar: React.FC = () => {
       </Modal >
 
       {/* Modal Detalles */}
-      < Modal
+      <Modal
         isOpen={modalDetalleOpen}
         onClose={() => setModalDetalleOpen(false)}
-        title="Detalles de Cuenta por Pagar"
+        title={
+          <div className="flex items-center space-x-3 text-white">
+            <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-400/20 shadow-inner">
+              <Library className="h-5 w-5 text-blue-400" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-bold text-[15px] leading-tight tracking-tight text-white/90">Detalles de Cuenta por Pagar</span>
+              <span className="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-0.5">Gestión de Comprobante</span>
+            </div>
+          </div>
+        }
+        size="lg"
+        className="bg-[#1a1c2e] text-white p-0 overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] !max-w-[850px]"
+        headerClassName="border-b border-white/5 bg-[#1a1c2e] px-8 py-5 !mb-0"
+        bodyClassName="p-0"
       >
         {cuentaSeleccionada && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-500">
-                  No. Documento
-                </label>
-                <p className="text-sm text-gray-900">{cuentaSeleccionada.numeroDocumento}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">
-                  Tipo de Documento
-                </label>
-                <p className="text-sm text-gray-900">{cuentaSeleccionada.tipoDocumento}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">
-                  Proveedor
-                </label>
-                <p className="text-sm text-gray-900">
-                  {cuentaSeleccionada.proveedor?.nombre || 'Sin proveedor'}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">
-                  Concepto
-                </label>
-                <p className="text-sm text-gray-900">{cuentaSeleccionada.concepto}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">
-                  Fecha de Emisión
-                </label>
-                <p className="text-sm text-gray-900">
-                  {new Date(cuentaSeleccionada.fechaEmision).toLocaleDateString('es-DO')}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">
-                  Fecha de Vencimiento
-                </label>
-                <p className="text-sm text-gray-900">
-                  {new Date(cuentaSeleccionada.fechaVencimiento).toLocaleDateString('es-DO')}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">
-                  Monto Original
-                </label>
-                <p className="text-sm text-gray-900">
-                  {formatCurrency(cuentaSeleccionada.montoOriginal)}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">
-                  Monto Pendiente
-                </label>
-                <p className="text-sm text-red-600 font-medium">
-                  {formatCurrency(cuentaSeleccionada.montoPendiente)}
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">
-                  Estado
-                </label>
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getEstadoBadge(cuentaSeleccionada.estado)}`}>
-                  {cuentaSeleccionada.estado.charAt(0).toUpperCase() + cuentaSeleccionada.estado.slice(1)}
-                </span>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-500">
-                  Días Vencido
-                </label>
-                <p className={`text-sm ${cuentaSeleccionada.diasVencido > 0 ? 'text-red-600 font-medium' : 'text-gray-900'}`}>
-                  {cuentaSeleccionada.diasVencido > 0 ? `+${cuentaSeleccionada.diasVencido}` : cuentaSeleccionada.diasVencido}
-                </p>
+          <div className="flex flex-col bg-[#1a1c2e]">
+            {/* Header Summary Section */}
+            <div className="px-8 py-8 bg-gradient-to-r from-[#2d325a] via-[#353a5f] to-[#2d325a] border-b border-white/5 relative overflow-hidden">
+              {/* Background Effects */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] -mr-32 -mt-32"></div>
+
+              <div className="relative flex items-center justify-between">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">Document</span>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-4xl font-bold text-white tracking-tight">#{cuentaSeleccionada.numeroDocumento}</span>
+                    <div className="px-2 py-1 bg-white/10 rounded-md border border-white/10 text-[10px] font-bold text-slate-300 uppercase letter-spacing-1">Original</div>
+                  </div>
+                </div>
+
+                <div className="text-right space-y-1">
+                  <span className="text-[10px] font-bold text-red-400 uppercase tracking-[0.2em] block">PENDING AMOUNT</span>
+                  <div className="flex items-center justify-end space-x-4">
+                    <div className="flex flex-col items-end">
+                      <span className="text-4xl font-black text-white tracking-tighter shadow-sm">
+                        {formatCurrency(cuentaSeleccionada.montoPendiente)}
+                      </span>
+                    </div>
+                    {cuentaSeleccionada.montoPendiente > 0 && (
+                      <div className="p-2 bg-red-500/20 rounded-xl border border-red-500/40 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                        <AlertTriangle className="h-6 w-6 text-red-400" strokeWidth={2.5} />
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-            {cuentaSeleccionada.observaciones && (
-              <div>
-                <label className="block text-sm font-medium text-gray-500">
-                  Observaciones
-                </label>
-                <p className="text-sm text-gray-900">{cuentaSeleccionada.observaciones}</p>
+
+            {/* Middle Stats Grid - 5 Columns */}
+            <div className="grid grid-cols-5 border-b border-white/10 bg-white/[0.02]">
+              <div className="p-6 border-r border-white/10 space-y-4">
+                <div className="flex items-center space-x-2 text-slate-500">
+                  <Briefcase size={12} strokeWidth={2.5} />
+                  <span className="text-[9px] font-black uppercase tracking-widest">PROVIDER</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-slate-200 line-clamp-1 leading-tight">{cuentaSeleccionada.proveedor?.nombre || 'N/A'}</span>
+                  <span className="text-[10px] text-slate-500 font-medium mt-0.5 capitalize">{cuentaSeleccionada.proveedor?.tipoProveedor || 'Empresa'}</span>
+                </div>
               </div>
-            )}
+
+              <div className="p-6 border-r border-white/10 space-y-4">
+                <div className="flex items-center space-x-2 text-slate-500">
+                  <FileText size={12} strokeWidth={2.5} />
+                  <span className="text-[9px] font-black uppercase tracking-widest">CONCEPT</span>
+                </div>
+                <span className="text-sm font-bold text-slate-200 line-clamp-2 leading-tight uppercase text-[11px] tracking-tight">
+                  {cuentaSeleccionada.concepto}
+                </span>
+              </div>
+
+              <div className="p-6 border-r border-white/10 space-y-4">
+                <div className="flex items-center space-x-2 text-slate-500 text-center justify-center">
+                  <Calendar size={12} strokeWidth={2.5} />
+                  <span className="text-[9px] font-black uppercase tracking-widest leading-[1.1]">FECHA DE <br /> EMISIÓN</span>
+                </div>
+                <div className="text-center">
+                  <span className="text-sm font-bold text-slate-200">
+                    {new Date(cuentaSeleccionada.fechaEmision).toLocaleDateString('es-DO', { day: '2-digit', month: 'short', year: 'numeric' })}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-6 border-r border-white/10 space-y-4">
+                <div className="flex items-center space-x-2 text-slate-500 text-center justify-center">
+                  <Calendar size={12} strokeWidth={2.5} />
+                  <span className="text-[9px] font-black uppercase tracking-widest leading-[1.1]">FECHA DE <br /> VENCIM...</span>
+                </div>
+                <div className="text-center">
+                  <span className="text-sm font-bold text-red-300">
+                    {new Date(cuentaSeleccionada.fechaVencimiento).toLocaleDateString('es-DO', { day: '2-digit', month: 'short', year: 'numeric' })}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div className="flex items-center space-x-2 text-slate-500 text-center justify-center">
+                  <DollarSign size={12} strokeWidth={2.5} />
+                  <span className="text-[9px] font-black uppercase tracking-widest leading-[1.1]">ORIGINAL <br /> AMOUNT</span>
+                </div>
+                <div className="text-center">
+                  <span className="text-base font-black text-white">
+                    {formatCurrency(cuentaSeleccionada.montoOriginal)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment History Section */}
+            <div className="p-8 space-y-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-1.5 bg-amber-500/10 rounded-lg border border-amber-400/20">
+                    <Clock size={18} className="text-amber-400" />
+                  </div>
+                  <h4 className="text-xl font-bold text-slate-100 tracking-tight italic">Historial de Pagos</h4>
+                </div>
+                <div className="px-3 py-1 bg-white/5 rounded-full border border-white/10 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  {historialPagos.length} Pagos Registrados
+                </div>
+              </div>
+
+              <div className="border border-white/10 rounded-2xl overflow-hidden bg-white/[0.02] shadow-xl">
+                <table className="w-full text-left">
+                  <thead className="bg-white/[0.05] text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-white/10">
+                    <tr>
+                      <th className="px-6 py-5 border-r border-white/5">FECHA</th>
+                      <th className="px-6 py-5 border-r border-white/5">MONTO</th>
+                      <th className="px-6 py-5 border-r border-white/5 text-center">MÉTODO</th>
+                      <th className="px-6 py-5">REGISTRADO POR</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-slate-300">
+                    {loadingPagos ? (
+                      <tr>
+                        <td colSpan={4} className="px-6 py-20 text-center">
+                          <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-3 text-blue-400 opacity-50" />
+                          <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Cargando registros...</span>
+                        </td>
+                      </tr>
+                    ) : historialPagos.length > 0 ? (
+                      historialPagos.map((pago: any) => (
+                        <tr key={pago.id} className="hover:bg-white/[0.03] transition-all group">
+                          <td className="px-6 py-5 text-sm font-bold border-r border-white/5 text-slate-400">
+                            {new Date(pago.fechaPago).toLocaleDateString('es-DO', { month: 'short', day: '2-digit', year: 'numeric' })}
+                          </td>
+                          <td className="px-6 py-5 text-sm font-black text-white border-r border-white/5">
+                            <span className="text-slate-500 mr-1">$</span>{formatCurrency(pago.monto).replace('$', '')}
+                          </td>
+                          <td className="px-6 py-5 text-[10px] font-black border-r border-white/5 text-center">
+                            <span className={`px-3 py-1.5 rounded-lg border uppercase tracking-widest ${pago.metodoPago === 'caja'
+                              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                              : 'bg-blue-500/10 border-blue-500/20 text-blue-400'
+                              }`}>
+                              {pago.metodoPago === 'caja' ? 'Caja' : pago.metodoPago === 'banco' ? 'Banco' : pago.metodoPago}
+                            </span>
+                          </td>
+                          <td className="px-6 py-5">
+                            <div className="flex items-center space-x-2">
+                              <div className="h-7 w-7 rounded-full bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-[10px] font-black text-indigo-300">
+                                {pago.creadoPor?.nombre?.charAt(0)}{pago.creadoPor?.apellido?.charAt(0)}
+                              </div>
+                              <span className="text-xs font-bold text-slate-200">
+                                {pago.creadoPor?.nombre} {pago.creadoPor?.apellido}
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={4} className="px-6 py-20 text-center text-slate-600 font-bold uppercase tracking-widest text-xs italic">
+                          No se encontraron pagos para este documento.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Premium Footer */}
+            <div className="px-8 py-6 bg-black/20 border-t border-white/5 flex items-center justify-between">
+              <div className="relative group">
+                {/* Glow Effect */}
+                <div className="absolute -inset-1 bg-blue-500/20 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+
+                <div className="relative flex items-center space-x-4 px-6 py-3.5 bg-[#1e2238] border border-blue-400/30 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+                  <div className="flex items-center justify-center h-7 w-7 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]">
+                    <Check size={16} strokeWidth={4} className="text-white" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Total Pagado</span>
+                    <span className="text-lg font-black text-white tracking-tighter">
+                      {formatCurrency(Number(cuentaSeleccionada.montoOriginal) - Number(cuentaSeleccionada.montoPendiente))}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setModalDetalleOpen(false)}
+                className="group flex items-center space-x-2 px-10 py-4 bg-slate-700/80 hover:bg-slate-600 text-white rounded-2xl font-black text-[13px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 border border-white/10"
+              >
+                <span>Cerrar</span>
+                <X size={16} className="text-slate-400 group-hover:rotate-90 transition-transform" />
+              </button>
+            </div>
           </div>
         )}
       </Modal>

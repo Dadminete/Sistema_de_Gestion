@@ -1,0 +1,6 @@
+--- MOVEMENT LINK DEBUG ---
+Found 2 movements for 'Extracredito':
+- ID: b0ad4f0a-3e46-4db9-9e72-298c1976aa1d, Amount: 1356.98, cuentaPorPagarId: undefined, Date: Sat Jan 03 2026 14:44:06 GMT-0400 (Venezuela Time)
+- ID: fdba0e73-9f3f-413e-ad55-6a1e18153371, Amount: 1356.98, cuentaPorPagarId: undefined, Date: Sat Jan 03 2026 14:45:58 GMT-0400 (Venezuela Time)
+
+Total PagoCuentaPorPagar count in DB: 0

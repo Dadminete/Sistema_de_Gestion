@@ -97,8 +97,8 @@ const FacturasPagar: React.FC = () => {
             return;
         }
 
-        if (descuento > montoPagar) {
-            Swal.fire('Error', 'El descuento no puede ser mayor al monto a pagar', 'error');
+        if (descuento >= montoPagar) {
+            Swal.fire('Error', 'El descuento debe ser menor al monto a pagar', 'error');
             return;
         }
 
@@ -110,8 +110,8 @@ const FacturasPagar: React.FC = () => {
         try {
             setProcesandoPago(true);
             await facturaService.pagarFactura(facturaSeleccionada.id, {
-                monto: montoPagar - descuento, // Monto real que entra en caja
-                descuento: descuento, // Descuento aplicado
+                monto: montoPagar, // Monto que se va a aplicar al pago de la factura
+                descuento: descuento, // Descuento aplicado (también cuenta para liquidar la factura)
                 metodoPago: formaPago,
                 cuentaBancariaId,
                 cajaId,
@@ -293,14 +293,29 @@ const FacturasPagar: React.FC = () => {
                             placeholder="0.00"
                         />
                         {descuento > 0 && (
-                            <p style={{
+                            <div style={{
                                 marginTop: '5px',
-                                fontSize: '14px',
-                                color: '#059669',
-                                fontWeight: 600
+                                padding: '8px',
+                                backgroundColor: '#f0fdf4',
+                                borderRadius: '4px',
+                                border: '1px solid #bbf7d0'
                             }}>
-                                Monto efectivo a pagar: {formatearMoneda(montoPagar - descuento)}
-                            </p>
+                                <p style={{
+                                    margin: 0,
+                                    fontSize: '14px',
+                                    color: '#059669',
+                                    fontWeight: 600
+                                }}>
+                                    💵 Efectivo a recibir: {formatearMoneda(montoPagar - descuento)}
+                                </p>
+                                <p style={{
+                                    margin: '4px 0 0 0',
+                                    fontSize: '12px',
+                                    color: '#6b7280'
+                                }}>
+                                    Total aplicado a factura: {formatearMoneda(montoPagar)} ({formatearMoneda(montoPagar - descuento)} + {formatearMoneda(descuento)} desc.)
+                                </p>
+                            </div>
                         )}
                     </div>
 
