@@ -102,6 +102,11 @@ const IngresosGastos: React.FC = () => {
   const [saldoPapeleriaActual, setSaldoPapeleriaActual] = useState<number>(0);
   const [loadingBalance, setLoadingBalance] = useState<boolean>(false);
 
+  // Estados para Nómina
+  const [nominasPendientes, setNominasPendientes] = useState<any[]>([]);
+  const [selectedNominaId, setSelectedNominaId] = useState<string>('');
+  const [isLoadingNominas, setIsLoadingNominas] = useState(false);
+
   const can = (permission: string) => {
     if (!user) return false;
     return user.permissions.includes(permission);
@@ -331,6 +336,23 @@ const IngresosGastos: React.FC = () => {
     }
   };
 
+  const fetchNominasPendientes = async () => {
+    if (!isAuthenticated) return;
+    setIsLoadingNominas(true);
+    try {
+      const response = await fetch('http://172.16.0.23:54116/api/rrhh/nomina/pending-details', {
+        headers: getAuthHeaders(),
+      });
+      const data = await response.json();
+      setNominasPendientes(data.empleadosPendientes || []);
+    } catch (error) {
+      console.error('Error fetching pending payrolls:', error);
+      setNominasPendientes([]);
+    } finally {
+      setIsLoadingNominas(false);
+    }
+  };
+
   const fetchCajaBalances = async () => {
     try {
       // Fetch both caja and papeleria balances
@@ -378,6 +400,7 @@ const IngresosGastos: React.FC = () => {
     fetchBanks();
     fetchCajasDisponibles();
     fetchCuentasPorPagarPendientes();
+    fetchNominasPendientes();
     // Cargar balances iniciales
     updateBalanceForMethod(metodo);
   }, []);
@@ -496,7 +519,7 @@ const IngresosGastos: React.FC = () => {
       bankId: metodo === 'banco' ? selectedBankId : null,
       cuentaBancariaId: metodo === 'banco' ? selectedCuentaBancariaId : null,
       cuentaPorPagarId: tipo === 'gasto' && selectedCuentaPorPagarId ? selectedCuentaPorPagarId : null,
-      descripcion: descripcion === '' ? null : descripcion,
+      descripcion: descripcion === '' ? null : (selectedNominaId ? `${descripcion} [nominaId:${selectedNominaId}]` : descripcion),
       usuarioId: user?.id,
     };
 
@@ -514,7 +537,36 @@ const IngresosGastos: React.FC = () => {
       if (response.ok) {
         const createdMovimiento = await response.json();
         setMovimientos(prev => [...prev, createdMovimiento]);
-        Swal.fire('Éxito', 'Movimiento registrado exitosamente.', 'success');
+
+        // Si era un gasto y se seleccionó una nómina, aplicar el pago parcial
+        if (tipo === 'gasto' && selectedNominaId) {
+          try {
+            const nominaResponse = await fetch(`http://172.16.0.23:54116/api/rrhh/nomina/payroll/${selectedNominaId}/partial-payment`, {
+              method: 'POST',
+              headers: getAuthHeaders(),
+              body: JSON.stringify({
+                monto: parsedMonto,
+                metodoPago: metodo,
+                cajaId: metodo === 'caja' ? selectedCajaId : null,
+                cuentaBancariaId: metodo === 'banco' ? selectedCuentaBancariaId : null,
+                movimientoContableId: createdMovimiento.id
+              })
+            });
+
+            if (nominaResponse.ok) {
+              Swal.fire('Éxito', 'Movimiento registrado y pago aplicado a nómina exitosamente.', 'success');
+              fetchNominasPendientes(); // Refrescar lista de nóminas
+            } else {
+              Swal.fire('Advertencia', 'Movimiento registrado pero hubo un error al aplicar el pago a la nómina.', 'warning');
+            }
+          } catch (nominaError) {
+            console.error('Error applying payment to payroll:', nominaError);
+            Swal.fire('Advertencia', 'Movimiento registrado pero hubo un error al aplicar el pago a la nómina.', 'warning');
+          }
+        } else {
+          Swal.fire('Éxito', 'Movimiento registrado exitosamente.', 'success');
+        }
+
         // Reset form
         setMonto('');
         setCategoriaId(filteredCategorias.length > 0 ? filteredCategorias[0].id : '');
@@ -529,6 +581,7 @@ const IngresosGastos: React.FC = () => {
         setSelectedBankId(banks.length > 0 ? banks[0].id : null); // Reset bank selection
         setSelectedCuentaBancariaId(null); // Reset bank account selection
         setSelectedCuentaPorPagarId(''); // Reset debt selection
+        setSelectedNominaId(''); // Reset payroll selection
         setIsBackdateModalOpen(false); // Close the backdate modal
 
         // Refrescar cuentas por pagar si era un gasto que liquidó una deuda
@@ -943,44 +996,88 @@ const IngresosGastos: React.FC = () => {
           )}
 
           {tipo === 'gasto' && (
-            <div className="form-group full-width" style={{ marginTop: '15px' }}>
-              <label htmlFor="cuentaPorPagarId" style={{ display: 'flex', alignItems: 'center' }}>
-                <FileText size={16} style={{ marginRight: '8px', color: 'var(--colors-primary-main)' }} />
-                Liquidar Deuda (Cuenta por Pagar)
-              </label>
-              <select
-                id="cuentaPorPagarId"
-                name="cuentaPorPagarId"
-                className="form-control"
-                value={selectedCuentaPorPagarId}
-                onChange={(e) => {
-                  const id = e.target.value;
-                  setSelectedCuentaPorPagarId(id);
-                  if (id) {
-                    const deuda = cuentasPorPagar.find(d => d.id === id);
-                    if (deuda) {
-                      if (!monto || monto === '' || monto === '0') {
-                        setMonto(deuda.montoPendiente.toString());
-                      }
-                      if (!descripcion || descripcion === '') {
-                        setDescripcion(`Pago de deuda: ${deuda.concepto}`);
+            <>
+              <div className="form-group full-width" style={{ marginTop: '15px' }}>
+                <label htmlFor="cuentaPorPagarId" style={{ display: 'flex', alignItems: 'center' }}>
+                  <FileText size={16} style={{ marginRight: '8px', color: 'var(--colors-primary-main)' }} />
+                  Liquidar Deuda (Cuenta por Pagar)
+                </label>
+                <select
+                  id="cuentaPorPagarId"
+                  name="cuentaPorPagarId"
+                  className="form-control"
+                  value={selectedCuentaPorPagarId}
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    setSelectedCuentaPorPagarId(id);
+                    if (id) {
+                      setSelectedNominaId(''); // Deseleccionar nómina si se selecciona cuenta por pagar
+                      const deuda = cuentasPorPagar.find(d => d.id === id);
+                      if (deuda) {
+                        if (!monto || monto === '' || monto === '0') {
+                          setMonto(deuda.montoPendiente.toString());
+                        }
+                        if (!descripcion || descripcion === '') {
+                          setDescripcion(`Pago de deuda: ${deuda.concepto}`);
+                        }
                       }
                     }
-                  }
-                }}
-                disabled={isLoadingCuentas}
-                style={{ borderColor: selectedCuentaPorPagarId ? 'var(--colors-primary-main)' : '' }}
-              >
-                <option value="">-- No vincular a ninguna deuda --</option>
-                {cuentasPorPagar.map(deuda => (
-                  <option key={deuda.id} value={deuda.id}>
-                    {deuda.proveedor?.nombre || 'PROV'} | {deuda.concepto} (Pte: RD$ {Number(deuda.montoPendiente).toFixed(2)})
-                  </option>
-                ))}
-              </select>
-              {isLoadingCuentas && <small>Cargando deudas...</small>}
-              {!isLoadingCuentas && cuentasPorPagar.length === 0 && <small style={{ color: '#94a3b8' }}>No hay deudas pendientes registradas.</small>}
-            </div>
+                  }}
+                  disabled={isLoadingCuentas || selectedNominaId !== ''}
+                  style={{ borderColor: selectedCuentaPorPagarId ? 'var(--colors-primary-main)' : '' }}
+                >
+                  <option value="">-- No vincular a ninguna deuda --</option>
+                  {cuentasPorPagar.map(deuda => (
+                    <option key={deuda.id} value={deuda.id}>
+                      {deuda.proveedor?.nombre || 'PROV'} | {deuda.concepto} (Pte: RD$ {Number(deuda.montoPendiente).toFixed(2)})
+                    </option>
+                  ))}
+                </select>
+                {isLoadingCuentas && <small>Cargando deudas...</small>}
+                {!isLoadingCuentas && cuentasPorPagar.length === 0 && <small style={{ color: '#94a3b8' }}>No hay deudas pendientes registradas.</small>}
+              </div>
+
+              <div className="form-group full-width" style={{ marginTop: '15px' }}>
+                <label htmlFor="nominaId" style={{ display: 'flex', alignItems: 'center' }}>
+                  <FileText size={16} style={{ marginRight: '8px', color: '#10b981' }} />
+                  Aplicar Pago a Nómina (Pago Parcial)
+                </label>
+                <select
+                  id="nominaId"
+                  name="nominaId"
+                  className="form-control"
+                  value={selectedNominaId}
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    setSelectedNominaId(id);
+                    if (id) {
+                      setSelectedCuentaPorPagarId(''); // Deseleccionar cuenta por pagar si se selecciona nómina
+                      const nomina = nominasPendientes.find(n => n.nominaId === id);
+                      if (nomina) {
+                        if (!monto || monto === '' || monto === '0') {
+                          setMonto(nomina.montoPendiente.toString());
+                        }
+                        if (!descripcion || descripcion === '') {
+                          setDescripcion(`Pago de nómina: ${nomina.empleado.nombres} ${nomina.empleado.apellidos}`);
+                        }
+                      }
+                    }
+                  }}
+                  disabled={isLoadingNominas || selectedCuentaPorPagarId !== ''}
+                  style={{ borderColor: selectedNominaId ? '#10b981' : '' }}
+                >
+                  <option value="">-- No aplicar a nómina --</option>
+                  {nominasPendientes.map(nomina => (
+                    <option key={nomina.nominaId} value={nomina.nominaId}>
+                      {nomina.empleado.nombres} {nomina.empleado.apellidos} | {nomina.empleado.cargo} (Pte: RD$ {Number(nomina.montoPendiente).toFixed(2)})
+                    </option>
+                  ))}
+                </select>
+                {isLoadingNominas && <small>Cargando nóminas pendientes...</small>}
+                {!isLoadingNominas && nominasPendientes.length === 0 && <small style={{ color: '#94a3b8' }}>No hay pagos de nómina pendientes.</small>}
+                {selectedCuentaPorPagarId && <small style={{ color: '#f59e0b' }}>⚠️ No puedes vincular a nómina y cuenta por pagar al mismo tiempo.</small>}
+              </div>
+            </>
           )}
 
           <div className="form-group full-width">
@@ -1354,41 +1451,83 @@ const IngresosGastos: React.FC = () => {
             )}
 
             {tipo === 'gasto' && (
-              <div className="form-group form-group-full" style={{ marginTop: '10px' }}>
-                <label htmlFor="backdate-cuentaPorPagarId" style={{ display: 'flex', alignItems: 'center' }}>
-                  <FileText size={14} style={{ marginRight: '8px' }} />
-                  Liquidar Deuda (Cuenta por Pagar)
-                </label>
-                <select
-                  id="backdate-cuentaPorPagarId"
-                  name="cuentaPorPagarId"
-                  value={selectedCuentaPorPagarId}
-                  onChange={(e) => {
-                    const id = e.target.value;
-                    setSelectedCuentaPorPagarId(id);
-                    if (id) {
-                      const deuda = cuentasPorPagar.find(d => d.id === id);
-                      if (deuda) {
-                        if (!monto || monto === '' || monto === '0') {
-                          setMonto(deuda.montoPendiente.toString());
-                        }
-                        if (!descripcion || descripcion === '') {
-                          setDescripcion(`Pago de deuda: ${deuda.concepto}`);
+              <>
+                <div className="form-group form-group-full" style={{ marginTop: '10px' }}>
+                  <label htmlFor="backdate-cuentaPorPagarId" style={{ display: 'flex', alignItems: 'center' }}>
+                    <FileText size={14} style={{ marginRight: '8px' }} />
+                    Liquidar Deuda (Cuenta por Pagar)
+                  </label>
+                  <select
+                    id="backdate-cuentaPorPagarId"
+                    name="cuentaPorPagarId"
+                    value={selectedCuentaPorPagarId}
+                    onChange={(e) => {
+                      const id = e.target.value;
+                      setSelectedCuentaPorPagarId(id);
+                      if (id) {
+                        setSelectedNominaId(''); // Deseleccionar nómina
+                        const deuda = cuentasPorPagar.find(d => d.id === id);
+                        if (deuda) {
+                          if (!monto || monto === '' || monto === '0') {
+                            setMonto(deuda.montoPendiente.toString());
+                          }
+                          if (!descripcion || descripcion === '') {
+                            setDescripcion(`Pago de deuda: ${deuda.concepto}`);
+                          }
                         }
                       }
-                    }
-                  }}
-                  disabled={isLoadingCuentas}
-                  className="form-control"
-                >
-                  <option value="">-- No vincular a ninguna deuda --</option>
-                  {cuentasPorPagar.map(deuda => (
-                    <option key={deuda.id} value={deuda.id}>
-                      {deuda.proveedor?.nombre || 'PROV'} | {deuda.concepto} (RD$ {Number(deuda.montoPendiente).toFixed(2)})
-                    </option>
-                  ))}
-                </select>
-              </div>
+                    }}
+                    disabled={isLoadingCuentas || selectedNominaId !== ''}
+                    className="form-control"
+                  >
+                    <option value="">-- No vincular a ninguna deuda --</option>
+                    {cuentasPorPagar.map(deuda => (
+                      <option key={deuda.id} value={deuda.id}>
+                        {deuda.proveedor?.nombre || 'PROV'} | {deuda.concepto} (RD$ {Number(deuda.montoPendiente).toFixed(2)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group form-group-full" style={{ marginTop: '10px' }}>
+                  <label htmlFor="backdate-nominaId" style={{ display: 'flex', alignItems: 'center' }}>
+                    <FileText size={14} style={{ marginRight: '8px', color: '#10b981' }} />
+                    Aplicar Pago a Nómina (Pago Parcial)
+                  </label>
+                  <select
+                    id="backdate-nominaId"
+                    name="nominaId"
+                    value={selectedNominaId}
+                    onChange={(e) => {
+                      const id = e.target.value;
+                      setSelectedNominaId(id);
+                      if (id) {
+                        setSelectedCuentaPorPagarId(''); // Deseleccionar cuenta por pagar
+                        const nomina = nominasPendientes.find(n => n.nominaId === id);
+                        if (nomina) {
+                          if (!monto || monto === '' || monto === '0') {
+                            setMonto(nomina.montoPendiente.toString());
+                          }
+                          if (!descripcion || descripcion === '') {
+                            setDescripcion(`Pago de nómina: ${nomina.empleado.nombres} ${nomina.empleado.apellidos}`);
+                          }
+                        }
+                      }
+                    }}
+                    disabled={isLoadingNominas || selectedCuentaPorPagarId !== ''}
+                    className="form-control"
+                  >
+                    <option value="">-- No aplicar a nómina --</option>
+                    {nominasPendientes.map(nomina => (
+                      <option key={nomina.nominaId} value={nomina.nominaId}>
+                        {nomina.empleado.nombres} {nomina.empleado.apellidos} | {nomina.empleado.cargo} (RD$ {Number(nomina.montoPendiente).toFixed(2)})
+                      </option>
+                    ))}
+                  </select>
+                  {isLoadingNominas && <small>Cargando nóminas...</small>}
+                  {!isLoadingNominas && nominasPendientes.length === 0 && <small style={{ color: '#94a3b8' }}>No hay nóminas pendientes.</small>}
+                </div>
+              </>
             )}
 
             <div className="form-group form-group-full">

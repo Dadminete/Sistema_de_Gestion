@@ -170,6 +170,27 @@ export const hrService = {
     return apiClient.put(`/rrhh/nomina/payroll/${id}/payment`, { status, ...paymentData });
   },
 
+  // Get pending payroll details with employees
+  getPendingPayrollDetails: async () => {
+    return apiClient.get('/rrhh/nomina/pending-details');
+  },
+
+  // Get payment details for all payrolls in a period
+  getPaymentDetailsByPeriod: async (periodId: string) => {
+    return apiClient.get(`/rrhh/nomina/period/${periodId}/payment-details`);
+  },
+
+  // Apply partial payment to payroll
+  applyPartialPayment: async (nominaId: string, paymentData: {
+    monto: number;
+    metodoPago: string;
+    cajaId?: string;
+    cuentaBancariaId?: string;
+    movimientoContableId?: string;
+  }) => {
+    return apiClient.post(`/rrhh/nomina/payroll/${nominaId}/partial-payment`, paymentData);
+  },
+
   // Loans
   getLoans: async () => {
     return apiClient.get('/rrhh/prestamos');

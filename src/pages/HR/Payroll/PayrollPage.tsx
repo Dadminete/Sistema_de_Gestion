@@ -32,6 +32,7 @@ const PayrollPage = () => {
     const [selectedEmployeesForWizard, setSelectedEmployeesForWizard] = useState<any[]>([]);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [payrollForPayment, setPayrollForPayment] = useState<any>(null);
+    const [payrollsWithPayments, setPayrollsWithPayments] = useState<Map<number, { totalPagado: number; montoPendiente: number }>>(new Map());
 
     useEffect(() => {
         fetchPeriods();
@@ -62,10 +63,29 @@ const PayrollPage = () => {
             setLoadingPayrolls(true);
             const data = await hrService.getPayrollsByPeriod(periodId);
             setPayrolls(data);
+
+            // Cargar información de pagos parciales para este período
+            await loadPaymentDetailsForPeriod(periodId);
         } catch (error) {
             console.error('Error fetching payrolls:', error);
         } finally {
             setLoadingPayrolls(false);
+        }
+    };
+
+    const loadPaymentDetailsForPeriod = async (periodId: string) => {
+        try {
+            const data = await hrService.getPaymentDetailsByPeriod(periodId);
+            const paymentsMap = new Map<number, { totalPagado: number; montoPendiente: number }>();
+            data.forEach((item: any) => {
+                paymentsMap.set(item.id, {
+                    totalPagado: item.totalPagado,
+                    montoPendiente: item.montoPendiente
+                });
+            });
+            setPayrollsWithPayments(paymentsMap);
+        } catch (error) {
+            console.error('Error loading payment details:', error);
         }
     };
 
@@ -245,71 +265,61 @@ const PayrollPage = () => {
                                 </div>
                                 <div className="period-info">
                                     <div className="period-info-item">
-                                        <Calendar />
-                                        <span>{new Date(period.fechaInicio).toLocaleDateString()} - {new Date(period.fechaFin).toLocaleDateString()}</span>
+                                        <Calendar size={12} />
+                                        <span>{new Date(period.fechaInicio).toLocaleDateString(undefined, { month: '2-digit', day: '2-digit' })} - {new Date(period.fechaFin).toLocaleDateString(undefined, { month: '2-digit', day: '2-digit' })}</span>
                                     </div>
                                     <div className="period-info-item">
-                                        <DollarSign />
-                                        <span>Pago: {new Date(period.fechaPago).toLocaleDateString()}</span>
+                                        <DollarSign size={12} />
+                                        <span>{new Date(period.fechaPago).toLocaleDateString(undefined, { month: '2-digit', day: '2-digit' })}</span>
                                     </div>
                                 </div>
                                 <div style={{
-                                    marginTop: '12px',
                                     display: 'flex',
-                                    flexDirection: 'row',
                                     justifyContent: 'flex-end',
-                                    gap: '8px',
-                                    alignItems: 'center'
+                                    gap: '6px',
+                                    marginTop: 'auto',
+                                    paddingTop: '8px',
+                                    borderTop: '1px solid rgba(0,0,0,0.05)'
                                 }}>
                                     <button
                                         style={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '4px',
-                                            padding: '6px 12px',
-                                            fontSize: '0.75rem',
-                                            fontWeight: '500',
-                                            color: '#2563eb',
-                                            backgroundColor: '#dbeafe',
-                                            border: '1px solid #93c5fd',
+                                            padding: '4px',
                                             borderRadius: '6px',
+                                            color: '#3b82f6',
+                                            background: 'rgba(59, 130, 246, 0.1)',
+                                            border: 'none',
                                             cursor: 'pointer',
-                                            transition: 'all 0.2s',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
                                         }}
-                                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#bfdbfe'}
-                                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#dbeafe'}
+                                        title="Editar"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleEditPeriod(period);
                                         }}
                                     >
                                         <Edit className="w-3.5 h-3.5" />
-                                        Editar
                                     </button>
                                     <button
                                         style={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '4px',
-                                            padding: '6px 12px',
-                                            fontSize: '0.75rem',
-                                            fontWeight: '500',
-                                            color: '#dc2626',
-                                            backgroundColor: '#fee2e2',
-                                            border: '1px solid #fca5a5',
+                                            padding: '4px',
                                             borderRadius: '6px',
+                                            color: '#ef4444',
+                                            background: 'rgba(239, 68, 68, 0.1)',
+                                            border: 'none',
                                             cursor: 'pointer',
-                                            transition: 'all 0.2s',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
                                         }}
-                                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#fecaca'}
-                                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#fee2e2'}
+                                        title="Eliminar"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleDeletePeriod(period.id);
                                         }}
                                     >
                                         <Trash2 className="w-3.5 h-3.5" />
-                                        Eliminar
                                     </button>
                                 </div>
                             </div>
@@ -318,182 +328,210 @@ const PayrollPage = () => {
                 )}
             </div>
 
-            {selectedPeriod && (
-                <div className="payroll-table-container">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            Nómina - {selectedPeriod.codigoPeriodo}
-                        </h2>
-                        {payrolls.length > 0 && (
-                            <div className="text-sm text-gray-600">
-                                Total: {formatCurrency(payrolls.reduce((sum, p) => sum + Number(p.salarioNeto), 0))}
-                            </div>
-                        )}
-                    </div>
-
-                    {loadingPayrolls ? (
-                        <div className="text-center py-8 text-gray-400">Cargando nómina...</div>
-                    ) : payrolls.length === 0 ? (
-                        <div className="empty-state">
-                            <FileText className="mx-auto" />
-                            <h3>No hay registros de nómina</h3>
-                            <p>Genera la nómina para este período</p>
-                            <button className="btn-glass primary mt-4" onClick={handleGeneratePayroll}>
-                                Generar Nómina
-                            </button>
+            {
+                selectedPeriod && (
+                    <div className="payroll-table-container">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-semibold text-gray-800">
+                                Nómina - {selectedPeriod.codigoPeriodo}
+                            </h2>
+                            {payrolls.length > 0 && (
+                                <div className="text-sm" style={{ display: 'flex', gap: '20px' }}>
+                                    <span style={{ color: '#374151' }}>
+                                        Total Neto: {formatCurrency(payrolls.reduce((sum, p) => sum + Number(p.salarioNeto), 0))}
+                                    </span>
+                                    <span style={{ color: '#10b981', fontWeight: '600' }}>
+                                        Pagado: {formatCurrency(Array.from(payrollsWithPayments.values()).reduce((sum, p) => sum + p.totalPagado, 0))}
+                                    </span>
+                                    <span style={{ color: '#3b82f6', fontWeight: '600' }}>
+                                        Pendiente: {formatCurrency(Array.from(payrollsWithPayments.values()).reduce((sum, p) => sum + p.montoPendiente, 0))}
+                                    </span>
+                                </div>
+                            )}
                         </div>
-                    ) : (
-                        <table className="payroll-table">
-                            <thead>
-                                <tr>
-                                    <th>Empleado</th>
-                                    <th>Días</th>
-                                    <th>Salario Base</th>
-                                    <th>Total Ingresos</th>
-                                    <th>Total Deducciones</th>
-                                    <th>Salario Neto</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {payrolls.map((payroll) => (
-                                    <tr key={payroll.id}>
-                                        <td>
-                                            <div className="employee-cell">
-                                                <div className="employee-avatar">
-                                                    {payroll.empleado?.nombres.charAt(0)}
-                                                    {payroll.empleado?.apellidos.charAt(0)}
+
+                        {loadingPayrolls ? (
+                            <div className="text-center py-8 text-gray-400">Cargando nómina...</div>
+                        ) : payrolls.length === 0 ? (
+                            <div className="empty-state">
+                                <FileText className="mx-auto" />
+                                <h3>No hay registros de nómina</h3>
+                                <p>Genera la nómina para este período</p>
+                                <button className="btn-glass primary mt-4" onClick={handleGeneratePayroll}>
+                                    Generar Nómina
+                                </button>
+                            </div>
+                        ) : (
+                            <table className="payroll-table">
+                                <thead>
+                                    <tr>
+                                        <th>Empleado</th>
+                                        <th>Días</th>
+                                        <th>Salario Base</th>
+                                        <th>Total Ingresos</th>
+                                        <th>Total Deducciones</th>
+                                        <th>Salario Neto</th>
+                                        <th>Pagado</th>
+                                        <th>Pendiente</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {payrolls.map((payroll) => (
+                                        <tr key={payroll.id}>
+                                            <td>
+                                                <div className="employee-cell">
+                                                    <div className="employee-avatar">
+                                                        {payroll.empleado?.nombres.charAt(0)}
+                                                        {payroll.empleado?.apellidos.charAt(0)}
+                                                    </div>
+                                                    <div className="employee-info">
+                                                        <span className="employee-name">
+                                                            {payroll.empleado?.nombres} {payroll.empleado?.apellidos}
+                                                        </span>
+                                                        <span className="employee-cargo">
+                                                            {payroll.empleado?.cargo?.nombreCargo || 'Sin cargo'}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                                <div className="employee-info">
-                                                    <span className="employee-name">
-                                                        {payroll.empleado?.nombres} {payroll.empleado?.apellidos}
-                                                    </span>
-                                                    <span className="employee-cargo">
-                                                        {payroll.empleado?.cargo?.nombreCargo || 'Sin cargo'}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{payroll.diasTrabajados}</td>
-                                        <td className="amount-cell">{formatCurrency(payroll.salarioBase)}</td>
-                                        <td className="amount-cell amount-positive">
-                                            {formatCurrency(payroll.totalIngresos)}
-                                        </td>
-                                        <td className="amount-cell amount-negative">
-                                            {formatCurrency(payroll.totalDeducciones)}
-                                        </td>
-                                        <td className="amount-cell font-bold">
-                                            {formatCurrency(payroll.salarioNeto)}
-                                        </td>
-                                        <td>
-                                            <span className={`status-badge ${payroll.estadoPago.toLowerCase()}`}>
-                                                {payroll.estadoPago}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="table-actions">
-                                                {payroll.estadoPago === 'PENDIENTE' && (
+                                            </td>
+                                            <td>{payroll.diasTrabajados}</td>
+                                            <td className="amount-cell">{formatCurrency(payroll.salarioBase)}</td>
+                                            <td className="amount-cell amount-positive">
+                                                {formatCurrency(Number(payroll.totalIngresos))}
+                                            </td>
+                                            <td className="amount-cell amount-negative">
+                                                {formatCurrency(Number(payroll.totalDeducciones))}
+                                            </td>
+                                            <td className="amount-cell font-bold">
+                                                {formatCurrency(Number(payroll.salarioNeto))}
+                                            </td>
+                                            <td className="amount-cell" style={{ color: '#10b981', fontWeight: '600' }}>
+                                                {formatCurrency(Number(payrollsWithPayments.get(payroll.id)?.totalPagado || 0))}
+                                            </td>
+                                            <td className="amount-cell" style={{ color: '#3b82f6', fontWeight: '600' }}>
+                                                {formatCurrency(Number(payrollsWithPayments.get(payroll.id)?.montoPendiente ?? payroll.salarioNeto))}
+                                            </td>
+                                            <td>
+                                                <span className={`status-badge ${payroll.estadoPago.toLowerCase()}`}>
+                                                    {payroll.estadoPago}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div className="table-actions">
+                                                    {payroll.estadoPago === 'PENDIENTE' && (
+                                                        <button
+                                                            type="button"
+                                                            className="action-icon-btn"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleMarkAsPaid(payroll);
+                                                            }}
+                                                            title="Marcar como pagado"
+                                                            style={{ width: 'auto', padding: '0 8px', gap: '4px' }}
+                                                        >
+                                                            <CheckCircle size={16} />
+                                                            <span className="text-xs">Pagar</span>
+                                                        </button>
+                                                    )}
                                                     <button
                                                         type="button"
                                                         className="action-icon-btn"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            handleMarkAsPaid(payroll);
+                                                            handleEditPayroll(payroll);
                                                         }}
-                                                        title="Marcar como pagado"
+                                                        title="Editar"
                                                         style={{ width: 'auto', padding: '0 8px', gap: '4px' }}
                                                     >
-                                                        <CheckCircle size={16} />
-                                                        <span className="text-xs">Pagar</span>
+                                                        <Edit size={16} />
+                                                        <span className="text-xs">Editar</span>
                                                     </button>
-                                                )}
-                                                <button
-                                                    type="button"
-                                                    className="action-icon-btn"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleEditPayroll(payroll);
-                                                    }}
-                                                    title="Editar"
-                                                    style={{ width: 'auto', padding: '0 8px', gap: '4px' }}
-                                                >
-                                                    <Edit size={16} />
-                                                    <span className="text-xs">Editar</span>
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="action-icon-btn delete"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDeletePayroll(payroll.id);
-                                                    }}
-                                                    title="Eliminar"
-                                                    style={{ width: 'auto', padding: '0 8px', gap: '4px' }}
-                                                >
-                                                    <Trash2 size={16} />
-                                                    <span className="text-xs">Eliminar</span>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
-                </div>
-            )}
+                                                    <button
+                                                        type="button"
+                                                        className="action-icon-btn delete"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeletePayroll(payroll.id);
+                                                        }}
+                                                        title="Eliminar"
+                                                        style={{ width: 'auto', padding: '0 8px', gap: '4px' }}
+                                                    >
+                                                        <Trash2 size={16} />
+                                                        <span className="text-xs">Eliminar</span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                )
+            }
 
-            {showPeriodForm && (
-                <PeriodForm
-                    period={editingPeriod}
-                    onClose={() => {
-                        setShowPeriodForm(false);
-                        setEditingPeriod(null);
-                    }}
-                    onSave={handleSavePeriod}
-                />
-            )}
+            {
+                showPeriodForm && (
+                    <PeriodForm
+                        period={editingPeriod}
+                        onClose={() => {
+                            setShowPeriodForm(false);
+                            setEditingPeriod(null);
+                        }}
+                        onSave={handleSavePeriod}
+                    />
+                )
+            }
 
-            {showPayrollForm && editingPayroll && (
-                <PayrollForm
-                    payroll={editingPayroll}
-                    onClose={() => {
-                        setShowPayrollForm(false);
-                        setEditingPayroll(null);
-                    }}
-                    onSave={handleSavePayroll}
-                />
-            )}
+            {
+                showPayrollForm && editingPayroll && (
+                    <PayrollForm
+                        payroll={editingPayroll}
+                        onClose={() => {
+                            setShowPayrollForm(false);
+                            setEditingPayroll(null);
+                        }}
+                        onSave={handleSavePayroll}
+                    />
+                )
+            }
 
-            {showEmployeeSelection && (
-                <EmployeeSelectionModal
-                    periodId={selectedPeriod?.id || ''}
-                    onClose={() => setShowEmployeeSelection(false)}
-                    onGenerate={handleGenerateForEmployees}
-                />
-            )}
+            {
+                showEmployeeSelection && (
+                    <EmployeeSelectionModal
+                        periodId={selectedPeriod?.id || ''}
+                        onClose={() => setShowEmployeeSelection(false)}
+                        onGenerate={handleGenerateForEmployees}
+                    />
+                )
+            }
 
-            {showWizard && (
-                <PayrollWizard
-                    employees={selectedEmployeesForWizard}
-                    onClose={() => setShowWizard(false)}
-                    onGenerate={handleConfirmGeneration}
-                    loading={loadingPayrolls}
-                />
-            )}
+            {
+                showWizard && (
+                    <PayrollWizard
+                        employees={selectedEmployeesForWizard}
+                        onClose={() => setShowWizard(false)}
+                        onGenerate={handleConfirmGeneration}
+                        loading={loadingPayrolls}
+                    />
+                )
+            }
 
-            {showPaymentModal && payrollForPayment && (
-                <PaymentModal
-                    payroll={payrollForPayment}
-                    onClose={() => {
-                        setShowPaymentModal(false);
-                        setPayrollForPayment(null);
-                    }}
-                    onConfirm={handleConfirmPayment}
-                />
-            )}
-        </div>
+            {
+                showPaymentModal && payrollForPayment && (
+                    <PaymentModal
+                        payroll={payrollForPayment}
+                        onClose={() => {
+                            setShowPaymentModal(false);
+                            setPayrollForPayment(null);
+                        }}
+                        onConfirm={handleConfirmPayment}
+                    />
+                )
+            }
+        </div >
     );
 };
 

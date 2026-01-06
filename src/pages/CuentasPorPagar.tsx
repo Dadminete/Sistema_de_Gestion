@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 import {
   Receipt, Filter, RefreshCw, Plus, Eye, Edit, Trash2, CreditCard,
   TrendingUp, DollarSign, Calendar, HandCoins, AlertTriangle, Clock, FileText, AlertCircle, X, Search,
-  Tag, Activity, CheckCircle, User, Phone, ChevronRight, CheckCircle2, Library, Briefcase, Check, Landmark
+  Tag, Activity, CheckCircle, User, Phone, ChevronRight, CheckCircle2, Library, Briefcase, Check, Landmark, Users
 } from 'lucide-react';
 import cuentasPorPagarService, {
   type CuentaPorPagar,
@@ -76,6 +76,7 @@ const CuentasPorPagar: React.FC = () => {
   const [loadingBalance, setLoadingBalance] = useState<boolean>(false);
   const [savingsAnalysis, setSavingsAnalysis] = useState<SavingsAnalysis | null>(null);
   const [montoNominaAbierta, setMontoNominaAbierta] = useState<number>(0);
+  const [empleadosNominaPendiente, setEmpleadosNominaPendiente] = useState<any[]>([]);
 
   // Función para obtener headers de autenticación
   const getAuthHeaders = (contentType: string = 'application/json'): HeadersInit => {
@@ -243,30 +244,17 @@ const CuentasPorPagar: React.FC = () => {
 
   const cargarNominaAbierta = async () => {
     try {
-      const response = await fetch('http://172.16.0.23:54116/api/rrhh/nomina/periods', {
+      const response = await fetch('http://172.16.0.23:54116/api/rrhh/nomina/pending-details', {
         headers: getAuthHeaders()
       });
       const data = await response.json();
 
-      // Buscar periodo con estado ABIERTO
-      const periodoAbierto = data.find((p: any) => p.estado === 'ABIERTO');
-
-      if (periodoAbierto) {
-        // Obtener las nóminas de ese periodo
-        const nominasResponse = await fetch(`http://172.16.0.23:54116/api/rrhh/nomina/periods/${periodoAbierto.id}/payrolls`, {
-          headers: getAuthHeaders()
-        });
-        const nominas = await nominasResponse.json();
-
-        // Sumar todos los salarios netos
-        const totalNomina = nominas.reduce((sum: number, nomina: any) => sum + Number(nomina.salarioNeto || 0), 0);
-        setMontoNominaAbierta(totalNomina);
-      } else {
-        setMontoNominaAbierta(0);
-      }
+      setMontoNominaAbierta(data.totalPendiente || 0);
+      setEmpleadosNominaPendiente(data.empleadosPendientes || []);
     } catch (error) {
-      console.error('Error al cargar nómina abierta:', error);
+      console.error('Error al cargar nómina pendiente:', error);
       setMontoNominaAbierta(0);
+      setEmpleadosNominaPendiente([]);
     }
   };
 
@@ -813,6 +801,125 @@ const CuentasPorPagar: React.FC = () => {
                 icon={<AlertCircle size={24} strokeWidth={2.5} />}
                 barColor={resumen.cuentasVencidas > 0 ? "#F44336" : "#4CAF50"}
               />
+            </div>
+          )}
+
+          {/* Nómina Pendiente */}
+          {montoNominaAbierta > 0 && empleadosNominaPendiente.length > 0 && (
+            <div className="mx-4 sm:mx-6 lg:mx-8 mb-6">
+              <div className="bg-white shadow rounded-lg overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Users className="h-6 w-6 text-white" />
+                      <div>
+                        <h3 className="text-lg font-bold text-white">Nómina Pendiente de Pago</h3>
+                        <p className="text-sm text-blue-100">
+                          {empleadosNominaPendiente.length} empleado(s) • Total: {formatCurrency(montoNominaAbierta)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <DataTable
+                  data={empleadosNominaPendiente}
+                  columns={[
+                    {
+                      accessorKey: 'empleado.nombres',
+                      header: 'Empleado',
+                      size: 200,
+                      cell: ({ row }: any) => (
+                        <div>
+                          <div className="font-medium text-gray-900" style={{ fontSize: '0.875rem' }}>
+                            {row.original.empleado.nombres} {row.original.empleado.apellidos}
+                          </div>
+                          <div className="text-sm text-gray-500" style={{ fontSize: '0.75rem' }}>
+                            {row.original.empleado.cargo}
+                          </div>
+                        </div>
+                      ),
+                    },
+                    {
+                      accessorKey: 'periodo.codigoPeriodo',
+                      header: 'Período',
+                      size: 120,
+                      cell: ({ row }: any) => (
+                        <div>
+                          <div className="font-medium text-gray-900" style={{ fontSize: '0.875rem' }}>
+                            {row.original.periodo.codigoPeriodo}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {new Date(row.original.periodo.fechaInicio).toLocaleDateString('es-DO')} - {new Date(row.original.periodo.fechaFin).toLocaleDateString('es-DO')}
+                          </div>
+                        </div>
+                      ),
+                    },
+                    {
+                      accessorKey: 'diasTrabajados',
+                      header: 'Días Trabajados',
+                      size: 100,
+                      cell: ({ getValue }: any) => (
+                        <div className="text-center font-medium text-gray-700" style={{ fontSize: '0.875rem' }}>
+                          {getValue()} días
+                        </div>
+                      ),
+                    },
+                    {
+                      accessorKey: 'salarioNeto',
+                      header: 'Salario Total',
+                      size: 120,
+                      cell: ({ getValue }: any) => (
+                        <div className="font-medium text-gray-700 text-right" style={{ fontSize: '0.875rem' }}>
+                          {formatCurrency(getValue())}
+                        </div>
+                      ),
+                    },
+                    {
+                      accessorKey: 'totalPagado',
+                      header: 'Pagado',
+                      size: 120,
+                      cell: ({ getValue }: any) => (
+                        <div className="font-medium text-green-600 text-right" style={{ fontSize: '0.875rem' }}>
+                          {formatCurrency(getValue() || 0)}
+                        </div>
+                      ),
+                    },
+                    {
+                      accessorKey: 'montoPendiente',
+                      header: 'Monto Pendiente',
+                      size: 130,
+                      cell: ({ getValue }: any) => (
+                        <div className="font-bold text-blue-600 text-right" style={{ fontSize: '0.875rem' }}>
+                          {formatCurrency(getValue())}
+                        </div>
+                      ),
+                    },
+                    {
+                      id: 'acciones',
+                      header: 'Acciones',
+                      size: 100,
+                      cell: ({ row }: any) => (
+                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                          <button
+                            onClick={() => {
+                              // Redirigir a ingresos-gastos con el empleado preseleccionado
+                              window.location.href = `/contabilidad/ingresos-gastos?nominaId=${row.original.nominaId}`;
+                            }}
+                            className="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors"
+                            title="Registrar pago"
+                          >
+                            <DollarSign className="h-3.5 w-3.5 mr-1" />
+                            Pagar
+                          </button>
+                        </div>
+                      ),
+                    },
+                  ]}
+                  isLoading={false}
+                  tableName="nominas-pendientes"
+                />
+              </div>
             </div>
           )}
 

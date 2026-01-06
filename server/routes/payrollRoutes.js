@@ -164,4 +164,46 @@ router.put('/payroll/:id/payment', async (req, res) => {
     }
 });
 
+// Get pending payroll details with employees
+router.get('/pending-details', async (req, res) => {
+    try {
+        const details = await PayrollService.getPendingPayrollDetails();
+        res.json(details);
+    } catch (error) {
+        console.error('Error fetching pending payroll details:', error);
+        res.status(500).json({ error: 'Failed to fetch pending payroll details' });
+    }
+});
+
+// Get payment details for all payrolls in a period
+router.get('/period/:periodId/payment-details', async (req, res) => {
+    try {
+        const details = await PayrollService.getPaymentDetailsByPeriod(req.params.periodId);
+        res.json(details);
+    } catch (error) {
+        console.error('Error fetching payment details for period:', error);
+        res.status(500).json({ error: 'Failed to fetch payment details for period' });
+    }
+});
+
+// Apply partial payment to payroll
+router.post('/payroll/:id/partial-payment', async (req, res) => {
+    try {
+        const { monto, metodoPago, cajaId, cuentaBancariaId, movimientoContableId } = req.body;
+        const userId = req.user ? req.user.id : null;
+        const updated = await PayrollService.applyPartialPayment(req.params.id, {
+            monto,
+            metodoPago,
+            cajaId,
+            cuentaBancariaId,
+            movimientoContableId,
+            userId
+        });
+        res.json(updated);
+    } catch (error) {
+        console.error('Error applying partial payment:', error);
+        res.status(500).json({ error: 'Failed to apply partial payment', details: error.message });
+    }
+});
+
 module.exports = router;

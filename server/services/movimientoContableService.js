@@ -218,9 +218,13 @@ const movimientoContableService = {
         monto: parseFloat(monto),
         categoria: { connect: { id: categoriaId } },
         metodo,
-        ...(cajaId && { caja: { connect: { id: cajaId } } }),
-        ...(bankId && { bank: { connect: { id: bankId } } }),
-        ...(cuentaBancariaId && { cuentaBancaria: { connect: { id: cuentaBancariaId } } }),
+        // Si el método es banco, desconectamos la caja explícitamente
+        caja: metodo === 'banco' ? { disconnect: true } : (cajaId ? { connect: { id: cajaId } } : undefined),
+
+        // Si el método es caja o papeleria, desconectamos el banco y cuenta bancaria
+        bank: (metodo === 'caja' || metodo === 'papeleria') ? { disconnect: true } : (bankId ? { connect: { id: bankId } } : undefined),
+        cuentaBancaria: (metodo === 'caja' || metodo === 'papeleria') ? { disconnect: true } : (cuentaBancariaId ? { connect: { id: cuentaBancariaId } } : undefined),
+
         descripcion,
         ...(usuarioId && { usuario: { connect: { id: usuarioId } } }),
       },

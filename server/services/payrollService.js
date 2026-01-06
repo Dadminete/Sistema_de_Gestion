@@ -664,6 +664,274 @@ class PayrollService {
 
         return payrollRecords;
     }
+
+    // Get pending payroll details with employees
+    static async getPendingPayrollDetails() {
+        // Find open periods
+        const openPeriods = await prisma.periodoNomina.findMany({
+            where: { estado: 'ABIERTO' },
+            orderBy: { fechaInicio: 'desc' }
+        });
+
+        if (openPeriods.length === 0) {
+            return {
+                totalPendiente: 0,
+                empleadosPendientes: [],
+                periodos: []
+            };
+        }
+
+        // Get all pending payrolls for open periods
+        const pendingPayrolls = await prisma.nomina.findMany({
+            where: {
+                periodoId: { in: openPeriods.map(p => p.id) },
+                estadoPago: 'PENDIENTE'
+            },
+            include: {
+                empleado: {
+                    include: {
+                        cargo: true,
+                        departamento: true
+                    }
+                },
+                periodo: true
+            },
+            orderBy: [
+                { periodo: { fechaInicio: 'desc' } },
+                { empleado: { apellidos: 'asc' } }
+            ]
+        });
+
+        // Calculate payments made for each payroll from MovimientoContable
+        const empleadosPendientes = [];
+        let totalPendiente = 0;
+
+        for (const p of pendingPayrolls) {
+            const salarioNeto = Number(p.salarioNeto);
+
+            // Get payments from MovimientoContable that reference this nomina
+            // We'll search in the descripcion field for the nominaId
+            const pagos = await prisma.movimientoContable.findMany({
+                where: {
+                    tipo: 'gasto',
+                    descripcion: {
+                        contains: `[nominaId:${p.id.toString()}]`,
+                        mode: 'insensitive'
+                    }
+                }
+            });
+
+            console.log(`🔍 Checking nomina ${p.id} for employee ${p.empleado.nombres} ${p.empleado.apellidos}`);
+            console.log(`   Salary: ${salarioNeto}, Payments found: ${pagos.length}`);
+            if (pagos.length > 0) {
+                pagos.forEach(pago => {
+                    console.log(`   - Payment: ${Number(pago.monto)} on ${pago.fecha}`);
+                });
+            }
+
+            const totalPagado = pagos.reduce((sum, pago) => sum + Number(pago.monto), 0);
+            const montoPendiente = salarioNeto - totalPagado;
+
+            console.log(`   Total Paid: ${totalPagado}, Remaining: ${montoPendiente}`);
+
+            // Only include if there's still something pending
+            if (montoPendiente > 0.01) { // Avoid floating point precision issues
+                empleadosPendientes.push({
+                    nominaId: p.id.toString(),
+                    empleado: {
+                        id: p.empleado.id.toString(),
+                        nombres: p.empleado.nombres,
+                        apellidos: p.empleado.apellidos,
+                        cargo: p.empleado.cargo?.nombreCargo || 'N/A'
+                    },
+                    periodo: {
+                        id: p.periodo.id.toString(),
+                        codigoPeriodo: p.periodo.codigoPeriodo,
+                        fechaInicio: p.periodo.fechaInicio,
+                        fechaFin: p.periodo.fechaFin
+                    },
+                    salarioNeto: salarioNeto,
+                    totalPagado: totalPagado,
+                    montoPendiente: montoPendiente,
+                    diasTrabajados: p.diasTrabajados
+                });
+
+                totalPendiente += montoPendiente;
+            }
+        }
+
+        return {
+            totalPendiente,
+            empleadosPendientes,
+            periodos: openPeriods.map(p => ({
+                id: p.id.toString(),
+                codigoPeriodo: p.codigoPeriodo,
+                fechaInicio: p.fechaInicio,
+                fechaFin: p.fechaFin,
+                estado: p.estado
+            }))
+        };
+    }
+
+    // Get payment details for all payrolls in a specific period
+    static async getPaymentDetailsByPeriod(periodId) {
+        // Get all payrolls for this period
+        const payrolls = await prisma.nomina.findMany({
+            where: { periodoId: BigInt(periodId) },
+            include: {
+                empleado: {
+                    include: {
+                        cargo: true,
+                        departamento: true
+                    }
+                },
+                periodo: true
+            },
+            orderBy: [{ empleado: { apellidos: 'asc' } }]
+        });
+
+        // Calculate payments made for each payroll
+        const paymentDetails = [];
+
+        for (const p of payrolls) {
+            const salarioNeto = Number(p.salarioNeto);
+
+            // Get payments from MovimientoContable that reference this nomina
+            const pagos = await prisma.movimientoContable.findMany({
+                where: {
+                    tipo: 'gasto',
+                    descripcion: {
+                        contains: `[nominaId:${p.id.toString()}]`,
+                        mode: 'insensitive'
+                    }
+                }
+            });
+
+            const totalPagado = pagos.reduce((sum, pago) => sum + Number(pago.monto), 0);
+            const montoPendiente = salarioNeto - totalPagado;
+
+            paymentDetails.push({
+                id: p.id,
+                nominaId: p.id.toString(),
+                empleado: {
+                    id: p.empleado.id.toString(),
+                    nombres: p.empleado.nombres,
+                    apellidos: p.empleado.apellidos,
+                    cargo: p.empleado.cargo?.nombreCargo || 'N/A'
+                },
+                salarioNeto: salarioNeto,
+                totalPagado: totalPagado,
+                montoPendiente: montoPendiente,
+                estadoPago: p.estadoPago
+            });
+        }
+
+        return paymentDetails;
+    }
+
+    // Apply partial payment to a payroll record
+    static async applyPartialPayment(nominaId, paymentData) {
+        const { monto, metodoPago, cajaId, cuentaBancariaId, movimientoContableId, userId } = paymentData;
+
+        // Get current payroll record
+        const nomina = await prisma.nomina.findUnique({
+            where: { id: BigInt(nominaId) },
+            include: {
+                empleado: true,
+                periodo: true
+            }
+        });
+
+        if (!nomina) {
+            throw new Error('Payroll record not found');
+        }
+
+        if (nomina.estadoPago === 'PAGADO') {
+            throw new Error('Payroll already fully paid');
+        }
+
+        const montoPago = parseFloat(monto);
+        const salarioNeto = parseFloat(nomina.salarioNeto);
+
+        if (montoPago <= 0) {
+            throw new Error(`Invalid payment amount. Must be greater than 0`);
+        }
+
+        return await prisma.$transaction(async (tx) => {
+            // Get all payments already made for this nomina
+            const pagosAnteriores = await tx.movimientoContable.findMany({
+                where: {
+                    tipo: 'gasto',
+                    descripcion: {
+                        contains: `[nominaId:${nominaId}]`,
+                        mode: 'insensitive'
+                    }
+                }
+            });
+
+            console.log(`💰 Processing payment for nomina ${nominaId}`);
+            console.log(`   Previous payments found: ${pagosAnteriores.length}`);
+            pagosAnteriores.forEach(pago => {
+                console.log(`   - ${Number(pago.monto)} on ${pago.fecha} - ${pago.descripcion}`);
+            });
+
+            const totalPagadoAnterior = pagosAnteriores.reduce((sum, pago) => sum + Number(pago.monto), 0);
+            const totalPagadoNuevo = totalPagadoAnterior + montoPago;
+
+            console.log(`   Previous total: ${totalPagadoAnterior}, New payment: ${montoPago}, New total: ${totalPagadoNuevo}, Salary: ${salarioNeto}`);
+
+            // Check if this payment exceeds the salary
+            if (totalPagadoNuevo > salarioNeto + 0.01) { // Allow 1 cent tolerance
+                throw new Error(`Payment exceeds remaining balance. Already paid: ${totalPagadoAnterior}, Salary: ${salarioNeto}, Attempting to pay: ${montoPago}`);
+            }
+
+            // Track payment in observaciones with a structured format
+            let observaciones = nomina.observaciones || '';
+            const fechaPago = new Date();
+            const pagoInfo = `[PAGO] ${fechaPago.toISOString().split('T')[0]} - ${montoPago} DOP (${metodoPago}) - Mov: ${movimientoContableId || 'N/A'} - Total Pagado: ${totalPagadoNuevo}/${salarioNeto}\n`;
+            observaciones += pagoInfo;
+
+            // Check if this completes the payment
+            const montoPendiente = salarioNeto - totalPagadoNuevo;
+            const estadoPago = montoPendiente <= 0.01 ? 'PAGADO' : 'PENDIENTE';
+            const fechaPagoFinal = estadoPago === 'PAGADO' ? fechaPago : nomina.fechaPago;
+
+            // Update payment amounts based on method
+            const updateData = {
+                estadoPago,
+                fechaPago: fechaPagoFinal,
+                observaciones,
+                formaPago: metodoPago,
+                numeroTransaccion: movimientoContableId ? movimientoContableId.toString() : nomina.numeroTransaccion
+            };
+
+            // Accumulate payment amounts by method
+            if (metodoPago === 'caja') {
+                updateData.montoCaja = Number(nomina.montoCaja || 0) + montoPago;
+            } else if (metodoPago === 'banco') {
+                updateData.montoBanco = Number(nomina.montoBanco || 0) + montoPago;
+                if (cuentaBancariaId) {
+                    updateData.cuentaBancariaId = cuentaBancariaId;
+                }
+            }
+
+            const updated = await tx.nomina.update({
+                where: { id: BigInt(nominaId) },
+                data: updateData,
+                include: {
+                    empleado: {
+                        include: {
+                            cargo: true,
+                            departamento: true
+                        }
+                    },
+                    periodo: true
+                }
+            });
+
+            return updated;
+        });
+    }
 }
 
 module.exports = { PayrollService };
