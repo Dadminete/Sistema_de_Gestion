@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
         res.json(departments);
     } catch (error) {
         console.error('Error fetching departments:', error);
-        res.status(500).json({ error: 'Failed to fetch departments' });
+        res.status(500).json({ error: 'Failed to fetch departments', message: error.message, stack: error.stack });
     }
 });
 

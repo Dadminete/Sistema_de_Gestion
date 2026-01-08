@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
         res.json(cargos);
     } catch (error) {
         console.error('Error fetching cargos:', error);
-        res.status(500).json({ error: 'Failed to fetch cargos' });
+        res.status(500).json({ error: 'Failed to fetch cargos', message: error.message, stack: error.stack });
     }
 });
 

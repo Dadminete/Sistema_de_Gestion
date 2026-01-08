@@ -58,6 +58,28 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onSave }
         loadData();
 
         if (employee) {
+            // Helper to safely parse date
+            const parseFechaIngreso = () => {
+                if (!employee.fechaIngreso) return '';
+                try {
+                    const date = new Date(employee.fechaIngreso);
+                    if (isNaN(date.getTime())) return '';
+                    return date.toISOString().split('T')[0];
+                } catch {
+                    return '';
+                }
+            };
+
+            // Helper to safely parse decimal/numeric values
+            const parseNumericValue = (value: any) => {
+                if (value === null || value === undefined || value === '') return '';
+                if (typeof value === 'object') {
+                    // Handle Prisma Decimal objects
+                    return value.toString();
+                }
+                return value.toString();
+            };
+
             setFormData({
                 nombres: employee.nombres || '',
                 apellidos: employee.apellidos || '',
@@ -67,15 +89,15 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onClose, onSave }
                 direccion: employee.direccion || '',
                 cargoId: employee.cargoId ? employee.cargoId.toString() : '',
                 departamentoId: employee.departamentoId ? employee.departamentoId.toString() : '',
-                fechaIngreso: employee.fechaIngreso ? new Date(employee.fechaIngreso).toISOString().split('T')[0] : '',
-                salarioBase: employee.salarioBase || '',
+                fechaIngreso: parseFechaIngreso(),
+                salarioBase: parseNumericValue(employee.salarioBase),
                 estado: employee.estado || 'ACTIVO',
                 codigoEmpleado: employee.codigoEmpleado || '',
                 usuarioId: employee.usuarioId || '',
-                montoAfp: employee.montoAfp || '',
-                montoSfs: employee.montoSfs || '',
-                montoIsr: employee.montoIsr || '',
-                otrosDescuentos: employee.otrosDescuentos || '',
+                montoAfp: parseNumericValue(employee.montoAfp),
+                montoSfs: parseNumericValue(employee.montoSfs),
+                montoIsr: parseNumericValue(employee.montoIsr),
+                otrosDescuentos: parseNumericValue(employee.otrosDescuentos),
                 tipoSalario: employee.tipoSalario || 'MENSUAL'
             });
         }

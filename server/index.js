@@ -2094,7 +2094,9 @@ app.post('/api/auth/login', async (req, res) => {
     console.error('Login error:', error);
     res.status(500).json({
       success: false,
-      error: 'Error interno del servidor'
+      error: 'Error interno del servidor',
+      message: error.message,
+      stack: error.stack
     });
   }
 });
