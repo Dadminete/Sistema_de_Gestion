@@ -6,11 +6,25 @@ const { authenticateToken } = require('../middleware/authMiddleware');
 // POST /api/database/backup
 router.post('/backup', authenticateToken, async (req, res) => {
   try {
+    console.log('📥 Backup request received:', req.body);
     const { tables, isFullBackup } = req.body;
+    
+    // Crear el backup (puede tomar tiempo)
     const backupPath = await databaseService.createBackup(tables, isFullBackup);
-    res.status(200).json({ message: 'Backup created successfully', backupPath });
+    
+    console.log('✅ Backup completed, sending response');
+    res.status(200).json({ 
+      success: true,
+      message: 'Backup created successfully', 
+      backupPath 
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error creating backup', error: error.message });
+    console.error('❌ Error in backup route:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error creating backup', 
+      error: error.message 
+    });
   }
 });
 

@@ -96,14 +96,34 @@ const ClientsDashboard: React.FC = () => {
   });
 
   useEffect(() => {
+    console.log('🚀 ClientsDashboard mounted, cargando datos iniciales...');
     loadDashboardData();
+
+    // Escuchar eventos de actualización de clientes
+    const handleClientesUpdated = () => {
+      console.log('📡 Evento clientes:updated recibido, recargando dashboard...');
+      loadDashboardData();
+    };
+
+    window.addEventListener('clientes:updated', handleClientesUpdated);
+    console.log('👂 Event listener agregado para clientes:updated');
+
+    return () => {
+      window.removeEventListener('clientes:updated', handleClientesUpdated);
+      console.log('🔌 Event listener removido para clientes:updated');
+    };
   }, []);
 
   const loadDashboardData = async () => {
     try {
+      console.log('🔄 Iniciando carga de datos del dashboard...');
       setLoading(true);
       setError(null);
       const data = await clientService.getDashboardData();
+      console.log('✅ Datos del dashboard recibidos:', {
+        stats: data.stats?.map((s: any) => ({ title: s.title, value: s.value })),
+        timestamp: new Date().toISOString()
+      });
       setDashboardData(data);
       // Set the recent clients data
       if (data.allClients) {

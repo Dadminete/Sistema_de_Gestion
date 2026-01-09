@@ -52,7 +52,7 @@ const Dashboard: React.FC = () => {
           setError('Error cargando datos de caja');
           return null;
         }),
-        recentClientsService.getRecentSubscribedClients(5).catch(error => {
+        recentClientsService.getRecentSubscribedClients(7).catch(error => {
           console.error('Error fetching recent clients:', error);
           return [];
         }),

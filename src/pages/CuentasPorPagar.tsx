@@ -821,7 +821,7 @@ const CuentasPorPagar: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <DataTable
                   data={empleadosNominaPendiente}
                   columns={[
@@ -1448,8 +1448,7 @@ const CuentasPorPagar: React.FC = () => {
               <Library className="h-5 w-5 text-blue-400" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-[15px] leading-tight tracking-tight text-white/90">Detalles de Cuenta por Pagar</span>
-              <span className="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-0.5">Gestión de Comprobante</span>
+              <span className="font-bold text-[15px] leading-tight tracking-tight text-white/90">Accounts Payable Details</span>
             </div>
           </div>
         }
@@ -1559,7 +1558,7 @@ const CuentasPorPagar: React.FC = () => {
                   <div className="p-1.5 bg-amber-500/10 rounded-lg border border-amber-400/20">
                     <Clock size={18} className="text-amber-400" />
                   </div>
-                  <h4 className="text-xl font-bold text-slate-100 tracking-tight italic">Historial de Pagos</h4>
+                  <h4 className="text-xl font-bold text-slate-100 tracking-tight italic">Payment History</h4>
                 </div>
                 <div className="px-3 py-1 bg-white/5 rounded-full border border-white/10 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                   {historialPagos.length} Pagos Registrados
@@ -1570,10 +1569,10 @@ const CuentasPorPagar: React.FC = () => {
                 <table className="w-full text-left">
                   <thead className="bg-white/[0.05] text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-white/10">
                     <tr>
-                      <th className="px-6 py-5 border-r border-white/5">FECHA</th>
-                      <th className="px-6 py-5 border-r border-white/5">MONTO</th>
-                      <th className="px-6 py-5 border-r border-white/5 text-center">MÉTODO</th>
-                      <th className="px-6 py-5">REGISTRADO POR</th>
+                      <th className="px-6 py-5 border-r border-white/5">DATE</th>
+                      <th className="px-6 py-5 border-r border-white/5">AMOUNT</th>
+                      <th className="px-6 py-5 border-r border-white/5 text-center">METHOD</th>
+                      <th className="px-6 py-5">USER</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-slate-300">
@@ -1636,7 +1635,7 @@ const CuentasPorPagar: React.FC = () => {
                     <Check size={16} strokeWidth={4} className="text-white" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Total Pagado</span>
+                    <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Total Paid</span>
                     <span className="text-lg font-black text-white tracking-tighter">
                       {formatCurrency(Number(cuentaSeleccionada.montoOriginal) - Number(cuentaSeleccionada.montoPendiente))}
                     </span>
@@ -1648,7 +1647,7 @@ const CuentasPorPagar: React.FC = () => {
                 onClick={() => setModalDetalleOpen(false)}
                 className="group flex items-center space-x-2 px-10 py-4 bg-slate-700/80 hover:bg-slate-600 text-white rounded-2xl font-black text-[13px] uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] active:scale-95 border border-white/10"
               >
-                <span>Cerrar</span>
+                <span>Close</span>
                 <X size={16} className="text-slate-400 group-hover:rotate-90 transition-transform" />
               </button>
             </div>

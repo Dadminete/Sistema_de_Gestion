@@ -26,11 +26,27 @@ const ClientesDashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('🚀 ClientesDashboard mounted, cargando datos iniciales...');
     loadData();
+
+    // Escuchar eventos de actualización de clientes
+    const handleClientesUpdated = () => {
+      console.log('📡 Evento clientes:updated recibido, recargando dashboard...');
+      loadData();
+    };
+
+    window.addEventListener('clientes:updated', handleClientesUpdated);
+    console.log('👂 Event listener agregado para clientes:updated');
+
+    return () => {
+      window.removeEventListener('clientes:updated', handleClientesUpdated);
+      console.log('🔌 Event listener removido para clientes:updated');
+    };
   }, []);
 
   const loadData = async () => {
     try {
+      console.log('🔄 Iniciando carga de datos del dashboard...');
       setLoading(true);
       setError(null);
 
@@ -64,9 +80,13 @@ const ClientesDashboard: React.FC = () => {
       }
 
       const data = await response.json();
+      console.log('✅ Datos del dashboard recibidos:', {
+        stats: data.stats?.map((s: any) => ({ title: s.title, value: s.value })),
+        timestamp: new Date().toISOString()
+      });
       setStats(data);
     } catch (err) {
-      console.error('Error:', err);
+      console.error('❌ Error cargando dashboard:', err);
       setError(err instanceof Error ? err.message : 'No se pudieron cargar los datos');
     } finally {
       setLoading(false);

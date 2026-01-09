@@ -498,6 +498,11 @@ const ClientesEquiposServicios: React.FC = () => {
       );
       setSuscripciones(filteredSuscripciones);
 
+      // Disparar evento para actualizar el dashboard de clientes
+      console.log('📢 Disparando evento clientes:updated después de guardar suscripción');
+      window.dispatchEvent(new CustomEvent('clientes:updated'));
+      console.log('✅ Evento clientes:updated disparado');
+
       setShowServicioModal(false);
       setEditingSuscripcionId(null);
       setServiciosSeleccionados([]);

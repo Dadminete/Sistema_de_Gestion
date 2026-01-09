@@ -48,11 +48,11 @@ export const getAuthHeaders = (): HeadersInit => {
 // Configuración de timeouts adaptativos según el tipo de endpoint
 const getTimeout = (endpoint: string): number => {
   // Endpoints que pueden requerir más tiempo
-  const slowEndpoints = ['/planes', '/eventos', '/notifications', '/clientes/equipos', '/suscripciones'];
+  const slowEndpoints = ['/planes', '/eventos', '/notifications', '/clientes/equipos', '/suscripciones', '/database/backup'];
   const isSlowEndpoint = slowEndpoints.some(slow => endpoint.includes(slow));
   
   if (isSlowEndpoint) {
-    return 60000; // 60 segundos para endpoints lentos
+    return 120000; // 120 segundos (2 minutos) para endpoints lentos como backups
   }
   
   return 15000; // 15 segundos para endpoints normales

@@ -897,6 +897,9 @@ const CajaService = {
           tipo: 'ingreso',
           fecha: { gte: monthStart, lte: monthEnd },
           metodo: { in: ['caja', 'banco'] }, // Solo ingresos operativos
+          NOT: {
+            descripcion: { contains: 'Traspaso', mode: 'insensitive' } // Excluir traspasos
+          },
           ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {}),
           ...bankFilterMovimientos
         }
@@ -907,6 +910,9 @@ const CajaService = {
         where: {
           tipo: 'gasto',
           fecha: { gte: monthStart, lte: monthEnd },
+          NOT: {
+            descripcion: { contains: 'Traspaso', mode: 'insensitive' } // Excluir traspasos
+          },
           ...(categoriaTraspasos ? { NOT: { categoriaId: categoriaTraspasos.id } } : {}),
           ...bankFilterMovimientos
         }
@@ -924,6 +930,16 @@ const CajaService = {
       });
       const montoCuentasPorCobrar = parseFloat(facturasPendientesAgg._sum.total || 0);
 
+      // Calcular el margen real correctamente (puede ser negativo)
+      const ahorroReal = ingresosReales - gastosReales;
+      let margenRealPorcentaje = '0';
+      if (gastosReales > 0 && ingresosReales === 0) {
+        // Si solo hay gastos sin ingresos, el margen es -100%
+        margenRealPorcentaje = '-100';
+      } else if (ingresosReales > 0) {
+        margenRealPorcentaje = ((ahorroReal / ingresosReales) * 100).toFixed(2);
+      }
+
       return {
         proyectado: {
           ingreso: ingresoMensualProyectado,
@@ -937,8 +953,8 @@ const CajaService = {
         realMes: {
           ingreso: ingresosReales,
           gastos: gastosReales,
-          ahorro: ingresosReales - gastosReales,
-          margenAhorro: ingresosReales > 0 ? (((ingresosReales - gastosReales) / ingresosReales) * 100).toFixed(2) : 0,
+          ahorro: ahorroReal,
+          margenAhorro: margenRealPorcentaje,
           cuentasPorCobrar: montoCuentasPorCobrar
         },
         recomendaciones: [
@@ -1321,7 +1337,7 @@ const CajaService = {
         .slice(0, 5);
 
       // (Fetched in Parallel)
-      const recentTransactions = await this.getRecentTransactions(7);
+      const recentTransactions = await this.getRecentTransactions(10);
 
       return {
         stats: {

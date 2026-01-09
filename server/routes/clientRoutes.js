@@ -1182,6 +1182,7 @@ router.get('/dashboard/overview', requirePermission('clientes.dashboard'), async
     });
 
     const totalMontoDia15 = montoDia15._sum.precioMensual || 0;
+    console.log('💰 Dashboard - Monto Día 15:', totalMontoDia15);
 
     // 2d. Total amount for clients with billing day 30, 20, 10
     const montoOtrosDias = await prisma.suscripcion.aggregate({
@@ -1199,6 +1200,7 @@ router.get('/dashboard/overview', requirePermission('clientes.dashboard'), async
     });
 
     const totalMontoOtrosDias = montoOtrosDias._sum.precioMensual || 0;
+    console.log('💰 Dashboard - Monto Otros Días:', totalMontoOtrosDias);
 
     // 3. Active subscriptions
     const suscripcionesActivas = await prisma.suscripcion.count({

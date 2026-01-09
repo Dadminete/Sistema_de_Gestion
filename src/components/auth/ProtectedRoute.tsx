@@ -100,53 +100,68 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // Check for required role
-  if (requiredRole && !hasRole(requiredRole)) {
-    return (
-      <div className="access-denied" style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        flexDirection: 'column',
-        gap: '1rem',
-        padding: '2rem'
-      }}>
-        <span className="material-icons" style={{
-          fontSize: '4rem',
-          color: 'var(--colors-error-main)'
+  if (requiredRole) {
+    // Si el rol empieza con '!', significa que NO debe tener ese rol
+    const isNegativeRole = requiredRole.startsWith('!');
+    const roleToCheck = isNegativeRole ? requiredRole.slice(1) : requiredRole;
+    const userHasRole = hasRole(roleToCheck);
+    
+    // Si es rol negativo (!Tecnico) y el usuario tiene ese rol, bloquear
+    // Si es rol positivo (Tecnico) y el usuario NO tiene ese rol, bloquear
+    const shouldBlock = isNegativeRole ? userHasRole : !userHasRole;
+    
+    if (shouldBlock) {
+      // Si es técnico intentando acceder al dashboard principal, redirigir a averías
+      if (isNegativeRole && hasRole(roleToCheck)) {
+        return <Navigate to="/averias/dashboard" replace />;
+      }
+      
+      return (
+        <div className="access-denied" style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          flexDirection: 'column',
+          gap: '1rem',
+          padding: '2rem'
         }}>
-          block
-        </span>
-        <h2 style={{ color: 'var(--colors-text-primary)', margin: 0 }}>
-          Acceso Denegado
-        </h2>
-        <p style={{ 
-          color: 'var(--colors-text-secondary)',
-          textAlign: 'center',
-          maxWidth: '400px'
-        }}>
-          No tienes el rol necesario para acceder a esta página.
-          Rol requerido: <strong>{requiredRole}</strong>
-        </p>
-        <button
-          onClick={() => window.history.back()}
-          style={{
-            padding: '0.75rem 1.5rem',
-            background: 'var(--colors-primary-main)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
-          }}
-        >
-          <span className="material-icons">arrow_back</span>
-          Volver
-        </button>
-      </div>
-    );
+          <span className="material-icons" style={{
+            fontSize: '4rem',
+            color: 'var(--colors-error-main)'
+          }}>
+            block
+          </span>
+          <h2 style={{ color: 'var(--colors-text-primary)', margin: 0 }}>
+            Acceso Denegado
+          </h2>
+          <p style={{ 
+            color: 'var(--colors-text-secondary)',
+            textAlign: 'center',
+            maxWidth: '400px'
+          }}>
+            No tienes el rol necesario para acceder a esta página.
+          </p>
+          <button
+            onClick={() => window.history.back()}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: 'var(--colors-primary-main)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}
+          >
+            <span className="material-icons">arrow_back</span>
+            Volver
+          </button>
+        </div>
+      );
+    }
   }
 
   // Render the protected content

@@ -87,7 +87,7 @@ const App: React.FC = () => {
           <Route
             path="/"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="!Técnico">
                 <Layout><Dashboard /></Layout>
               </ProtectedRoute>
             }

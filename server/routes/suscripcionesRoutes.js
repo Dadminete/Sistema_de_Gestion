@@ -151,6 +151,9 @@ router.put('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Suscripción no encontrada' });
     }
 
+    console.log('🔄 PUT /api/suscripciones/:id - Request body:', JSON.stringify(req.body, null, 2));
+    console.log('📅 Suscripción actual - diaFacturacion:', existing.diaFacturacion);
+
     const {
       clienteId,
       servicioId,
@@ -168,6 +171,8 @@ router.put('/:id', async (req, res) => {
       notasInstalacion,
       notasServicio
     } = req.body || {};
+
+    console.log('📅 Nuevo diaFacturacion recibido:', diaFacturacion, 'tipo:', typeof diaFacturacion);
 
     const data = {
       ...(numeroContrato ? { numeroContrato } : {}),
@@ -191,6 +196,14 @@ router.put('/:id', async (req, res) => {
       where: { id },
       data,
       include: { cliente: true, servicio: true, plan: true, usuario: true }
+    });
+
+    console.log('✅ Suscripción actualizada - diaFacturacion:', updated.diaFacturacion);
+    console.log('✅ Suscripción actualizada completa:', {
+      id: updated.id,
+      numeroContrato: updated.numeroContrato,
+      diaFacturacion: updated.diaFacturacion,
+      precioMensual: updated.precioMensual
     });
 
     try {

@@ -196,9 +196,19 @@ const Login: React.FC = () => {
         localStorage.removeItem('loginAttempts');
         setLoginAttempts([]);
 
-        // Redirect to intended page or dashboard
-        const from = (location.state as LocationState)?.from?.pathname || '/dashboard';
-        navigate(from, { replace: true });
+        // Redirect based on user role
+        const userRoles = result.user?.roles || [];
+        let redirectPath = '/';
+        
+        if (userRoles.includes('Técnico') || userRoles.includes('Tecnico')) {
+          // Técnicos van directo al dashboard de averías
+          redirectPath = '/averias/dashboard';
+        } else {
+          // Otros usuarios van al dashboard principal o a la página que intentaban acceder
+          redirectPath = (location.state as LocationState)?.from?.pathname || '/';
+        }
+        
+        navigate(redirectPath, { replace: true });
       } else {
         recordLoginAttempt();
         setError(result.error || 'Credenciales inválidas');

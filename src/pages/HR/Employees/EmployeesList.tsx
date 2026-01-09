@@ -66,12 +66,14 @@ const EmployeesList = () => {
         fetchEmployees();
     };
 
-    const filteredEmployees = employees.filter(emp =>
-        (emp.nombres || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (emp.apellidos || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (emp.codigoEmpleado || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (emp.cargo?.nombreCargo || '').toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredEmployees = employees
+        .filter(emp => emp.estado === 'ACTIVO')
+        .filter(emp =>
+            (emp.nombres || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (emp.apellidos || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (emp.codigoEmpleado || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (emp.cargo?.nombreCargo || '').toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
     return (
         <div className="emp-page">
